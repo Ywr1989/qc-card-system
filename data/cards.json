@@ -1,5 +1,22 @@
 [
   {
+    "id": "QR-2026-002",
+    "defectType": "",
+    "materialCode": "3432",
+    "productDesc": "324234",
+    "severity": "★★★★☆ 很高",
+    "defectRate": "234123",
+    "occurrence": "144",
+    "updateTime": "2026-06-10",
+    "customer": "",
+    "note": "啊沙发上的发",
+    "problemDesc": "324",
+    "causeAnalysis": "1234231",
+    "solution": "4234",
+    "photos": [],
+    "createdAt": "2026-06-10T17:11:32.333Z"
+  },
+  {
     "id": "QR-2026-001",
     "defectType": "",
     "materialCode": "3214",
