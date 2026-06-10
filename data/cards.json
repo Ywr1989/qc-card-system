@@ -1,87 +1,1 @@
-[
-  {
-    "id": "QR-2026-061",
-    "defectType": "",
-    "materialCode": "5510-a-b-c-d",
-    "productDesc": "",
-    "severity": "★★★★★ 极高",
-    "defectRate": "3242",
-    "occurrence": "2",
-    "updateTime": "2026-06-10",
-    "customer": "2",
-    "note": "",
-    "problemDesc": "341范大哥所发生的事反攻倒算个341范大哥所发生的事反攻倒算个341范大哥所发生的事反攻倒算个341范大哥所发生的事",
-    "causeAnalysis": "3341范大哥所发生的事反攻倒算个341范大哥所发生的事反攻倒算个341范大哥所发生的事反攻倒算个",
-    "solution": "341范大哥所发生的事反攻倒算个341范大哥所发生的事反攻倒算个341范大哥所发生的事反攻倒算个",
-    "photos": [],
-    "createdAt": "2026-06-10T11:03:48.132Z"
-  },
-  {
-    "id": "QR-TEST-001",
-    "defectType": "æ¯åº",
-    "materialCode": "TEST-001-A-B-C",
-    "productDesc": "æµè¯-1çº§-çº¢è²",
-    "severity": "âââââ æé«",
-    "defectRate": "5.0%",
-    "occurrence": "è¿ç»­",
-    "updateTime": "2026-06-10",
-    "customer": "æµè¯å®¢æ·",
-    "note": "æµè¯æ°æ®",
-    "problemDesc": "1çº§å¹éæµè¯",
-    "causeAnalysis": "æµè¯",
-    "solution": "æµè¯",
-    "photos": [],
-    "createdAt": "2026-06-10T10:55:36.218Z"
-  },
-  {
-    "id": "QR-TEST-002",
-    "defectType": "åç",
-    "materialCode": "TEST-001-X-Y-Z",
-    "productDesc": "æµè¯-2çº§-é»è²",
-    "severity": "âââââ ä¸­",
-    "defectRate": "3.0%",
-    "occurrence": "é¢å",
-    "updateTime": "2026-06-10",
-    "customer": "æµè¯å®¢æ·",
-    "note": "æµè¯æ°æ®",
-    "problemDesc": "2çº§å¹éæµè¯",
-    "causeAnalysis": "æµè¯",
-    "solution": "æµè¯",
-    "photos": [],
-    "createdAt": "2026-06-10T10:55:36.218Z"
-  },
-  {
-    "id": "QR-TEST-003",
-    "defectType": "æ°æ³¡",
-    "materialCode": "TEST-999-A-B-C",
-    "productDesc": "æµè¯-3çº§-ç»¿è²",
-    "severity": "âââââ ä½",
-    "defectRate": "1.0%",
-    "occurrence": "å¶å",
-    "updateTime": "2026-06-10",
-    "customer": "æµè¯å®¢æ·",
-    "note": "æµè¯æ°æ®",
-    "problemDesc": "3çº§å¹éæµè¯",
-    "causeAnalysis": "æµè¯",
-    "solution": "æµè¯",
-    "photos": [],
-    "createdAt": "2026-06-10T10:55:36.218Z"
-  },
-  {
-    "id": "QR-TEST-004",
-    "defectType": "ç¼©æ°´",
-    "materialCode": "OTHER-001-A-B-C",
-    "productDesc": "æµè¯-4çº§-çº¢è²",
-    "severity": "âââââ é«",
-    "defectRate": "4.0%",
-    "occurrence": "æ¹æ¬¡æ§",
-    "updateTime": "2026-06-10",
-    "customer": "æµè¯å®¢æ·",
-    "note": "æµè¯æ°æ®",
-    "problemDesc": "4çº§å¹éæµè¯",
-    "causeAnalysis": "æµè¯",
-    "solution": "æµè¯",
-    "photos": [],
-    "createdAt": "2026-06-10T10:55:36.218Z"
-  }
-]
+[]
