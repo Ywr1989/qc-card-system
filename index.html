@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.03</title>
+<title>质量问题卡片系统 v1.04</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -82,6 +82,7 @@ body {
 .action-card {
   width: 190px; height: 210px;
   background: rgba(255,255,255,0.08);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   border:1px solid rgba(255,255,255,0.15);
   border-radius: 10px;
@@ -1329,7 +1330,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
-  <div class="nav-right" id="navRight">v1.03</div>
+  <div class="nav-right" id="navRight">v1.04</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1584,7 +1585,11 @@ function saveCards(cards) {
   // 异步推送到 GitHub（不阻塞）
   if (githubToken) {
     setTimeout(async () => {
-      await pushToGitHubWithConflictHandling(cards);
+      const result = await pushToGitHubWithConflictHandling(cards);
+      if (result && result.noToken) {
+        // 用户取消了 Token 输入，数据已保存到本地
+        console.log('用户取消了 Token 输入，数据已保存到本地');
+      }
     }, 0);
   }
 }
@@ -1593,20 +1598,20 @@ function saveCards(cards) {
 async function pushToGitHubWithConflictHandling(cards, depth = 0) {
   if (depth > 2) {
     console.warn('Max retry depth reached');
-    return;
+    return { success: false, conflict: false, error: 'Max retry depth reached' };
   }
   
   const data = await fetchCardsFromGitHub();
   if (!data) {
     console.warn('Failed to fetch from GitHub');
-    return;
+    return { success: false, conflict: false, error: 'Failed to fetch from GitHub' };
   }
   
   const sha = data.sha;
   const result = await pushCardsToGitHub(cards, sha);
   
   if (result.success) {
-    return;
+    return result;
   }
   
   if (result.conflict) {
@@ -1617,9 +1622,9 @@ async function pushToGitHubWithConflictHandling(cards, depth = 0) {
     } else {
       // 合并数据：远程+本地，以ID去重，远程优先
       const remoteData = await fetchCardsFromGitHub();
-      if (!remoteData) return;
+      if (!remoteData) return { success: false, conflict: false, error: 'Failed to fetch from GitHub for merge' };
       
-      const remoteCards = JSON.parse(atob(remoteData.content));
+      const remoteCards = JSON.parse(decodeURIComponent(escape(atob(remoteData.content))));
       const localCards = loadCards();
       const cardMap = new Map();
       // 远程优先
@@ -1635,14 +1640,20 @@ async function pushToGitHubWithConflictHandling(cards, depth = 0) {
       return await pushToGitHubWithConflictHandling(mergedCards, depth + 1);
     }
   }
+  
+  // 其他错误情况（包括 noToken）
+  return result;
 }
 
 // ========== GitHub API 函数 ==========
 async function fetchCardsFromGitHub() {
-  if (!githubToken) return null;
   try {
+    const headers = {};
+    if (githubToken) {
+      headers['Authorization'] = `token ${githubToken}`;
+    }
     const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`, {
-      headers: { 'Authorization': `token ${githubToken}` }
+      headers: headers
     });
     if (!resp.ok) return null;
     const data = await resp.json();
@@ -1654,7 +1665,12 @@ async function fetchCardsFromGitHub() {
 }
 
 async function pushCardsToGitHub(cards, sha) {
-  if (!githubToken) return { success: false, conflict: false };
+  if (!githubToken) {
+    const token = prompt('请输入 GitHub Token 以保存数据到云端（需要 repo 权限）：');
+    if (!token) return { success: false, conflict: false, noToken: true };
+    githubToken = token;
+    localStorage.setItem('qc_github_token', token);
+  }
   try {
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(cards, null, 2))));
     const body = {
@@ -1687,14 +1703,7 @@ async function pushCardsToGitHub(cards, sha) {
 
 // ========== 同步函数（从云端更新数据）==========
 async function syncFromGitHub() {
-  // 如果还没有 token，提示用户输入
-  if (!githubToken) {
-    const token = prompt('请输入 GitHub Token（需要 repo 权限）：');
-    if (!token) return;
-    githubToken = token;
-    localStorage.setItem('qc_github_token', token);
-  }
-  
+  // 读取公开仓库数据不需要 Token，直接拉取
   try {
     // 从 GitHub 拉取最新数据
     const data = await fetchCardsFromGitHub();
@@ -1707,7 +1716,7 @@ async function syncFromGitHub() {
     }
     
     // 解析 GitHub 上的数据
-    const remoteCards = JSON.parse(atob(data.content));
+    const remoteCards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
     const localCards = loadCards();
     
     // 比较本地和远程数据
@@ -1723,7 +1732,7 @@ async function syncFromGitHub() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
     
     // 成功后提示
-    alert('已更新 ' + remoteCards.length + ' 张卡片');
+    alert('已更新 ' + remoteCards.length + ' 张卡片' + (githubToken ? '' : '\n\n提示：如需保存数据到云端，请在数据管理页输入 GitHub Token'));
     
     // 刷新页面显示（如果在首页或查找页）
     if (currentPage === 'search') {
@@ -1743,8 +1752,7 @@ async function autoSyncFromGitHub() {
   // 如果页面不可见，则不执行
   if (document.hidden) return;
   
-  // 如果没有 token，则不执行
-  if (!githubToken) return;
+  // 读取公开仓库数据不需要 Token
   
   try {
     // 从 GitHub 拉取最新数据
@@ -1752,7 +1760,7 @@ async function autoSyncFromGitHub() {
     if (!data) return; // 失败静默处理
     
     // 解析 GitHub 上的数据
-    const remoteCards = JSON.parse(atob(data.content));
+    const remoteCards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
     const localCards = loadCards();
     
     // 比较本地和远程数据
@@ -1832,7 +1840,7 @@ function renderSeverityStars(severity) {
 }
 
 // ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.03';
+const APP_VERSION = 'v1.04';
 const DEMO_VERSION_KEY = 'qc_demo_version';
 
 // 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
