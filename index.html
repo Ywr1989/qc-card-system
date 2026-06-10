@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.06</title>
+<title>质量问题卡片系统 v1.07</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1330,7 +1330,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
-  <div class="nav-right" id="navRight">v1.06</div>
+  <div class="nav-right" id="navRight">v1.07</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1588,15 +1588,16 @@ let githubToken = localStorage.getItem('qc_github_token') || HARDCODED_TOKEN;
 function loadCards() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { return []; } }
 function saveCards(cards) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
-  // 异步推送到 GitHub（不阻塞）
+  // 立即推送到 GitHub（不用 setTimeout）
   if (githubToken) {
-    setTimeout(async () => {
-      const result = await pushToGitHubWithConflictHandling(cards);
-      if (result && result.noToken) {
-        // 用户取消了 Token 输入，数据已保存到本地
-        console.log('用户取消了 Token 输入，数据已保存到本地');
+    pushToGitHubWithConflictHandling(cards).then(result => {
+      if (!result.success) {
+        console.warn('GitHub 推送失败:', result.error);
+        // 可以在这里添加错误提示（但不打扰用户）
       }
-    }, 0);
+    }).catch(err => {
+      console.warn('GitHub 推送异常:', err);
+    });
   }
 }
 
@@ -1774,8 +1775,16 @@ async function autoSyncFromGitHub() {
     const remoteStr = JSON.stringify(remoteCards);
     
     if (localStr !== remoteStr) {
+      // 合并数据：以ID去重，本地优先
+      const cardMap = new Map();
+      // 先放远程（这样如果本地有冲突，本地会覆盖远程）
+      remoteCards.forEach(c => cardMap.set(c.id, c));
+      // 再放本地（本地优先）
+      localCards.forEach(c => cardMap.set(c.id, c));
+      const mergedCards = Array.from(cardMap.values());
+      
       // 更新本地数据
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards));
       
       // 刷新页面显示（如果在首页或查找页）
       if (currentPage === 'search') {
@@ -1846,7 +1855,7 @@ function renderSeverityStars(severity) {
 }
 
 // ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.06';
+const APP_VERSION = 'v1.07';
 const DEMO_VERSION_KEY = 'qc_demo_version';
 
 // 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
@@ -2064,32 +2073,30 @@ function fillForm(r) {
 }
 
 // ========== 照片 ==========
-const pDrop = document.getElementById('photoDrop');
-const pInput = document.getElementById('photoInput');
-if (pDrop && pInput) {
-  pDrop.addEventListener('click', () => pInput.click());
-  pDrop.addEventListener('dragover', e => { e.preventDefault(); pDrop.classList.add('dragover'); });
-  pDrop.addEventListener('dragleave', () => pDrop.classList.remove('dragover'));
-  pDrop.addEventListener('drop', e => { e.preventDefault(); pDrop.classList.remove('dragover'); handleFiles(e.dataTransfer.files); });
-  pInput.addEventListener('change', e => handleFiles(e.target.files));
-}
-
-function handleFiles(files) {
+function handleFiles(files, mode = 'record') {
+  const targetArr = mode === 'edit' ? (editCardData ? editCardData.photos : currentPhotos) : currentPhotos;
   Array.from(files).forEach(f => {
     if (!f.type.startsWith('image/')) return;
     const r = new FileReader();
-    r.onload = e => { currentPhotos.push(e.target.result); renderPhotos(); debouncedUpdatePreview(); };
+    r.onload = e => { targetArr.push(e.target.result); renderPhotos(mode); debouncedUpdatePreview(); };
     r.readAsDataURL(f);
   });
 }
 
-function renderPhotos() {
-  document.getElementById('photoList').innerHTML = currentPhotos.map((src, i) =>
-    `<div class="photo-item"><img src="${src}"><button class="ph-del" onclick="removePhoto(${i})">×</button></div>`
+function renderPhotos(mode = 'record') {
+  const photos = mode === 'edit' ? (editCardData ? editCardData.photos : currentPhotos) : currentPhotos;
+  const containerId = mode === 'edit' ? 'photoList' : 'photoList';
+  document.getElementById(containerId).innerHTML = photos.map((src, i) =>
+    `<div class="photo-item"><img src="${src}"><button class="ph-del" onclick="removePhoto(${i}, '${mode}')">×</button></div>`
   ).join('');
 }
 
-function removePhoto(i) { currentPhotos.splice(i, 1); renderPhotos(); debouncedUpdatePreview(); }
+function removePhoto(i, mode = 'record') {
+  const photos = mode === 'edit' ? (editCardData ? editCardData.photos : currentPhotos) : currentPhotos;
+  photos.splice(i, 1);
+  renderPhotos(mode);
+  debouncedUpdatePreview();
+}
 
 // ========== 实时预览（动态字体缩小）==========
 const debouncedUpdatePreview = debounce(function() {
@@ -2794,6 +2801,10 @@ function renderEditCard() {
   const photoBox = document.createElement('div');
   photoBox.className = 'photo-box clickable';
   photoBox.onclick = (e) => { if (e.target === photoBox || e.target.tagName === 'DIV') document.getElementById('photoInput').click(); };
+  // 添加拖放事件监听
+  photoBox.addEventListener('dragover', e => { e.preventDefault(); photoBox.classList.add('dragover'); });
+  photoBox.addEventListener('dragleave', () => photoBox.classList.remove('dragover'));
+  photoBox.addEventListener('drop', e => { e.preventDefault(); photoBox.classList.remove('dragover'); handleFiles(e.dataTransfer.files, 'edit'); });
   if (card.photos && card.photos.length > 0) {
     const img = document.createElement('img');
     img.src = card.photos[0];
@@ -2803,7 +2814,14 @@ function renderEditCard() {
     photoBox.innerHTML = '<div style="color:#999;font-size:12px;">[ 点击上传照片 ]</div>';
   }
   leftSide.appendChild(photoBox);
-
+  
+  // 照片列表
+  const photoList = document.createElement('div');
+  photoList.className = 'photo-list';
+  photoList.id = 'photoList';
+  leftSide.appendChild(photoList);
+  renderPhotos('edit');
+  
   // 备注（固定前缀 + 可编辑区域）
   const noteBlock = document.createElement('div');
   noteBlock.className = 'note-block';
@@ -2927,38 +2945,12 @@ function showDefectSelect(triangleWrap) {
   sel.focus();
 }
 
-// 照片处理（新版，使用 editCardData.photos）
+// 照片处理
 const photoInputEl = document.getElementById('photoInput');
 if (photoInputEl) {
-  // 移除旧的事件监听器（如果有）
-  // 直接重新设置 onchange
   photoInputEl.onchange = function(e) {
-    handleFiles(e.target.files);
+    handleFiles(e.target.files, 'edit');
   };
-}
-
-function handleFiles(files) {
-  Array.from(files).forEach(f => {
-    if (!f.type.startsWith('image/')) return;
-    const r = new FileReader();
-    r.onload = e => { if (editCardData) { editCardData.photos.push(e.target.result); renderEditCard(); } };
-    r.readAsDataURL(f);
-  });
-}
-
-function renderPhotos() {
-  if (!editCardData) return;
-  const photoList = document.getElementById('photoList');
-  if (!photoList) return;
-  photoList.innerHTML = editCardData.photos.map((src, i) =>
-    `<div class="photo-item"><img src="${src}"><button class="ph-del" onclick="removePhoto(${i})">×</button></div>`
-  ).join('');
-}
-
-function removePhoto(i) {
-  if (!editCardData) return;
-  editCardData.photos.splice(i, 1);
-  renderEditCard();
 }
 
 // submitRecord 新版
