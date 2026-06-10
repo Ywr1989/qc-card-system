@@ -1646,6 +1646,9 @@ async function syncWithGitHub() {
     const data = await fetchCardsFromGitHub();
     if (!data) {
       alert('从 GitHub 拉取失败，请检查 Token 和仓库设置');
+      // 清除错误的 Token，允许用户重新输入
+      githubToken = '';
+      localStorage.removeItem('qc_github_token');
       return;
     }
     
