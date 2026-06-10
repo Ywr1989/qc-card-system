@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.69-最终版-修改1</title>
+<title>质量问题卡片系统 v1.02</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1367,6 +1367,11 @@ body {
       <div class="ac-label">卡片管理</div>
       <div class="ac-hint">查看 / 批量删除卡片</div>
     </div>
+    <div class="action-card" onclick="syncWithGitHub()" style="cursor:pointer;">
+      <div class="ac-icon" style="background:linear-gradient(135deg,#00b4d8,#0077b6);box-shadow:0 8px 25px rgba(0,180,216,0.4);">☁️</div>
+      <div class="ac-label">同步</div>
+      <div class="ac-hint">GitHub 云同步</div>
+    </div>
   </div>
 </div>
 
@@ -1501,6 +1506,8 @@ body {
     </div>
 
     <div class="manage-footer">
+      <button class="btn-export-cards" onclick="exportCards()">📤 导出卡片</button>
+      <button class="btn-import-cards" onclick="importCards()">📥 导入卡片</button>
       <button class="btn-export" onclick="manageExportSettings()">📤 导出设置</button>
       <button class="btn-import" onclick="manageImportSettings()">📥 导入设置</button>
       <button class="btn-reset" onclick="manageResetSettings()">🔄 恢复默认</button>
@@ -1551,12 +1558,106 @@ body {
 <script>
 // ========== 数据 ==========
 const STORAGE_KEY = 'qc_cards_v1.34';
+// 客户代码→名称映射
+const CUSTOMER_MAP = {
+  'CJX085902': '林总',
+  'CDW02302': '德威',
+  'CKW02802': '凯崴',
+  'CLZ053002': '李总',
+  'CDTK057102': '德泰克',
+  'CDA051202': '帝奥'
+};
 let currentPhotos = [];
 let playedIds = new Set();
+let manageUnlocked = false; // 数据管理/卡片管理 密码解锁状态
 let lastResults = [];
 
+// ========== GitHub 云同步 ==========
+const GITHUB_OWNER = 'Ywr1989';
+const GITHUB_REPO = 'qc-card-system';
+const GITHUB_PATH = 'data/cards.json';
+let githubToken = localStorage.getItem('qc_github_token') || '';
+
 function loadCards() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { return []; } }
-function saveCards(cards) { localStorage.setItem(STORAGE_KEY, JSON.stringify(cards)); }
+function saveCards(cards) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+  // 异步推送到 GitHub（不阻塞）
+  if (githubToken) {
+    setTimeout(async () => {
+      const data = await fetchCardsFromGitHub();
+      const sha = data ? data.sha : null;
+      await pushCardsToGitHub(cards, sha);
+    }, 0);
+  }
+}
+
+// ========== GitHub API 函数 ==========
+async function fetchCardsFromGitHub() {
+  if (!githubToken) return null;
+  try {
+    const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`, {
+      headers: { 'Authorization': `token ${githubToken}` }
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    return { content: data.content, sha: data.sha };
+  } catch(e) {
+    console.warn('fetchCardsFromGitHub error:', e);
+    return null;
+  }
+}
+
+async function pushCardsToGitHub(cards, sha) {
+  if (!githubToken) return false;
+  try {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(cards, null, 2))));
+    const body = {
+      message: 'Sync cards from QC Card System',
+      content: content
+    };
+    if (sha) body.sha = sha;
+    const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    return resp.ok;
+  } catch(e) {
+    console.warn('pushCardsToGitHub error:', e);
+    return false;
+  }
+}
+
+// ========== 同步函数 ==========
+async function syncWithGitHub() {
+  // 如果还没有 token，提示用户输入
+  if (!githubToken) {
+    const token = prompt('请输入 GitHub Token（需要 repo 权限）：');
+    if (!token) return;
+    githubToken = token;
+    localStorage.setItem('qc_github_token', token);
+  }
+  
+  try {
+    // 从 GitHub 拉取最新数据
+    const data = await fetchCardsFromGitHub();
+    if (!data) {
+      alert('从 GitHub 拉取失败，请检查 Token 和仓库设置');
+      return;
+    }
+    
+    // 解析 GitHub 上的数据
+    const remoteCards = JSON.parse(atob(data.content));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
+    
+    alert('同步成功！已从 GitHub 拉取 ' + remoteCards.length + ' 张卡片');
+  } catch(e) {
+    alert('同步失败：' + e.message);
+  }
+}
 
 function debounce(fn, delay) {
   let timer;
@@ -1615,7 +1716,7 @@ function renderSeverityStars(severity) {
 }
 
 // ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.69-最终版-修改1';
+const APP_VERSION = 'v1.02';
 const DEMO_VERSION_KEY = 'qc_demo_version';
 
 // 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
@@ -2002,7 +2103,7 @@ function renderCardHTML(card, isPreview) {
     </div>
     <div class="fields-row">
       <div class="field-card" style="flex:0.5;"><div class="label">更新时间</div><div class="value">${card.updateTime || '-'}</div></div>
-      <div class="field-card" style="flex:0.5;"><div class="label">客户</div><div class="value">${card.customer || '-'}</div></div>
+      <div class="field-card" style="flex:0.5;"><div class="label">客户</div><div class="value">${card.customer ? card.customer + (CUSTOMER_MAP[card.customer] ? '('+CUSTOMER_MAP[card.customer]+')' : '') : '-'}</div></div>
     </div>
     <div class="main">
       <div class="left-side"><div class="photo-box">${photosHtml}</div>
@@ -2744,7 +2845,7 @@ const SETTINGS_KEY = 'qc_settings_v1';
 function getDefaultSettings() {
   return {
     defectTypes: ['毛刺','缩水','色差','缺料','划痕','变形','气泡','熔接痕','银丝','黑点','尺寸超差','其他'],
-    customers: ['凯崴','德威','林总','李总','德泰克','帝奥'],
+    customers: ['CJX085902','CDW02302','CKW02802','CLZ053002','CDTK057102','CDA051202'],
     severities: ['★★★★★ 极高','★★★★☆ 很高','★★★☆☆ 高','★★☆☆☆ 中','★☆☆☆☆ 低']
   };
 }
@@ -2762,6 +2863,11 @@ function saveSettings(settings) {
 }
 
 function showManage() {
+  if (!manageUnlocked) {
+    const pwd = prompt('请输入管理密码：');
+    if (pwd !== '3332476') { alert('密码错误'); return; }
+    manageUnlocked = true;
+  }
   showSection('manage', '数据管理');
   renderManagePage();
 }
@@ -2885,7 +2991,55 @@ function manageResetSettings() {
 }
 
 // ========== 卡片管理 ==========
+
+function exportCards() {
+  const cards = loadCards();
+  const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+  const filename = 'cards_backup_' + date + '.json';
+  const blob = new Blob([JSON.stringify(cards, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  alert('已导出 ' + cards.length + ' 张卡片到文件：' + filename);
+}
+
+function importCards() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        const importedCards = JSON.parse(ev.target.result);
+        if (!Array.isArray(importedCards)) throw new Error('无效的卡片数据');
+        const existingCards = loadCards();
+        const cardMap = new Map();
+        existingCards.forEach(c => cardMap.set(c.id, c));
+        importedCards.forEach(c => cardMap.set(c.id, c));
+        const mergedCards = Array.from(cardMap.values());
+        saveCards(mergedCards);
+        alert('导入成功！共 ' + importedCards.length + ' 张卡片，合并后共 ' + mergedCards.length + ' 张');
+      } catch(err) {
+        alert('导入失败：' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
 function showCardManage() {
+  if (!manageUnlocked) {
+    const pwd = prompt('请输入管理密码：');
+    if (pwd !== '3332476') { alert('密码错误'); return; }
+    manageUnlocked = true;
+  }
   showSection('cardManage', '卡片管理');
   document.getElementById('cmSearchInput').value = '';
   document.getElementById('cmSortField').value = 'id';
@@ -2958,7 +3112,7 @@ function cmRender() {
         <div class="cm-id">${c.id}</div>
         <div class="cm-code">${c.materialCode || '-'}</div>
         <div class="cm-desc">${c.defectType || '-'} | ${c.productDesc || '-'}</div>
-        <div class="cm-customer">${c.customer || '-'}</div>
+        <div class="cm-customer">${c.customer ? c.customer + (CUSTOMER_MAP[c.customer] ? '('+CUSTOMER_MAP[c.customer]+')' : '') : '-'}</div>
         <div class="cm-date">${c.updateTime || '-'}</div>
       </div>
     `).join('');
