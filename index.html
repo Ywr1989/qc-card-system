@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.08</title>
+<title>质量问题卡片系统 v1.09</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1333,7 +1333,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
-  <div class="nav-right" id="navRight">v1.08</div>
+  <div class="nav-right" id="navRight">v1.09</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1562,6 +1562,7 @@ body {
 <script>
 // ========== 数据 ==========
 const STORAGE_KEY = 'qc_cards_v1.34';
+const LAST_SYNC_KEY = 'qc_last_sync_v1';
 // 客户代码→名称映射
 const CUSTOMER_MAP = {
   'CJX085902': '林总',
@@ -1588,19 +1589,23 @@ const HARDCODED_TOKEN = T1 + T2 + T3;
 let githubToken = localStorage.getItem('qc_github_token') || HARDCODED_TOKEN;
 
 function loadCards() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { return []; } }
-function saveCards(cards) {
+async function saveCards(cards) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
-  // 立即推送到 GitHub（不用 setTimeout）
   if (githubToken) {
-    pushToGitHubWithConflictHandling(cards).then(result => {
-      if (!result.success) {
+    try {
+      const result = await pushToGitHubWithConflictHandling(cards);
+      if (result.success) {
+        localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(cards));
+      } else {
         console.warn('GitHub 推送失败:', result.error);
-        // 可以在这里添加错误提示（但不打扰用户）
       }
-    }).catch(err => {
+      return result;
+    } catch(err) {
       console.warn('GitHub 推送异常:', err);
-    });
+      return { success: false, error: err.message };
+    }
   }
+  return { success: true };
 }
 
 // 带冲突处理的 GitHub 推送
@@ -1777,17 +1782,25 @@ async function autoSyncFromGitHub() {
     const remoteStr = JSON.stringify(remoteCards);
     
     if (localStr !== remoteStr) {
-      // 合并数据：以ID去重，本地优先
-      const cardMap = new Map();
-      // 先放远程（这样如果本地有冲突，本地会覆盖远程）
-      remoteCards.forEach(c => cardMap.set(c.id, c));
-      // 再放本地（本地优先）
-      localCards.forEach(c => cardMap.set(c.id, c));
-      const mergedCards = Array.from(cardMap.values());
-      
+      let mergedCards;
+      const lastSyncStr = localStorage.getItem(LAST_SYNC_KEY);
+      if (lastSyncStr) {
+        const lastSyncCards = JSON.parse(lastSyncStr);
+        mergedCards = threeWayMerge(lastSyncCards, localCards, remoteCards);
+      } else {
+        // 首次同步：以本地为准，添加远程新增的卡片
+        const localIds = new Set(localCards.map(c => c.id));
+        mergedCards = [...localCards];
+        remoteCards.forEach(c => { if (!localIds.has(c.id)) mergedCards.push(c); });
+        // 初始化 lastSync
+        localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards));
+      }
+
       // 更新本地数据
       localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards));
-      
+      // 同步完成后，更新 lastSync 为当前远程状态
+      localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards));
+
       // 刷新页面显示（如果在首页或查找页）
       if (currentPage === 'search') {
         doSearch(); // 重新渲染搜索结果
@@ -1798,6 +1811,52 @@ async function autoSyncFromGitHub() {
     // 失败静默处理，不打扰用户
     console.warn('autoSyncFromGitHub error:', e);
   }
+}
+
+// 三路合并：基于上次同步状态，正确合并本地和远程的增删改
+function threeWayMerge(lastSync, local, remote) {
+  const lastMap = new Map(lastSync.map(c => [c.id, c]));
+  const localMap = new Map(local.map(c => [c.id, c]));
+  const remoteMap = new Map(remote.map(c => [c.id, c]));
+  const resultMap = new Map();
+
+  // 处理本地卡片
+  localMap.forEach((c, id) => {
+    if (remoteMap.has(id)) {
+      // 双方都有的卡片：比较是否有变化
+      const remoteCard = remoteMap.get(id);
+      const lastCard = lastMap.get(id);
+      const localChanged = JSON.stringify(lastCard) !== JSON.stringify(c);
+      const remoteChanged = JSON.stringify(lastCard) !== JSON.stringify(remoteCard);
+      if (localChanged && !remoteChanged) {
+        resultMap.set(id, c);        // 只有本地变了
+      } else if (!localChanged && remoteChanged) {
+        resultMap.set(id, remoteCard); // 只有远程变了
+      } else {
+        resultMap.set(id, c);        // 都没变或都变了 → 本地优先
+      }
+    } else {
+      // 本地有，远程没有
+      if (lastMap.has(id)) {
+        // 上次同步时有，现在远程没有了 → 远程删除了，不保留
+      } else {
+        resultMap.set(id, c);        // 本地新增的 → 保留
+      }
+    }
+  });
+
+  // 处理远程有但本地没有的卡片
+  remoteMap.forEach((c, id) => {
+    if (!localMap.has(id)) {
+      if (lastMap.has(id)) {
+        // 上次同步时有，现在本地没有了 → 本地删除了，不保留
+      } else {
+        resultMap.set(id, c);        // 远程新增的 → 保留
+      }
+    }
+  });
+
+  return Array.from(resultMap.values());
 }
 
 function debounce(fn, delay) {
@@ -1857,7 +1916,7 @@ function renderSeverityStars(severity) {
 }
 
 // ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.08';
+const APP_VERSION = 'v1.09';
 const DEMO_VERSION_KEY = 'qc_demo_version';
 
 // 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
@@ -2823,7 +2882,7 @@ function renderEditCard() {
   photoList.className = 'photo-list';
   photoList.id = 'photoList';
   leftSide.appendChild(photoList);
-  renderPhotos('edit');
+  // 注意：renderPhotos 在 cardEl 挂载到 DOM 后再调用，见下方
   
   // 备注（固定前缀 + 可编辑区域）
   const noteBlock = document.createElement('div');
@@ -2857,6 +2916,8 @@ function renderEditCard() {
 
   wrapper.innerHTML = '';
   wrapper.appendChild(cardEl);
+  // cardEl 已挂载到 DOM，现在可以安全地渲染照片列表
+  renderPhotos('edit');
 }
 
 // 辅助：创建字段卡片（带 select 或 input）
@@ -3279,16 +3340,21 @@ function cmSelectNone() {
 function cmSelectInvert() {
   document.querySelectorAll('.cm-check').forEach(cb => cb.checked = !cb.checked);
 }
-function cmBatchDelete() {
+async function cmBatchDelete() {
   const checked = document.querySelectorAll('.cm-check:checked');
   if (checked.length === 0) { alert('请先勾选要删除的卡片'); return; }
   if (!confirm('确定删除选中的 ' + checked.length + ' 张卡片？此操作不可恢复！')) return;
   const idsToDelete = new Set(Array.from(checked).map(cb => cb.dataset.id));
   let cards = loadCards();
   cards = cards.filter(c => !idsToDelete.has(c.id));
-  saveCards(cards);
-  cmRender();
-  alert('已删除 ' + idsToDelete.size + ' 张卡片');
+  const result = await saveCards(cards);
+  if (result.success) {
+    cmRender();
+    alert('已删除 ' + idsToDelete.size + ' 张卡片');
+  } else {
+    cmRender();
+    alert('本地删除成功，但同步到云端失败：' + (result.error || '未知错误') + '\n请检查网络后重试，或稍后点击「更新」按钮手动同步。');
+  }
 }
 
 // 也保留旧的 submitRecord 函数名（如果有其他地方调用）
