@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.07</title>
+<title>质量问题卡片系统 v1.08</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -938,6 +938,8 @@ body {
   padding: 10px 16px;
   background: #d0d0d0;
   border-radius: 8px;
+  max-height: calc(100vh - 44px - 240px);
+  justify-content: center;
 }
 .edit-card-scroll {
   flex: 1;
@@ -945,6 +947,7 @@ body {
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
   padding: 10px 0;
 }
 .edit-card-wrapper {
@@ -1330,7 +1333,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
-  <div class="nav-right" id="navRight">v1.07</div>
+  <div class="nav-right" id="navRight">v1.08</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1408,7 +1411,6 @@ body {
       </div>
     </div>
   </div>
-</div>
 
 <!-- ========== 查找页 ========== -->
 <div id="search" class="page-section">
@@ -1855,7 +1857,7 @@ function renderSeverityStars(severity) {
 }
 
 // ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.07';
+const APP_VERSION = 'v1.08';
 const DEMO_VERSION_KEY = 'qc_demo_version';
 
 // 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
@@ -1865,8 +1867,9 @@ const DEMO_CARD_IDS = [
 ];
 
 function initDemoData() {
-  // 每次都检测并补录缺失的示例卡片（快速检测已移除，确保管理员加卡后一定会被补录）
+  // 只在首次（没有任何卡片时）初始化示例卡片，删除后不再自动补录
   const existing = loadCards();
+  if (existing.length > 0) return; // 已有卡片，不再补录示例数据
   const existingIds = new Set(existing.map(c => c.id));
 
   const defects = ['毛刺','缩水','色差','缺料','划痕','变形','气泡','熔接痕','银丝','黑点','尺寸超差'];
