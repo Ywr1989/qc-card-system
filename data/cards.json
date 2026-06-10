@@ -1,5 +1,22 @@
 [
   {
+    "id": "QR-2026-004",
+    "defectType": "",
+    "materialCode": "8512-PC-T-P000-BLK",
+    "productDesc": "8512-普通PC-透明-不印刷-空白",
+    "severity": "★★★★★ 极高",
+    "defectRate": "DF",
+    "occurrence": "DFSA",
+    "updateTime": "2026-06-10",
+    "customer": "DSAFASD",
+    "note": "8512-普通PC-透明-不印刷-空白8512-普通PC-透明-不印刷-空白",
+    "problemDesc": "8512-普通PC-透明-不印刷-空白8512-普通PC-透明-不印刷-空白",
+    "causeAnalysis": "8512-普通PC-透明-不印刷-空白8512-普通PC-透明-不印刷-空白8512-普通PC-透明-不印刷-空白",
+    "solution": "8512-普通PC-透明-不印刷-空白8512-普通PC-透明-不印刷-空白",
+    "photos": [],
+    "createdAt": "2026-06-10T11:06:54.177Z"
+  },
+  {
     "id": "QR-2026-003",
     "defectType": "",
     "materialCode": "5510-N-B-C-D",
