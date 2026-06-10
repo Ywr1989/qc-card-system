@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.05</title>
+<title>质量问题卡片系统 v1.06</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -57,12 +57,12 @@ body {
   padding: 4px 12px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 10pt;
+  font-size: 13px;
   font-family: inherit;
 }
 .top-nav .back-btn:hover { background: rgba(255,255,255,0.25); }
-.top-nav .nav-title { font-size: 11pt; font-weight: bold; }
-.top-nav .nav-right { font-size: 8pt; color: rgba(255,255,255,0.5); }
+.top-nav .nav-title { font-size: 15px; font-weight: bold; }
+.top-nav .nav-right { font-size: 11px; color: rgba(255,255,255,0.5); }
 
 /* ========== 首页 ========== */
 #home {
@@ -75,9 +75,9 @@ body {
   padding: 40px 20px;
 }
 .home-brand { text-align: center; margin-bottom: 60px; }
-.home-brand .logo-icon { font-size: 52pt; margin-bottom: 12px; }
-.home-brand h1 { color: #fff; font-size: 24pt; font-weight: bold; text-shadow: 0 2px 12px rgba(0,0,0,0.4); letter-spacing: 2px; }
-.home-brand p { color: rgba(255,255,255,0.7); font-size: 11pt; margin-top: 8px; }
+.home-brand .logo-icon { font-size: 69px; margin-bottom: 12px; }
+.home-brand h1 { color: #fff; font-size: 32px; font-weight: bold; text-shadow: 0 2px 12px rgba(0,0,0,0.4); letter-spacing: 2px; }
+.home-brand p { color: rgba(255,255,255,0.7); font-size: 15px; margin-top: 8px; }
 .home-actions { display: flex; gap: 50px; flex-wrap: wrap; justify-content: center; }
 .action-card {
   width: 190px; height: 210px;
@@ -97,12 +97,12 @@ body {
 }
 .action-card .ac-icon {
   width: 68px; height: 68px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center; font-size: 26pt;
+  display: flex; align-items: center; justify-content: center; font-size: 35px;
 }
 .action-card.record .ac-icon { background: linear-gradient(135deg, #e74c3c, #c0392b); box-shadow: 0 8px 25px rgba(231,76,60,0.4); }
 .action-card.search .ac-icon { background: linear-gradient(135deg, #3498db, #2980b9); box-shadow: 0 8px 25px rgba(52,152,219,0.4); }
-.action-card .ac-label { font-size: 15pt; font-weight: bold; }
-.action-card .ac-hint { font-size: 9pt; color: rgba(255,255,255,0.5); }
+.action-card .ac-label { font-size: 20px; font-weight: bold; }
+.action-card .ac-hint { font-size: 12px; color: rgba(255,255,255,0.5); }
 
 /* ========== 记录页（左右布局） ========== */
 #record { background: #f8fafc; }
@@ -285,17 +285,17 @@ body {
 .search-bar-row { display: flex; gap: 8px; align-items: center; }
 .search-bar-row input {
   flex: 1; border: 2px solid #ddd; border-radius: 7px; padding: 7px 12px;
-  font-size: 11pt; font-family: inherit; transition: border-color 0.3s;
+  font-size: 15px; font-family: inherit; transition: border-color 0.3s;
 }
 .search-bar-row input:focus { outline: none; border-color: #3498db; }
 .search-bar-row button {
   background: #3498db; color: #fff; border: none; padding: 7px 20px;
-  border-radius: 7px; font-size: 11pt; cursor: pointer; font-family: inherit;
+  border-radius: 7px; font-size: 15px; cursor: pointer; font-family: inherit;
 }
 .search-bar-row button:hover { background: #2980b9; }
 .search-filters { display: flex; gap: 6px; flex-wrap: wrap; }
-.search-filters select { border: 1px solid #ddd; border-radius: 5px; padding: 4px 7px; font-size: 9pt; font-family: inherit; }
-.search-stats { font-size: 8pt; color: #888; }
+.search-filters select { border: 1px solid #ddd; border-radius: 5px; padding: 4px 7px; font-size: 12px; font-family: inherit; }
+.search-stats { font-size: 11px; color: #888; }
 
 /* 桌面展示区 */
 .card-table {
@@ -327,13 +327,13 @@ body {
   filter: grayscale(0.3);
 }
 .table-hint .th-text {
-  font-size: 10pt;
+  font-size: 13px;
   font-weight: 600;
   color: #64748b;
   margin-bottom: 6px;
 }
 .table-hint .th-sub {
-  font-size: 10pt;
+  font-size: 13px;
   color: #94a3b8;
   margin-top: 4px;
   line-height: 1.6;
@@ -364,7 +364,7 @@ body {
   bottom: -22px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 10pt;
+  font-size: 13px;
   color: #555;
   background: rgba(255,255,255,0.8);
   padding: 1px 8px;
@@ -402,7 +402,7 @@ body {
   position: absolute;
   top: 6px; left: 16px;
   color: rgba(255,255,255,0.45);
-  font-size: 10pt;
+  font-size: 13px;
 }
 .hand-actions {
   position: absolute;
@@ -416,7 +416,7 @@ body {
   padding: 7px 18px;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 10pt;
+  font-size: 13px;
   font-family: inherit;
 }
 .hand-actions button:hover { background: rgba(255,255,255,0.2); }
@@ -634,7 +634,7 @@ body {
   background: #fff;
   position: relative;
   overflow: hidden;
-  font-size: 10pt;
+  font-size: 13px;
   color: #000;
   box-shadow: 0 4px 16px rgba(0,0,0,0.25);
   flex-shrink: 0;
@@ -655,26 +655,26 @@ body {
   position: absolute; top: 4mm; left: 3.5mm;
   color: #fff; font-weight: bold; line-height: 1.25; z-index: 1;
 }
-.qr-card .triangle-text.defect-2 { font-size: 14pt; }
-.qr-card .triangle-text.defect-3 { font-size: 11pt; }
-.qr-card .triangle-text.defect-4 { font-size: 9pt; }
+.qr-card .triangle-text.defect-2 { font-size: 19px; }
+.qr-card .triangle-text.defect-3 { font-size: 15px; }
+.qr-card .triangle-text.defect-4 { font-size: 12px; }
 .qr-card .code-area {
   flex: 1; padding: 2mm 22mm 2mm 8mm;
   display: flex; flex-direction: column; justify-content: center;
 }
-.qr-card .code-en { font-size: 16pt; font-weight: bold; color: #000; word-break: break-all; }
-.qr-card .code-cn { font-size: 11pt; color: #000; margin-top: 1mm; word-break: break-all; }
+.qr-card .code-en { font-size: 21px; font-weight: bold; color: #000; word-break: break-all; }
+.qr-card .code-cn { font-size: 15px; color: #000; margin-top: 1mm; word-break: break-all; }
 .qr-card .report-no { position: absolute; top: 3mm; right: 4mm; text-align: right; }
-.qr-card .report-no .num { font-size: 11pt; font-weight: bold; color: #000; }
-.qr-card .report-no .label { font-size: 8pt; color: #333; margin-top: 1mm; }
+.qr-card .report-no .num { font-size: 15px; font-weight: bold; color: #000; }
+.qr-card .report-no .label { font-size: 11px; color: #333; margin-top: 1mm; }
 .qr-card .fields-row { display: flex; padding: 0 2mm; gap: 1.5mm; margin-bottom: 1mm; }
 .qr-card .field-card {
   flex: 1; background: #fff; border: 1px solid #c8c8c8; border-radius: 6px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.03);
   padding: 1.2mm 2mm; text-align: center;
 }
-.qr-card .field-card .label { font-size: 11pt; font-weight: bold; color: #000; }
-.qr-card .field-card .value { font-size: 10pt; color: #000; margin-top: 0.5mm; word-break: break-all; }
+.qr-card .field-card .label { font-size: 15px; font-weight: bold; color: #000; }
+.qr-card .field-card .value { font-size: 13px; color: #000; margin-top: 0.5mm; word-break: break-all; }
 .qr-card .main { display: flex; height: 100mm; padding: 0 2mm 2mm 2mm; gap: 2mm; }
 .qr-card .left-side { width: 108mm; display: flex; flex-direction: column; gap: 1.2mm; }
 .qr-card .photo-box {
@@ -684,17 +684,17 @@ body {
 }
 .qr-card .photo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
 .qr-card .note-block { height: 14mm; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.12); flex-shrink: 0; }
-.qr-card .note-body { height: 100%; padding: 1.5mm 3mm; font-size: 9pt; color: #000; line-height: 1.5; overflow: hidden; word-break: break-all; }
-.qr-card .note-label { font-weight: bold; font-size: 9pt; color: #000; }
+.qr-card .note-body { height: 100%; padding: 1.5mm 3mm; font-size: 12px; color: #000; line-height: 1.5; overflow: hidden; word-break: break-all; }
+.qr-card .note-label { font-weight: bold; font-size: 12px; color: #000; }
 .qr-card .right-side { flex: 1; display: flex; flex-direction: column; gap: 1.2mm; min-height: 0; }
 .qr-card .block { flex: 1; display: flex; flex-direction: column; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.12); min-height: 0; }
-.qr-card .block-header { background: #e0e0e0; padding: 1.2mm 3mm; font-size: 12pt; font-weight: bold; color: #000; flex-shrink: 0; }
-.qr-card .block-body { flex: 1; padding: 1.5mm 3mm; color: #000; line-height: 1.5; overflow: hidden; font-size: 9pt; word-break: break-all; }
-.qr-card .block-body.too-long-1 { font-size: 8pt; }
-.qr-card .block-body.too-long-2 { font-size: 7pt; }
-.qr-card .block-body.too-long-3 { font-size: 6pt; line-height: 1.3; }
-.qr-card .note-body.too-long-1 { font-size: 8pt; }
-.qr-card .note-body.too-long-2 { font-size: 7pt; }
+.qr-card .block-header { background: #e0e0e0; padding: 1.2mm 3mm; font-size: 16px; font-weight: bold; color: #000; flex-shrink: 0; }
+.qr-card .block-body { flex: 1; padding: 1.5mm 3mm; color: #000; line-height: 1.5; overflow: hidden; font-size: 12px; word-break: break-all; }
+.qr-card .block-body.too-long-1 { font-size: 11px; }
+.qr-card .block-body.too-long-2 { font-size: 9px; }
+.qr-card .block-body.too-long-3 { font-size: 8px; line-height: 1.3; }
+.qr-card .note-body.too-long-1 { font-size: 11px; }
+.qr-card .note-body.too-long-2 { font-size: 9px; }
 
 /* ========== 弹窗 ========== */
 .modal-overlay {
@@ -770,14 +770,14 @@ body {
 }
 /* 报告编号输入 */
 .card-input-id {
-  font-size: 10pt;
+  font-size: 13px;
   font-weight: bold;
   text-align: right;
   width: 100%;
 }
 /* 料号 */
 .card-input-en {
-  font-size: 10pt;
+  font-size: 13px;
   font-weight: bold;
   color: #000;
   word-break: break-all;
@@ -785,7 +785,7 @@ body {
 }
 /* 产品描述 */
 .card-input-cn {
-  font-size: 10pt;
+  font-size: 13px;
   color: #000;
   word-break: break-all;
   width: 100%;
@@ -793,7 +793,7 @@ body {
 }
 /* 字段卡片内的 select */
 .card-select {
-  font-size: 10pt;
+  font-size: 13px;
   text-align: center;
   text-align-last: center;
   -moz-text-align-last: center;
@@ -806,7 +806,7 @@ body {
   color: #000;
 }
 .card-select option {
-  font-size: 10pt;
+  font-size: 13px;
 }
 /* field-card 需要为 select 腾出空间 */
 .qr-card .field-card {
@@ -826,7 +826,7 @@ body {
 .card-textarea {
   width: 100%;
   height: 100%;
-  font-size: 10pt;
+  font-size: 13px;
   line-height: 1.5;
   padding: 1.5mm 3mm;
   overflow: auto;
@@ -842,7 +842,7 @@ body {
 }
 .note-prefix-fixed {
   font-weight: bold;
-  font-size: 10pt;
+  font-size: 13px;
   color: #000;
   flex-shrink: 0;
   white-space: nowrap;
@@ -853,7 +853,7 @@ body {
   border: none;
   background: transparent;
   font-family: inherit;
-  font-size: 10pt;
+  font-size: 13px;
   color: #000;
   line-height: 1.5;
   resize: none;
@@ -882,7 +882,7 @@ body {
   top: 50%; left: 50%;
   transform: translate(-50%, -50%);
   color: #3498db;
-  font-size: 10pt;
+  font-size: 13px;
   font-weight: bold;
   pointer-events: none;
   background: rgba(255,255,255,0.9);
@@ -904,7 +904,7 @@ body {
 .defect-select-popup select {
   border: none;
   background: transparent;
-  font-size: 10pt;
+  font-size: 13px;
   font-family: inherit;
   outline: none;
   cursor: pointer;
@@ -918,7 +918,7 @@ body {
   border: none;
   background: rgba(255,255,255,0.95);
   color: #000;
-  font-size: 10pt;
+  font-size: 13px;
   font-weight: bold;
   font-family: inherit;
   outline: none;
@@ -992,7 +992,7 @@ body {
 }
 .edit-overlay-box h3 {
   margin: 0 0 14px 0;
-  font-size: 10pt;
+  font-size: 13px;
   color: #222;
 }
 .edit-overlay-box textarea,
@@ -1002,7 +1002,7 @@ body {
   padding: 8px 10px;
   border: 1px solid #bbb;
   border-radius: 6px;
-  font-size: 10pt;
+  font-size: 13px;
   box-sizing: border-box;
 }
 .edit-overlay-box textarea { min-height: 80px; resize: vertical; }
@@ -1019,7 +1019,7 @@ body {
   padding: 8px 22px;
   border: none;
   border-radius: 6px;
-  font-size: 10pt;
+  font-size: 13px;
   cursor: pointer;
 }
 .btn-cancel-edit { background: #e0e0e0; color: #333; }
@@ -1046,7 +1046,7 @@ body {
   padding: 12px;
   border: 1px solid #ccc;
   border-radius: 6px;
-  font-size: 10pt;
+  font-size: 13px;
   resize: vertical;
 }
 .paste-row button {
@@ -1057,14 +1057,14 @@ body {
   border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
-  font-size: 10pt;
+  font-size: 13px;
 }
 .paste-row .btn-clear-paste {
   background: #e74c3c;
 }
 .paste-status {
   margin-top: 6px;
-  font-size: 10pt;
+  font-size: 13px;
   color: #666;
 }
 /* 提交栏 */
@@ -1081,7 +1081,7 @@ body {
   padding: 10px 32px;
   border: none;
   border-radius: 6px;
-  font-size: 10pt;
+  font-size: 13px;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -1161,22 +1161,22 @@ body {
   .qr-card .main { height: auto !important; flex: 1 !important; min-height: 0 !important; padding: 0 1.5mm 1.5mm 1.5mm !important; gap: 1.5mm !important; }
   .qr-card .fields-row { padding: 0 1.5mm !important; gap: 1mm !important; margin-bottom: 0.5mm !important; }
   .qr-card .field-card { padding: 0.8mm 1.5mm !important; }
-  .qr-card .field-card .label { font-size: 10pt !important; }
-  .qr-card .field-card .value { font-size: 9pt !important; }
-  .qr-card .code-en { font-size: 14pt !important; }
-  .qr-card .code-cn { font-size: 10pt !important; margin-top: 0.5mm !important; }
+  .qr-card .field-card .label { font-size: 13px !important; }
+  .qr-card .field-card .value { font-size: 12px !important; }
+  .qr-card .code-en { font-size: 19px !important; }
+  .qr-card .code-cn { font-size: 13px !important; margin-top: 0.5mm !important; }
   .qr-card .report-no { top: 2mm !important; right: 3mm !important; }
-  .qr-card .report-no .num { font-size: 10pt !important; }
-  .qr-card .report-no .label { font-size: 7pt !important; }
+  .qr-card .report-no .num { font-size: 13px !important; }
+  .qr-card .report-no .label { font-size: 9px !important; }
   .qr-card .left-side { width: 45% !important; gap: 1mm !important; }
   .qr-card .photo-box { border-radius: 4px !important; }
   .qr-card .note-block { height: 12mm !important; border-radius: 4px !important; }
-  .qr-card .note-body { padding: 1mm 2mm !important; font-size: 8pt !important; line-height: 1.4 !important; }
-  .qr-card .note-label { font-size: 8pt !important; }
+  .qr-card .note-body { padding: 1mm 2mm !important; font-size: 11px !important; line-height: 1.4 !important; }
+  .qr-card .note-label { font-size: 11px !important; }
   .qr-card .right-side { gap: 1mm !important; }
   .qr-card .block { border-radius: 4px !important; }
-  .qr-card .block-header { padding: 0.8mm 2mm !important; font-size: 10pt !important; }
-  .qr-card .block-body { padding: 1mm 2mm !important; font-size: 8pt !important; line-height: 1.4 !important; }
+  .qr-card .block-header { padding: 0.8mm 2mm !important; font-size: 13px !important; }
+  .qr-card .block-body { padding: 1mm 2mm !important; font-size: 11px !important; line-height: 1.4 !important; }
 }
 
 /* ========== 数据管理页 ========== */
@@ -1193,8 +1193,8 @@ body {
   padding: 16px 24px;
   flex-shrink: 0;
 }
-.manage-header h2 { font-size: 18pt; margin-bottom: 4px; }
-.manage-header p { font-size: 9pt; color: rgba(255,255,255,0.6); }
+.manage-header h2 { font-size: 24px; margin-bottom: 4px; }
+.manage-header p { font-size: 12px; color: rgba(255,255,255,0.6); }
 .manage-body {
   flex: 1;
   overflow-y: auto;
@@ -1210,8 +1210,8 @@ body {
   box-shadow: 0 2px 10px rgba(0,0,0,0.08);
 }
 .manage-section-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
-.manage-section-header h3 { font-size: 14pt; font-weight: bold; color: #2c3e50; }
-.manage-section-header .manage-section-hint { font-size: 8pt; color: #999; }
+.manage-section-header h3 { font-size: 19px; font-weight: bold; color: #2c3e50; }
+.manage-section-header .manage-section-hint { font-size: 11px; color: #999; }
 .manage-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
 .manage-item {
   display: flex;
@@ -1221,7 +1221,7 @@ body {
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 5px 10px;
-  font-size: 10pt;
+  font-size: 13px;
 }
 .manage-item .mi-del {
   background: #e74c3c;
@@ -1230,7 +1230,7 @@ body {
   width: 20px; height: 20px;
   border-radius: 50%;
   cursor: pointer;
-  font-size: 10pt;
+  font-size: 13px;
   line-height: 20px;
   text-align: center;
   flex-shrink: 0;
@@ -1242,7 +1242,7 @@ body {
   border: 1px solid #ddd;
   border-radius: 6px;
   padding: 7px 12px;
-  font-size: 10pt;
+  font-size: 13px;
   font-family: inherit;
 }
 .manage-add-row input:focus { outline: none; border-color: #3498db; }
@@ -1253,7 +1253,7 @@ body {
   padding: 7px 18px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 10pt;
+  font-size: 13px;
   font-family: inherit;
 }
 .manage-add-row button:hover { background: #219a52; }
@@ -1271,7 +1271,7 @@ body {
   padding: 8px 18px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 10pt;
+  font-size: 13px;
   font-family: inherit;
   border: 1px solid #ddd;
 }
@@ -1287,17 +1287,17 @@ body {
 /* ========== 卡片管理页 ========== */
 .card-manage-layout { display: flex; flex-direction: column; height: 100vh; background: #f8fafc; overflow: hidden; }
 .card-manage-header { background: #1e293b; color: #fff; padding: 16px 24px; flex-shrink: 0; }
-.card-manage-header h2 { font-size: 18pt; margin-bottom: 4px; }
-.card-manage-header p { font-size: 9pt; color: rgba(255,255,255,0.6); }
+.card-manage-header h2 { font-size: 24px; margin-bottom: 4px; }
+.card-manage-header p { font-size: 12px; color: rgba(255,255,255,0.6); }
 .card-manage-toolbar { background: #fff; border-bottom: 1px solid #ddd; padding: 10px 24px; display: flex; gap: 10px; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
-.card-manage-toolbar button { padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 10pt; border: 1px solid #ddd; background: #fff; }
+.card-manage-toolbar button { padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; border: 1px solid #ddd; background: #fff; }
 .card-manage-toolbar button.btn-danger { background: #e74c3c; color: #fff; border-color: #e74c3c; }
 .card-manage-toolbar button.btn-danger:hover { background: #c0392b; }
 .card-manage-toolbar button.btn-back { background: #95a5a6; color: #fff; border-color: #95a5a6; }
 .card-manage-toolbar button.btn-back:hover { background: #7f8c8d; }
-.card-manage-toolbar .cm-count { margin-left: auto; font-size: 10pt; color: #666; }
+.card-manage-toolbar .cm-count { margin-left: auto; font-size: 13px; color: #666; }
 .card-manage-list { flex: 1; overflow-y: auto; padding: 0 24px 20px; }
-.cm-item { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 10pt; }
+.cm-item { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 13px; }
 .cm-item:hover { border-color: #3498db; }
 .cm-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
 .cm-item .cm-id { font-weight: bold; color: #2c3e50; width: 110px; flex-shrink: 0; }
@@ -1305,22 +1305,22 @@ body {
 .cm-item .cm-desc { color: #333; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cm-item .cm-customer { color: #888; width: 70px; text-align: right; flex-shrink: 0; }
 .cm-item .cm-date { color: #888; width: 90px; text-align: right; flex-shrink: 0; }
-.cm-empty { text-align: center; padding: 60px 20px; color: #999; font-size: 11pt; }
+.cm-empty { text-align: center; padding: 60px 20px; color: #999; font-size: 15px; }
 
 /* 分页控件 */
 .cm-pagination { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 16px 0; margin-top: 10px; }
-.cm-pagination button { padding: 5px 10px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; font-size: 10pt; color: #333; min-width: 32px; }
+.cm-pagination button { padding: 5px 10px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; color: #333; min-width: 32px; }
 .cm-pagination button:hover:not(:disabled) { background: #f0f0f0; border-color: #bbb; }
 .cm-pagination button:disabled { color: #ccc; cursor: not-allowed; background: #fafafa; }
 .cm-pagination button.active { background: #2c3e50; color: #fff; border-color: #2c3e50; }
-.cm-pagination .cm-ellipsis { color: #999; padding: 0 4px; font-size: 10pt; }
+.cm-pagination .cm-ellipsis { color: #999; padding: 0 4px; font-size: 13px; }
 
 </style>
 </head>
 <body>
 
 <!-- 新版本提示条：localStorage版本变化时显示，点击刷新 -->
-<div id="updateBanner" style="display:none;position:fixed;top:44px;left:0;right:0;z-index:3000;background:#e74c3c;color:#fff;text-align:center;padding:9px 16px;font-size:10pt;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);" onclick="location.href=location.href.split('?')[0]+'?t='+Date.now()">
+<div id="updateBanner" style="display:none;position:fixed;top:44px;left:0;right:0;z-index:3000;background:#e74c3c;color:#fff;text-align:center;padding:9px 16px;font-size:13px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);" onclick="location.href=location.href.split('?')[0]+'?t='+Date.now()">
   ⚠ 检测到更新，页面即将自动刷新…
 </div>
 
@@ -1330,7 +1330,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
-  <div class="nav-right" id="navRight">v1.05</div>
+  <div class="nav-right" id="navRight">v1.06</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1339,7 +1339,7 @@ body {
     <div class="logo-icon"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="8" width="64" height="48" rx="4" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" fill="none"/><polyline points="10,36 18,36 22,28 30,44 38,24 46,36 54,32 62,36" stroke="rgba(147,197,253,0.85)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="62" width="44" height="3" rx="1.5" fill="rgba(255,255,255,0.3)"/><circle cx="60" cy="16" r="3" fill="rgba(56,189,248,0.9)"/><circle cx="60" cy="16" r="5" stroke="rgba(56,189,248,0.4)" stroke-width="1" fill="none"/></svg></div>
     <h1>质量问题卡片系统</h1>
     <p>丰康塑料厂 · 品质管理部</p>
-    <p style="color: rgba(144,238,144,0.9); font-size: 9pt; margin-top: 4px;">✅ GitHub Token 已配置，可直接保存</p>
+    <p style="color: rgba(144,238,144,0.9); font-size: 12px; margin-top: 4px;">✅ GitHub Token 已配置，可直接保存</p>
   </div>
   <div class="home-actions">
     <div class="action-card record" onclick="showRecord()">
@@ -1526,15 +1526,15 @@ body {
       <p>查看所有质量问题卡片，勾选后可批量删除</p>
     </div>
     <div class="card-manage-toolbar">
-      <input type="text" id="cmSearchInput" placeholder="搜索 ID / 料号 / 缺陷 / 描述 / 客户…" style="flex:1;min-width:200px;padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:10pt;" oninput="cmRender()">
-      <select id="cmSortField" style="padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:10pt;" onchange="cmRender()">
+      <input type="text" id="cmSearchInput" placeholder="搜索 ID / 料号 / 缺陷 / 描述 / 客户…" style="flex:1;min-width:200px;padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;" oninput="cmRender()">
+      <select id="cmSortField" style="padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:13px;" onchange="cmRender()">
         <option value="id">按ID排序</option>
         <option value="materialCode">按料号排序</option>
         <option value="defectType">按缺陷类型排序</option>
         <option value="customer">按客户排序</option>
         <option value="updateTime">按日期排序</option>
       </select>
-      <select id="cmSortDir" style="padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:10pt;" onchange="cmRender()">
+      <select id="cmSortDir" style="padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:13px;" onchange="cmRender()">
         <option value="asc">升序 ↑</option>
         <option value="desc">降序 ↓</option>
       </select>
@@ -1846,7 +1846,7 @@ function renderSeverityStars(severity) {
 }
 
 // ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.05';
+const APP_VERSION = 'v1.06';
 const DEMO_VERSION_KEY = 'qc_demo_version';
 
 // 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
@@ -2213,7 +2213,7 @@ function buildCardFromForm() {
 function renderCardHTML(card, isPreview) {
   const photosHtml = card.photos && card.photos.length > 0
     ? `<img src="${card.photos[0]}" style="max-width:100%;max-height:100%;object-fit:contain;">`
-    : '<div style="color:#999;font-size:9pt;">[ 质量问题照片 ]</div>';
+    : '<div style="color:#999;font-size:12px;">[ 质量问题照片 ]</div>';
   const dt = card.defectType || '问题';
   const defectText = dt.split('').join('<br>');
   const dtLen = dt.length;
@@ -2364,7 +2364,7 @@ function renderHand(cards) {
   const handCards = cards.filter(c => !playedIds.has(c.id));
 
   if (handCards.length === 0) {
-    deck.innerHTML = '<div style="color:rgba(255,255,255,0.3);padding:20px;font-size:9pt;">所有报告已展开到展示区，点击展示区报告收起</div>';
+    deck.innerHTML = '<div style="color:rgba(255,255,255,0.3);padding:20px;font-size:12px;">所有报告已展开到展示区，点击展示区报告收起</div>';
     deck.style.width = '100%';
     document.getElementById('handLabel').textContent = `结果：0 条（已展示 ${playedIds.size} 条）`;
     return;
@@ -2770,7 +2770,7 @@ function renderEditCard() {
   const dateInput = document.createElement('input');
   dateInput.type = 'date';
   dateInput.className = 'card-input';
-  dateInput.style.fontSize = '10pt';
+  dateInput.style.fontSize = '13px';
   dateInput.style.textAlign = 'center';
   dateInput.value = card.updateTime || '';
   dateInput.onchange = (e) => { editCardData.updateTime = e.target.value; };
@@ -2800,7 +2800,7 @@ function renderEditCard() {
     img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;';
     photoBox.appendChild(img);
   } else {
-    photoBox.innerHTML = '<div style="color:#999;font-size:9pt;">[ 点击上传照片 ]</div>';
+    photoBox.innerHTML = '<div style="color:#999;font-size:12px;">[ 点击上传照片 ]</div>';
   }
   leftSide.appendChild(photoBox);
 
@@ -2871,7 +2871,7 @@ function makeFieldCard(label, field, value, options) {
   } else {
     const inp = document.createElement('input');
     inp.className = 'card-input';
-    inp.style.fontSize = '10pt';
+    inp.style.fontSize = '13px';
     inp.style.textAlign = 'center';
     inp.value = value || '';
     inp.oninput = (e) => { editCardData[field] = e.target.value; };
