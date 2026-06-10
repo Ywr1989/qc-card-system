@@ -1,5 +1,22 @@
 [
   {
+    "id": "QR-2026-002",
+    "defectType": "",
+    "materialCode": "5510-A-C-C-D",
+    "productDesc": "5510-A-C-C-D",
+    "severity": "★☆☆☆☆ 低",
+    "defectRate": "5510-A-B-C-D",
+    "occurrence": "5510-A-B-C-D",
+    "updateTime": "2026-06-10",
+    "customer": "5510-A-B-C-D",
+    "note": "",
+    "problemDesc": "5510-A-B-C-D5510-A-B-C-D5510-A-B-C-D5510-A-B-C-D5510-A-B-C-D",
+    "causeAnalysis": "5510-A-B-C-D5510-A-B-C-D",
+    "solution": "5510-A-B-C-D",
+    "photos": [],
+    "createdAt": "2026-06-10T11:05:30.929Z"
+  },
+  {
     "id": "QR-2026-001",
     "defectType": "",
     "materialCode": "5510-A-B-C-D",
