@@ -1,5 +1,22 @@
 [
   {
+    "id": "QR-2026-061",
+    "defectType": "",
+    "materialCode": "123",
+    "productDesc": "123",
+    "severity": "★★★★☆ 很高",
+    "defectRate": "",
+    "occurrence": "",
+    "updateTime": "2026-06-10",
+    "customer": "",
+    "note": "",
+    "problemDesc": "",
+    "causeAnalysis": "",
+    "solution": "",
+    "photos": [],
+    "createdAt": "2026-06-10T12:57:38.771Z"
+  },
+  {
     "id": "QR-2026-004",
     "defectType": "",
     "materialCode": "8512-PC-T-P000-BLK",
