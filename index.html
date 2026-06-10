@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.09</title>
+<title>质量问题卡片系统 v1.10</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1047,7 +1047,7 @@ body {
   height: 300px;
   min-height: 200px;
   padding: 12px;
-  border: 1px solid #ccc;
+  border: 2px solid #555;
   border-radius: 6px;
   font-size: 13px;
   resize: vertical;
@@ -1333,7 +1333,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
-  <div class="nav-right" id="navRight">v1.09</div>
+  <div class="nav-right" id="navRight">v1.10</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1389,6 +1389,7 @@ body {
           <div class="edit-card-wrapper" id="editCardWrapper">
             <!-- JS渲染可编辑卡片 -->
           </div>
+          <div id="photoList" class="photo-list"></div>
         </div>
       </div>
 
@@ -1788,10 +1789,10 @@ async function autoSyncFromGitHub() {
         const lastSyncCards = JSON.parse(lastSyncStr);
         mergedCards = threeWayMerge(lastSyncCards, localCards, remoteCards);
       } else {
-        // 首次同步：以本地为准，添加远程新增的卡片
-        const localIds = new Set(localCards.map(c => c.id));
-        mergedCards = [...localCards];
-        remoteCards.forEach(c => { if (!localIds.has(c.id)) mergedCards.push(c); });
+        // lastSync 不存在（旧版本升级或新设备）：以远程为准，保留本地新增的卡片
+        const remoteIds = new Set(remoteCards.map(c => c.id));
+        mergedCards = [...remoteCards];
+        localCards.forEach(c => { if (!remoteIds.has(c.id)) mergedCards.push(c); });
         // 初始化 lastSync
         localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards));
       }
@@ -1916,7 +1917,7 @@ function renderSeverityStars(severity) {
 }
 
 // ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.09';
+const APP_VERSION = 'v1.10';
 const DEMO_VERSION_KEY = 'qc_demo_version';
 
 // 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
@@ -1926,9 +1927,14 @@ const DEMO_CARD_IDS = [
 ];
 
 function initDemoData() {
-  // 只在首次（没有任何卡片时）初始化示例卡片，删除后不再自动补录
+  // 只在首次打开页面时初始化示例卡片，删除后不再自动补录
+  if (localStorage.getItem('qc_demo_initialized') === '1') return;
   const existing = loadCards();
-  if (existing.length > 0) return; // 已有卡片，不再补录示例数据
+  if (existing.length > 0) {
+    // 已有用户数据，标记为已初始化，不再补录
+    localStorage.setItem('qc_demo_initialized', '1');
+    return;
+  }
   const existingIds = new Set(existing.map(c => c.id));
 
   const defects = ['毛刺','缩水','色差','缺料','划痕','变形','气泡','熔接痕','银丝','黑点','尺寸超差'];
@@ -1995,6 +2001,7 @@ function initDemoData() {
     saveCards([...existing, ...toAdd]);
   }
   localStorage.setItem(DEMO_VERSION_KEY, Date.now().toString());
+  localStorage.setItem('qc_demo_initialized', '1');
 }
 
 // ========== 页面切换 ==========
@@ -2135,20 +2142,40 @@ function fillForm(r) {
 }
 
 // ========== 照片 ==========
+// 更新 photoBox 中的主照片显示（仅编辑模式）
+function updateEditPhotoBox() {
+  if (!editCardData) return;
+  const wrapper = document.getElementById('editCardWrapper');
+  if (!wrapper) return;
+  const photoBox = wrapper.querySelector('.photo-box');
+  if (!photoBox) return;
+  if (editCardData.photos && editCardData.photos.length > 0) {
+    photoBox.innerHTML = `<img src="${editCardData.photos[0]}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
+  } else {
+    photoBox.innerHTML = '<div style="color:#999;font-size:12px;">[ 点击上传照片 ]</div>';
+  }
+}
+
 function handleFiles(files, mode = 'record') {
   const targetArr = mode === 'edit' ? (editCardData ? editCardData.photos : currentPhotos) : currentPhotos;
   Array.from(files).forEach(f => {
     if (!f.type.startsWith('image/')) return;
     const r = new FileReader();
-    r.onload = e => { targetArr.push(e.target.result); renderPhotos(mode); debouncedUpdatePreview(); };
+    r.onload = e => {
+      targetArr.push(e.target.result);
+      renderPhotos(mode);
+      if (mode === 'edit') updateEditPhotoBox();
+      debouncedUpdatePreview();
+    };
     r.readAsDataURL(f);
   });
 }
 
 function renderPhotos(mode = 'record') {
   const photos = mode === 'edit' ? (editCardData ? editCardData.photos : currentPhotos) : currentPhotos;
-  const containerId = mode === 'edit' ? 'photoList' : 'photoList';
-  document.getElementById(containerId).innerHTML = photos.map((src, i) =>
+  const containerId = 'photoList';
+  const el = document.getElementById(containerId);
+  if (el) el.innerHTML = photos.map((src, i) =>
     `<div class="photo-item"><img src="${src}"><button class="ph-del" onclick="removePhoto(${i}, '${mode}')">×</button></div>`
   ).join('');
 }
@@ -2157,6 +2184,7 @@ function removePhoto(i, mode = 'record') {
   const photos = mode === 'edit' ? (editCardData ? editCardData.photos : currentPhotos) : currentPhotos;
   photos.splice(i, 1);
   renderPhotos(mode);
+  if (mode === 'edit') updateEditPhotoBox();
   debouncedUpdatePreview();
 }
 
@@ -2876,13 +2904,6 @@ function renderEditCard() {
     photoBox.innerHTML = '<div style="color:#999;font-size:12px;">[ 点击上传照片 ]</div>';
   }
   leftSide.appendChild(photoBox);
-  
-  // 照片列表
-  const photoList = document.createElement('div');
-  photoList.className = 'photo-list';
-  photoList.id = 'photoList';
-  leftSide.appendChild(photoList);
-  // 注意：renderPhotos 在 cardEl 挂载到 DOM 后再调用，见下方
   
   // 备注（固定前缀 + 可编辑区域）
   const noteBlock = document.createElement('div');
