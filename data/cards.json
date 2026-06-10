@@ -5,7 +5,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-KW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-凯崴",
     "severity": "★★★★★ 极高",
-    "defectRate": "2.8%",
+    "defectRate": "0.9%",
     "occurrence": "偶发",
     "updateTime": "2026-01-01",
     "customer": "凯崴",
@@ -14,7 +14,7 @@
     "causeAnalysis": "模具分型面磨损产生毛刺",
     "solution": "修模抛光分型面，调整合模力",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.934Z"
+    "createdAt": "2026-06-10T13:41:00.815Z"
   },
   {
     "id": "QR-2026-002",
@@ -22,7 +22,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德威",
     "severity": "★★★★☆ 很高",
-    "defectRate": "3.9%",
+    "defectRate": "0.8%",
     "occurrence": "频发",
     "updateTime": "2026-02-02",
     "customer": "德威",
@@ -31,7 +31,7 @@
     "causeAnalysis": "保压不足导致收缩不均",
     "solution": "增加保压压力和保压时间",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.934Z"
+    "createdAt": "2026-06-10T13:41:00.815Z"
   },
   {
     "id": "QR-2026-003",
@@ -39,7 +39,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-林总",
     "severity": "★★★☆☆ 高",
-    "defectRate": "1.1%",
+    "defectRate": "4.6%",
     "occurrence": "连续",
     "updateTime": "2026-03-03",
     "customer": "林总",
@@ -48,7 +48,7 @@
     "causeAnalysis": "色母添加比例不准或分散不良",
     "solution": "重新配色，检查色母质量",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.815Z"
   },
   {
     "id": "QR-2026-004",
@@ -56,7 +56,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-CL",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-李总",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "1.5%",
+    "defectRate": "4.2%",
     "occurrence": "批次性",
     "updateTime": "2026-04-04",
     "customer": "李总",
@@ -65,7 +65,7 @@
     "causeAnalysis": "注塑压力不足或射速过慢",
     "solution": "提高注塑压力和射速",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.815Z"
   },
   {
     "id": "QR-2026-005",
@@ -73,7 +73,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DTK",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德泰克",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "3.9%",
+    "defectRate": "1.0%",
     "occurrence": "偶发",
     "updateTime": "2026-05-05",
     "customer": "德泰克",
@@ -82,7 +82,7 @@
     "causeAnalysis": "模具表面有异物或损伤",
     "solution": "清洁模具表面，检查损伤",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.815Z"
   },
   {
     "id": "QR-2026-006",
@@ -90,7 +90,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DA",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-帝奥",
     "severity": "★★★★★ 极高",
-    "defectRate": "2.4%",
+    "defectRate": "0.5%",
     "occurrence": "频发",
     "updateTime": "2026-06-06",
     "customer": "帝奥",
@@ -99,7 +99,7 @@
     "causeAnalysis": "冷却不均匀，内应力大",
     "solution": "优化冷却水路，降低模温",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.815Z"
   },
   {
     "id": "QR-2026-007",
@@ -107,7 +107,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-KW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-凯崴",
     "severity": "★★★★☆ 很高",
-    "defectRate": "1.4%",
+    "defectRate": "4.3%",
     "occurrence": "连续",
     "updateTime": "2026-07-07",
     "customer": "凯崴",
@@ -116,7 +116,7 @@
     "causeAnalysis": "原料含水率过高或温度过高",
     "solution": "干燥原料，降低熔体温度",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.815Z"
   },
   {
     "id": "QR-2026-008",
@@ -124,7 +124,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德威",
     "severity": "★★★☆☆ 高",
-    "defectRate": "2.0%",
+    "defectRate": "1.5%",
     "occurrence": "批次性",
     "updateTime": "2026-08-08",
     "customer": "德威",
@@ -133,7 +133,7 @@
     "causeAnalysis": "熔体温度低，汇合处融合不良",
     "solution": "提高熔体温度，增加汇合角",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.815Z"
   },
   {
     "id": "QR-2026-009",
@@ -141,7 +141,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-林总",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "1.8%",
+    "defectRate": "3.8%",
     "occurrence": "偶发",
     "updateTime": "2026-09-09",
     "customer": "林总",
@@ -150,7 +150,7 @@
     "causeAnalysis": "原料降解或含有杂质",
     "solution": "更换原料，清洗螺杆",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.815Z"
   },
   {
     "id": "QR-2026-010",
@@ -158,7 +158,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-CL",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-李总",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "1.6%",
+    "defectRate": "4.8%",
     "occurrence": "频发",
     "updateTime": "2026-10-10",
     "customer": "李总",
@@ -167,7 +167,7 @@
     "causeAnalysis": "原料污染或螺杆积碳",
     "solution": "清理螺杆和料筒，过滤原料",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.815Z"
   },
   {
     "id": "QR-2026-011",
@@ -175,7 +175,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DTK",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德泰克",
     "severity": "★★★★★ 极高",
-    "defectRate": "4.6%",
+    "defectRate": "1.3%",
     "occurrence": "连续",
     "updateTime": "2026-11-11",
     "customer": "德泰克",
@@ -184,7 +184,7 @@
     "causeAnalysis": "模具尺寸磨损或注塑参数漂移",
     "solution": "修模或调整注塑参数补偿",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.815Z"
   },
   {
     "id": "QR-2026-012",
@@ -192,7 +192,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DA",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-帝奥",
     "severity": "★★★★☆ 很高",
-    "defectRate": "4.1%",
+    "defectRate": "3.9%",
     "occurrence": "批次性",
     "updateTime": "2026-12-12",
     "customer": "帝奥",
@@ -201,7 +201,7 @@
     "causeAnalysis": "模具分型面磨损产生毛刺",
     "solution": "修模抛光分型面，调整合模力",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-013",
@@ -209,7 +209,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-KW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-凯崴",
     "severity": "★★★☆☆ 高",
-    "defectRate": "0.4%",
+    "defectRate": "3.7%",
     "occurrence": "偶发",
     "updateTime": "2026-01-13",
     "customer": "凯崴",
@@ -218,7 +218,7 @@
     "causeAnalysis": "保压不足导致收缩不均",
     "solution": "增加保压压力和保压时间",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-014",
@@ -226,7 +226,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德威",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "0.5%",
+    "defectRate": "3.5%",
     "occurrence": "频发",
     "updateTime": "2026-02-14",
     "customer": "德威",
@@ -235,7 +235,7 @@
     "causeAnalysis": "色母添加比例不准或分散不良",
     "solution": "重新配色，检查色母质量",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-015",
@@ -243,7 +243,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-林总",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "4.6%",
+    "defectRate": "1.1%",
     "occurrence": "连续",
     "updateTime": "2026-03-15",
     "customer": "林总",
@@ -252,7 +252,7 @@
     "causeAnalysis": "注塑压力不足或射速过慢",
     "solution": "提高注塑压力和射速",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-016",
@@ -260,7 +260,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-CL",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-李总",
     "severity": "★★★★★ 极高",
-    "defectRate": "4.5%",
+    "defectRate": "1.6%",
     "occurrence": "批次性",
     "updateTime": "2026-04-16",
     "customer": "李总",
@@ -269,7 +269,7 @@
     "causeAnalysis": "模具表面有异物或损伤",
     "solution": "清洁模具表面，检查损伤",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-017",
@@ -277,7 +277,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DTK",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德泰克",
     "severity": "★★★★☆ 很高",
-    "defectRate": "1.4%",
+    "defectRate": "2.7%",
     "occurrence": "偶发",
     "updateTime": "2026-05-17",
     "customer": "德泰克",
@@ -286,7 +286,7 @@
     "causeAnalysis": "冷却不均匀，内应力大",
     "solution": "优化冷却水路，降低模温",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-018",
@@ -294,7 +294,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DA",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-帝奥",
     "severity": "★★★☆☆ 高",
-    "defectRate": "1.4%",
+    "defectRate": "3.2%",
     "occurrence": "频发",
     "updateTime": "2026-06-18",
     "customer": "帝奥",
@@ -303,7 +303,7 @@
     "causeAnalysis": "原料含水率过高或温度过高",
     "solution": "干燥原料，降低熔体温度",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-019",
@@ -311,7 +311,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-KW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-凯崴",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "0.8%",
+    "defectRate": "2.7%",
     "occurrence": "连续",
     "updateTime": "2026-07-19",
     "customer": "凯崴",
@@ -320,7 +320,7 @@
     "causeAnalysis": "熔体温度低，汇合处融合不良",
     "solution": "提高熔体温度，增加汇合角",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-020",
@@ -328,7 +328,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德威",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "3.1%",
+    "defectRate": "4.0%",
     "occurrence": "批次性",
     "updateTime": "2026-08-20",
     "customer": "德威",
@@ -337,7 +337,7 @@
     "causeAnalysis": "原料降解或含有杂质",
     "solution": "更换原料，清洗螺杆",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-021",
@@ -345,7 +345,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-林总",
     "severity": "★★★★★ 极高",
-    "defectRate": "1.3%",
+    "defectRate": "1.5%",
     "occurrence": "偶发",
     "updateTime": "2026-09-21",
     "customer": "林总",
@@ -354,7 +354,7 @@
     "causeAnalysis": "原料污染或螺杆积碳",
     "solution": "清理螺杆和料筒，过滤原料",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-022",
@@ -371,7 +371,7 @@
     "causeAnalysis": "模具尺寸磨损或注塑参数漂移",
     "solution": "修模或调整注塑参数补偿",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-023",
@@ -379,7 +379,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DTK",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德泰克",
     "severity": "★★★☆☆ 高",
-    "defectRate": "5.0%",
+    "defectRate": "4.5%",
     "occurrence": "连续",
     "updateTime": "2026-11-23",
     "customer": "德泰克",
@@ -388,7 +388,7 @@
     "causeAnalysis": "模具分型面磨损产生毛刺",
     "solution": "修模抛光分型面，调整合模力",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-024",
@@ -396,7 +396,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DA",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-帝奥",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "0.6%",
+    "defectRate": "2.2%",
     "occurrence": "批次性",
     "updateTime": "2026-12-24",
     "customer": "帝奥",
@@ -405,7 +405,7 @@
     "causeAnalysis": "保压不足导致收缩不均",
     "solution": "增加保压压力和保压时间",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-025",
@@ -413,7 +413,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-KW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-凯崴",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "3.9%",
+    "defectRate": "3.4%",
     "occurrence": "偶发",
     "updateTime": "2026-01-25",
     "customer": "凯崴",
@@ -422,7 +422,7 @@
     "causeAnalysis": "色母添加比例不准或分散不良",
     "solution": "重新配色，检查色母质量",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-026",
@@ -430,7 +430,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德威",
     "severity": "★★★★★ 极高",
-    "defectRate": "2.2%",
+    "defectRate": "0.9%",
     "occurrence": "频发",
     "updateTime": "2026-02-26",
     "customer": "德威",
@@ -439,7 +439,7 @@
     "causeAnalysis": "注塑压力不足或射速过慢",
     "solution": "提高注塑压力和射速",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-027",
@@ -447,7 +447,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-林总",
     "severity": "★★★★☆ 很高",
-    "defectRate": "3.3%",
+    "defectRate": "4.6%",
     "occurrence": "连续",
     "updateTime": "2026-03-27",
     "customer": "林总",
@@ -456,7 +456,7 @@
     "causeAnalysis": "模具表面有异物或损伤",
     "solution": "清洁模具表面，检查损伤",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-028",
@@ -464,7 +464,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-CL",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-李总",
     "severity": "★★★☆☆ 高",
-    "defectRate": "2.2%",
+    "defectRate": "0.9%",
     "occurrence": "批次性",
     "updateTime": "2026-04-28",
     "customer": "李总",
@@ -473,7 +473,7 @@
     "causeAnalysis": "冷却不均匀，内应力大",
     "solution": "优化冷却水路，降低模温",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-029",
@@ -481,7 +481,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DTK",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德泰克",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "1.2%",
+    "defectRate": "0.5%",
     "occurrence": "偶发",
     "updateTime": "2026-05-01",
     "customer": "德泰克",
@@ -490,7 +490,7 @@
     "causeAnalysis": "原料含水率过高或温度过高",
     "solution": "干燥原料，降低熔体温度",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-030",
@@ -498,7 +498,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DA",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-帝奥",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "1.9%",
+    "defectRate": "3.2%",
     "occurrence": "频发",
     "updateTime": "2026-06-02",
     "customer": "帝奥",
@@ -507,7 +507,7 @@
     "causeAnalysis": "熔体温度低，汇合处融合不良",
     "solution": "提高熔体温度，增加汇合角",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-031",
@@ -515,7 +515,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-KW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-凯崴",
     "severity": "★★★★★ 极高",
-    "defectRate": "3.3%",
+    "defectRate": "0.3%",
     "occurrence": "连续",
     "updateTime": "2026-07-03",
     "customer": "凯崴",
@@ -524,7 +524,7 @@
     "causeAnalysis": "原料降解或含有杂质",
     "solution": "更换原料，清洗螺杆",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-032",
@@ -532,7 +532,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德威",
     "severity": "★★★★☆ 很高",
-    "defectRate": "2.7%",
+    "defectRate": "2.5%",
     "occurrence": "批次性",
     "updateTime": "2026-08-04",
     "customer": "德威",
@@ -541,7 +541,7 @@
     "causeAnalysis": "原料污染或螺杆积碳",
     "solution": "清理螺杆和料筒，过滤原料",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-033",
@@ -549,7 +549,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-林总",
     "severity": "★★★☆☆ 高",
-    "defectRate": "1.4%",
+    "defectRate": "1.5%",
     "occurrence": "偶发",
     "updateTime": "2026-09-05",
     "customer": "林总",
@@ -558,7 +558,7 @@
     "causeAnalysis": "模具尺寸磨损或注塑参数漂移",
     "solution": "修模或调整注塑参数补偿",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-034",
@@ -566,7 +566,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-CL",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-李总",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "4.2%",
+    "defectRate": "1.4%",
     "occurrence": "频发",
     "updateTime": "2026-10-06",
     "customer": "李总",
@@ -575,7 +575,7 @@
     "causeAnalysis": "模具分型面磨损产生毛刺",
     "solution": "修模抛光分型面，调整合模力",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-035",
@@ -583,7 +583,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DTK",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德泰克",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "4.0%",
+    "defectRate": "2.6%",
     "occurrence": "连续",
     "updateTime": "2026-11-07",
     "customer": "德泰克",
@@ -592,7 +592,7 @@
     "causeAnalysis": "保压不足导致收缩不均",
     "solution": "增加保压压力和保压时间",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-036",
@@ -600,7 +600,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DA",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-帝奥",
     "severity": "★★★★★ 极高",
-    "defectRate": "2.6%",
+    "defectRate": "3.1%",
     "occurrence": "批次性",
     "updateTime": "2026-12-08",
     "customer": "帝奥",
@@ -609,7 +609,7 @@
     "causeAnalysis": "色母添加比例不准或分散不良",
     "solution": "重新配色，检查色母质量",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-037",
@@ -617,7 +617,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-KW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-凯崴",
     "severity": "★★★★☆ 很高",
-    "defectRate": "1.9%",
+    "defectRate": "3.6%",
     "occurrence": "偶发",
     "updateTime": "2026-01-09",
     "customer": "凯崴",
@@ -626,7 +626,7 @@
     "causeAnalysis": "注塑压力不足或射速过慢",
     "solution": "提高注塑压力和射速",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-038",
@@ -634,7 +634,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德威",
     "severity": "★★★☆☆ 高",
-    "defectRate": "3.5%",
+    "defectRate": "3.4%",
     "occurrence": "频发",
     "updateTime": "2026-02-10",
     "customer": "德威",
@@ -643,7 +643,7 @@
     "causeAnalysis": "模具表面有异物或损伤",
     "solution": "清洁模具表面，检查损伤",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-039",
@@ -651,7 +651,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-林总",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "3.3%",
+    "defectRate": "0.2%",
     "occurrence": "连续",
     "updateTime": "2026-03-11",
     "customer": "林总",
@@ -660,7 +660,7 @@
     "causeAnalysis": "冷却不均匀，内应力大",
     "solution": "优化冷却水路，降低模温",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-040",
@@ -668,7 +668,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-CL",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-李总",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "4.8%",
+    "defectRate": "3.7%",
     "occurrence": "批次性",
     "updateTime": "2026-04-12",
     "customer": "李总",
@@ -677,7 +677,7 @@
     "causeAnalysis": "原料含水率过高或温度过高",
     "solution": "干燥原料，降低熔体温度",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-041",
@@ -685,7 +685,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DTK",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德泰克",
     "severity": "★★★★★ 极高",
-    "defectRate": "1.4%",
+    "defectRate": "1.8%",
     "occurrence": "偶发",
     "updateTime": "2026-05-13",
     "customer": "德泰克",
@@ -694,7 +694,7 @@
     "causeAnalysis": "熔体温度低，汇合处融合不良",
     "solution": "提高熔体温度，增加汇合角",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-042",
@@ -702,7 +702,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DA",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-帝奥",
     "severity": "★★★★☆ 很高",
-    "defectRate": "2.9%",
+    "defectRate": "1.5%",
     "occurrence": "频发",
     "updateTime": "2026-06-14",
     "customer": "帝奥",
@@ -711,7 +711,7 @@
     "causeAnalysis": "原料降解或含有杂质",
     "solution": "更换原料，清洗螺杆",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-043",
@@ -719,7 +719,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-KW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-凯崴",
     "severity": "★★★☆☆ 高",
-    "defectRate": "0.4%",
+    "defectRate": "3.3%",
     "occurrence": "连续",
     "updateTime": "2026-07-15",
     "customer": "凯崴",
@@ -728,7 +728,7 @@
     "causeAnalysis": "原料污染或螺杆积碳",
     "solution": "清理螺杆和料筒，过滤原料",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-044",
@@ -736,7 +736,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德威",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "4.0%",
+    "defectRate": "2.8%",
     "occurrence": "批次性",
     "updateTime": "2026-08-16",
     "customer": "德威",
@@ -745,7 +745,7 @@
     "causeAnalysis": "模具尺寸磨损或注塑参数漂移",
     "solution": "修模或调整注塑参数补偿",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-045",
@@ -753,7 +753,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-林总",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "3.6%",
+    "defectRate": "0.5%",
     "occurrence": "偶发",
     "updateTime": "2026-09-17",
     "customer": "林总",
@@ -762,7 +762,7 @@
     "causeAnalysis": "模具分型面磨损产生毛刺",
     "solution": "修模抛光分型面，调整合模力",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-046",
@@ -770,7 +770,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-CL",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-李总",
     "severity": "★★★★★ 极高",
-    "defectRate": "5.0%",
+    "defectRate": "0.8%",
     "occurrence": "频发",
     "updateTime": "2026-10-18",
     "customer": "李总",
@@ -779,7 +779,7 @@
     "causeAnalysis": "保压不足导致收缩不均",
     "solution": "增加保压压力和保压时间",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-047",
@@ -787,7 +787,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DTK",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德泰克",
     "severity": "★★★★☆ 很高",
-    "defectRate": "4.4%",
+    "defectRate": "2.9%",
     "occurrence": "连续",
     "updateTime": "2026-11-19",
     "customer": "德泰克",
@@ -796,7 +796,7 @@
     "causeAnalysis": "色母添加比例不准或分散不良",
     "solution": "重新配色，检查色母质量",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-048",
@@ -804,7 +804,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DA",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-帝奥",
     "severity": "★★★☆☆ 高",
-    "defectRate": "1.6%",
+    "defectRate": "3.1%",
     "occurrence": "批次性",
     "updateTime": "2026-12-20",
     "customer": "帝奥",
@@ -813,7 +813,7 @@
     "causeAnalysis": "注塑压力不足或射速过慢",
     "solution": "提高注塑压力和射速",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-049",
@@ -821,7 +821,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-KW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-凯崴",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "3.9%",
+    "defectRate": "4.2%",
     "occurrence": "偶发",
     "updateTime": "2026-01-21",
     "customer": "凯崴",
@@ -830,7 +830,7 @@
     "causeAnalysis": "模具表面有异物或损伤",
     "solution": "清洁模具表面，检查损伤",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-050",
@@ -838,7 +838,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德威",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "4.9%",
+    "defectRate": "1.0%",
     "occurrence": "频发",
     "updateTime": "2026-02-22",
     "customer": "德威",
@@ -847,7 +847,7 @@
     "causeAnalysis": "冷却不均匀，内应力大",
     "solution": "优化冷却水路，降低模温",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-051",
@@ -855,7 +855,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-林总",
     "severity": "★★★★★ 极高",
-    "defectRate": "4.6%",
+    "defectRate": "0.8%",
     "occurrence": "连续",
     "updateTime": "2026-03-23",
     "customer": "林总",
@@ -864,7 +864,7 @@
     "causeAnalysis": "原料含水率过高或温度过高",
     "solution": "干燥原料，降低熔体温度",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-052",
@@ -872,7 +872,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-CL",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-李总",
     "severity": "★★★★☆ 很高",
-    "defectRate": "3.4%",
+    "defectRate": "2.2%",
     "occurrence": "批次性",
     "updateTime": "2026-04-24",
     "customer": "李总",
@@ -881,7 +881,7 @@
     "causeAnalysis": "熔体温度低，汇合处融合不良",
     "solution": "提高熔体温度，增加汇合角",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-053",
@@ -898,7 +898,7 @@
     "causeAnalysis": "原料降解或含有杂质",
     "solution": "更换原料，清洗螺杆",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-054",
@@ -906,7 +906,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DA",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-帝奥",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "0.7%",
+    "defectRate": "4.5%",
     "occurrence": "频发",
     "updateTime": "2026-06-26",
     "customer": "帝奥",
@@ -915,7 +915,7 @@
     "causeAnalysis": "原料污染或螺杆积碳",
     "solution": "清理螺杆和料筒，过滤原料",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-055",
@@ -923,7 +923,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-KW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-凯崴",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "4.0%",
+    "defectRate": "4.7%",
     "occurrence": "连续",
     "updateTime": "2026-07-27",
     "customer": "凯崴",
@@ -932,7 +932,7 @@
     "causeAnalysis": "模具尺寸磨损或注塑参数漂移",
     "solution": "修模或调整注塑参数补偿",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-056",
@@ -940,7 +940,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DW",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德威",
     "severity": "★★★★★ 极高",
-    "defectRate": "3.0%",
+    "defectRate": "3.1%",
     "occurrence": "批次性",
     "updateTime": "2026-08-28",
     "customer": "德威",
@@ -949,7 +949,7 @@
     "causeAnalysis": "模具分型面磨损产生毛刺",
     "solution": "修模抛光分型面，调整合模力",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-057",
@@ -957,7 +957,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-林总",
     "severity": "★★★★☆ 很高",
-    "defectRate": "2.9%",
+    "defectRate": "3.0%",
     "occurrence": "偶发",
     "updateTime": "2026-09-01",
     "customer": "林总",
@@ -966,7 +966,7 @@
     "causeAnalysis": "保压不足导致收缩不均",
     "solution": "增加保压压力和保压时间",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-058",
@@ -974,7 +974,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-CL",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-李总",
     "severity": "★★★☆☆ 高",
-    "defectRate": "4.5%",
+    "defectRate": "1.8%",
     "occurrence": "频发",
     "updateTime": "2026-10-02",
     "customer": "李总",
@@ -983,7 +983,7 @@
     "causeAnalysis": "色母添加比例不准或分散不良",
     "solution": "重新配色，检查色母质量",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-059",
@@ -991,7 +991,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DTK",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-德泰克",
     "severity": "★★☆☆☆ 中",
-    "defectRate": "2.1%",
+    "defectRate": "0.1%",
     "occurrence": "连续",
     "updateTime": "2026-11-03",
     "customer": "德泰克",
@@ -1000,7 +1000,7 @@
     "causeAnalysis": "注塑压力不足或射速过慢",
     "solution": "提高注塑压力和射速",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-2026-060",
@@ -1008,7 +1008,7 @@
     "materialCode": "5510-E/ABS01-BK-P000-DA",
     "productDesc": "5510-防静电ABS01-黑色-不印刷-帝奥",
     "severity": "★☆☆☆☆ 低",
-    "defectRate": "0.8%",
+    "defectRate": "4.7%",
     "occurrence": "批次性",
     "updateTime": "2026-12-04",
     "customer": "帝奥",
@@ -1017,7 +1017,7 @@
     "causeAnalysis": "模具表面有异物或损伤",
     "solution": "清洁模具表面，检查损伤",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:48.935Z"
+    "createdAt": "2026-06-10T13:41:00.816Z"
   },
   {
     "id": "QR-TEST-001",
@@ -1034,7 +1034,7 @@
     "causeAnalysis": "测试",
     "solution": "测试",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:52.889Z"
+    "createdAt": "2026-06-10T13:41:22.943Z"
   },
   {
     "id": "QR-TEST-002",
@@ -1051,7 +1051,7 @@
     "causeAnalysis": "测试",
     "solution": "测试",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:52.889Z"
+    "createdAt": "2026-06-10T13:41:22.943Z"
   },
   {
     "id": "QR-TEST-003",
@@ -1068,7 +1068,7 @@
     "causeAnalysis": "测试",
     "solution": "测试",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:52.889Z"
+    "createdAt": "2026-06-10T13:41:22.943Z"
   },
   {
     "id": "QR-TEST-004",
@@ -1085,6 +1085,6 @@
     "causeAnalysis": "测试",
     "solution": "测试",
     "photos": [],
-    "createdAt": "2026-06-10T13:39:52.889Z"
+    "createdAt": "2026-06-10T13:41:22.943Z"
   }
 ]
