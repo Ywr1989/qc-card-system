@@ -1,5 +1,22 @@
 [
   {
+    "id": "QR-2026-061",
+    "defectType": "",
+    "materialCode": "32",
+    "productDesc": "324",
+    "severity": "★★★★☆ 很高",
+    "defectRate": "3241",
+    "occurrence": "3214",
+    "updateTime": "2026-06-10",
+    "customer": "3214",
+    "note": "",
+    "problemDesc": "2134",
+    "causeAnalysis": "1324",
+    "solution": "1234",
+    "photos": [],
+    "createdAt": "2026-06-10T15:53:33.585Z"
+  },
+  {
     "id": "QR-2026-001",
     "defectType": "毛刺",
     "materialCode": "5510-E/ABS01-BK-P000-KW",
