@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.02</title>
+<title>质量问题卡片系统 v1.03</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1329,7 +1329,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
-  <div class="nav-right" id="navRight">v1.69</div>
+  <div class="nav-right" id="navRight">v1.03</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1367,10 +1367,10 @@ body {
       <div class="ac-label">卡片管理</div>
       <div class="ac-hint">查看 / 批量删除卡片</div>
     </div>
-    <div class="action-card" onclick="syncWithGitHub()" style="cursor:pointer;">
-      <div class="ac-icon" style="background:linear-gradient(135deg,#00b4d8,#0077b6);box-shadow:0 8px 25px rgba(0,180,216,0.4);">☁️</div>
-      <div class="ac-label">同步</div>
-      <div class="ac-hint">GitHub 云同步</div>
+    <div class="action-card" onclick="syncFromGitHub()" style="cursor:pointer;">
+      <div class="ac-icon" style="background:linear-gradient(135deg,#00b4d8,#0077b6);box-shadow:0 8px 25px rgba(0,180,216,0.4);">🔄</div>
+      <div class="ac-label">更新</div>
+      <div class="ac-hint">从云端更新数据</div>
     </div>
   </div>
 </div>
@@ -1584,10 +1584,56 @@ function saveCards(cards) {
   // 异步推送到 GitHub（不阻塞）
   if (githubToken) {
     setTimeout(async () => {
-      const data = await fetchCardsFromGitHub();
-      const sha = data ? data.sha : null;
-      await pushCardsToGitHub(cards, sha);
+      await pushToGitHubWithConflictHandling(cards);
     }, 0);
+  }
+}
+
+// 带冲突处理的 GitHub 推送
+async function pushToGitHubWithConflictHandling(cards, depth = 0) {
+  if (depth > 2) {
+    console.warn('Max retry depth reached');
+    return;
+  }
+  
+  const data = await fetchCardsFromGitHub();
+  if (!data) {
+    console.warn('Failed to fetch from GitHub');
+    return;
+  }
+  
+  const sha = data.sha;
+  const result = await pushCardsToGitHub(cards, sha);
+  
+  if (result.success) {
+    return;
+  }
+  
+  if (result.conflict) {
+    const overwrite = confirm('检测到远程数据已被其他人修改，是否覆盖？点击"取消"将合并数据');
+    if (overwrite) {
+      // 强制覆盖：用最新 SHA 再推一次
+      return await pushToGitHubWithConflictHandling(cards, depth + 1);
+    } else {
+      // 合并数据：远程+本地，以ID去重，远程优先
+      const remoteData = await fetchCardsFromGitHub();
+      if (!remoteData) return;
+      
+      const remoteCards = JSON.parse(atob(remoteData.content));
+      const localCards = loadCards();
+      const cardMap = new Map();
+      // 远程优先
+      remoteCards.forEach(c => cardMap.set(c.id, c));
+      localCards.forEach(c => {
+        if (!cardMap.has(c.id)) cardMap.set(c.id, c);
+      });
+      const mergedCards = Array.from(cardMap.values());
+      
+      // 更新本地存储
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards));
+      // 推送合并后的数据
+      return await pushToGitHubWithConflictHandling(mergedCards, depth + 1);
+    }
   }
 }
 
@@ -1608,7 +1654,7 @@ async function fetchCardsFromGitHub() {
 }
 
 async function pushCardsToGitHub(cards, sha) {
-  if (!githubToken) return false;
+  if (!githubToken) return { success: false, conflict: false };
   try {
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(cards, null, 2))));
     const body = {
@@ -1624,15 +1670,23 @@ async function pushCardsToGitHub(cards, sha) {
       },
       body: JSON.stringify(body)
     });
-    return resp.ok;
+    
+    if (!resp.ok) {
+      // 检查是否是冲突（409）或 SHA 不匹配（400）
+      const errorText = await resp.text();
+      const isConflict = resp.status === 409 || (resp.status === 400 && errorText.includes('SHA'));
+      return { success: false, conflict: isConflict, status: resp.status };
+    }
+    
+    return { success: true };
   } catch(e) {
     console.warn('pushCardsToGitHub error:', e);
-    return false;
+    return { success: false, conflict: false, error: e.message };
   }
 }
 
-// ========== 同步函数 ==========
-async function syncWithGitHub() {
+// ========== 同步函数（从云端更新数据）==========
+async function syncFromGitHub() {
   // 如果还没有 token，提示用户输入
   if (!githubToken) {
     const token = prompt('请输入 GitHub Token（需要 repo 权限）：');
@@ -1654,11 +1708,70 @@ async function syncWithGitHub() {
     
     // 解析 GitHub 上的数据
     const remoteCards = JSON.parse(atob(data.content));
+    const localCards = loadCards();
+    
+    // 比较本地和远程数据
+    const localStr = JSON.stringify(localCards);
+    const remoteStr = JSON.stringify(remoteCards);
+    
+    if (localStr === remoteStr) {
+      alert('已是最新数据，无需更新');
+      return;
+    }
+    
+    // 更新本地数据
     localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
     
-    alert('同步成功！已从 GitHub 拉取 ' + remoteCards.length + ' 张卡片');
+    // 成功后提示
+    alert('已更新 ' + remoteCards.length + ' 张卡片');
+    
+    // 刷新页面显示（如果在首页或查找页）
+    if (currentPage === 'search') {
+      doSearch(); // 重新渲染搜索结果
+    }
+    // 首页不需要刷新（没有数据展示）
+    
   } catch(e) {
-    alert('同步失败：' + e.message);
+    alert('更新失败：' + e.message);
+  }
+}
+
+// ========== 自动同步函数（静默更新）==========
+let autoSyncTimer = null;
+
+async function autoSyncFromGitHub() {
+  // 如果页面不可见，则不执行
+  if (document.hidden) return;
+  
+  // 如果没有 token，则不执行
+  if (!githubToken) return;
+  
+  try {
+    // 从 GitHub 拉取最新数据
+    const data = await fetchCardsFromGitHub();
+    if (!data) return; // 失败静默处理
+    
+    // 解析 GitHub 上的数据
+    const remoteCards = JSON.parse(atob(data.content));
+    const localCards = loadCards();
+    
+    // 比较本地和远程数据
+    const localStr = JSON.stringify(localCards);
+    const remoteStr = JSON.stringify(remoteCards);
+    
+    if (localStr !== remoteStr) {
+      // 更新本地数据
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
+      
+      // 刷新页面显示（如果在首页或查找页）
+      if (currentPage === 'search') {
+        doSearch(); // 重新渲染搜索结果
+      }
+      // 首页不需要刷新（没有数据展示）
+    }
+  } catch(e) {
+    // 失败静默处理，不打扰用户
+    console.warn('autoSyncFromGitHub error:', e);
   }
 }
 
@@ -1719,7 +1832,7 @@ function renderSeverityStars(severity) {
 }
 
 // ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.02';
+const APP_VERSION = 'v1.03';
 const DEMO_VERSION_KEY = 'qc_demo_version';
 
 // 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
@@ -2499,6 +2612,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initDemoData();
   // 检测URL参数，自动搜索
   checkUrlSearch();
+  // 自动从 GitHub 拉取最新数据（静默更新）
+  autoSyncFromGitHub();
   // 绑定表单变化事件（使用防抖）
   ['r_defectType','r_materialCode','r_productDesc','r_severity','r_defectRate','r_occurrence','r_customer','r_updateTime'].forEach(id => {
     const el = document.getElementById(id);
@@ -2533,6 +2648,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 启动轮询：定期检查HTML文件是否有更新（自动检测新版，无需手动改版本号）
   startAutoUpdateCheck();
+  
+  // 启动自动定时同步（每2分钟检查一次）
+  autoSyncTimer = setInterval(autoSyncFromGitHub, 2 * 60 * 1000);
 });
 
 
