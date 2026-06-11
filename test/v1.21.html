@@ -606,11 +606,14 @@ body {
 }
 .card-thumb .thumb-level .bar {
   width: 4px;
-  height: 22px;
-  background: #4a5568;
   border-radius: 2px;
   transition: background-color 0.2s;
 }
+/* 4条柱子从左到右递增高度（手机信号风格） */
+.card-thumb .thumb-level .bar:nth-child(1) { height: 8px; background: #4a5568; }
+.card-thumb .thumb-level .bar:nth-child(2) { height: 12px; background: #4a5568; }
+.card-thumb .thumb-level .bar:nth-child(3) { height: 16px; background: #4a5568; }
+.card-thumb .thumb-level .bar:nth-child(4) { height: 20px; background: #4a5568; }
 /* Level 1: 4条全亮（信号满格） */
 .card-thumb .thumb-level.level-1 .bar { background: #4a5568; }
 /* Level 2: 第4条（最高）灰，其余亮 */
