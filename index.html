@@ -2,8 +2,11 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.20</title>
+<title>质量问题卡片系统 v1.21</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -594,7 +597,7 @@ body {
   color: #888;
 }
 
-/* 料号匹配级别标识 - 方案I：竖条阶梯（放大版） */
+/* 料号匹配级别标识 - 手机信号风格（从右往左灭） */
 .card-thumb .thumb-level {
   position: absolute;
   bottom: 3px;
@@ -606,22 +609,25 @@ body {
 }
 .card-thumb .thumb-level .bar {
   width: 4px;
-  height: 22px;
-  background: #4a5568;
   border-radius: 2px;
-  transition: opacity 0.2s;
+  transition: background-color 0.2s;
 }
-/* Level 1: 4条全实 */
-.card-thumb .thumb-level.level-1 .bar { opacity: 1; }
-/* Level 2: 3实1淡30% */
-.card-thumb .thumb-level.level-2 .bar:nth-child(4) { opacity: 0.3; }
-/* Level 3: 2实2淡15% */
+/* 4条柱子从左到右递增高度（手机信号风格） */
+.card-thumb .thumb-level .bar:nth-child(1) { height: 8px; background: #4a5568; }
+.card-thumb .thumb-level .bar:nth-child(2) { height: 12px; background: #4a5568; }
+.card-thumb .thumb-level .bar:nth-child(3) { height: 16px; background: #4a5568; }
+.card-thumb .thumb-level .bar:nth-child(4) { height: 20px; background: #4a5568; }
+/* Level 1: 4条全亮（信号满格） */
+.card-thumb .thumb-level.level-1 .bar { background: #4a5568; }
+/* Level 2: 第4条（最高）灰，其余亮 */
+.card-thumb .thumb-level.level-2 .bar:nth-child(4) { background: #cbd5e0; }
+/* Level 3: 第3、4条灰，第1、2条亮 */
 .card-thumb .thumb-level.level-3 .bar:nth-child(3),
-.card-thumb .thumb-level.level-3 .bar:nth-child(4) { opacity: 0.15; }
-/* Level 4: 1实3淡5% */
+.card-thumb .thumb-level.level-3 .bar:nth-child(4) { background: #cbd5e0; }
+/* Level 4: 第2、3、4条灰，只有第1条（最矮）亮 */
 .card-thumb .thumb-level.level-4 .bar:nth-child(2),
 .card-thumb .thumb-level.level-4 .bar:nth-child(3),
-.card-thumb .thumb-level.level-4 .bar:nth-child(4) { opacity: 0.05; }
+.card-thumb .thumb-level.level-4 .bar:nth-child(4) { background: #cbd5e0; }
 
 /* ========== 完整卡片（桌面展示用） ========== */
 .qr-card {
@@ -1651,25 +1657,11 @@ let githubToken = localStorage.getItem('qc_github_token') || HARDCODED_TOKEN;
 function loadCards() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { return []; } }
 async function saveCards(cards) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
-  // v1.20: 同时保存到本地备份（万一GitHub上传失败，可从备份恢复）
+  // v1.21: 同时保存到本地备份（万一GitHub上传失败，可从备份恢复）
   localStorage.setItem(BACKUP_KEY, JSON.stringify(cards));
-  if (githubToken) {
-    try {
-      const result = await pushToGitHubWithConflictHandling(cards);
-      if (result.success) {
-        localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(cards));
-      } else {
-        console.warn('GitHub 推送失败:', result.error);
-        // v1.20: 推送失败时提示用户数据已备份到本地
-        alert('云端保存失败，数据已备份到本地。\n网络恢复后请点击"保存到云端"重新同步。');
-      }
-      return result;
-    } catch(err) {
-      console.warn('GitHub 推送异常:', err);
-      alert('云端保存异常，数据已备份到本地。\n错误：' + err.message);
-      return { success: false, error: err.message };
-    }
-  }
+  // v1.21: 不立即推送到GitHub，而是安排延迟推送（防抖3秒）
+  scheduleCloudSync();
+  // 立即返回成功（推送在后台进行）
   return { success: true };
 }
 
@@ -1722,6 +1714,91 @@ async function pushToGitHubWithConflictHandling(cards, depth = 0) {
   
   // 其他错误情况（包括 noToken）
   return result;
+}
+
+
+// ========== 延迟云端同步（防抖） ==========
+let cloudSyncTimer = null;
+let cloudSyncToastEl = null;
+
+// 安排延迟3秒同步到云端（防抖：用户连续操作时只同步最后一次）
+function scheduleCloudSync() {
+  if (cloudSyncTimer) clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(async () => {
+    if (!githubToken) return; // 没有Token，跳过
+    const cards = loadCards();
+    try {
+      const result = await pushToGitHubWithConflictHandling(cards);
+      if (result.success) {
+        localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(cards));
+        console.log('✅ 自动同步到云端成功，共 ' + cards.length + ' 张卡片');
+        showToast('已同步到云端 ✓', 'success');
+      } else {
+        console.warn('⚠️ 自动同步到云端失败:', result.error);
+        showToast('云端同步失败，数据已备份到本地', 'warning');
+      }
+    } catch(err) {
+      console.warn('⚠️ 自动同步异常:', err);
+      showToast('云端同步异常: ' + err.message, 'error');
+    }
+  }, 3000); // 3秒防抖
+}
+
+// 显示toast提示（右上角，3秒后自动消失）
+function showToast(message, type = 'info') {
+  // 移除旧的toast
+  if (cloudSyncToastEl) {
+    cloudSyncToastEl.remove();
+    cloudSyncToastEl = null;
+  }
+  
+  // 创建新toast
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    background: ${type === 'success' ? '#4CAF50' : type === 'warning' ? '#FF9800' : type === 'error' ? '#F44336' : '#2196F3'};
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 99999;
+    animation: toastIn 0.3s ease;
+    max-width: 300px;
+    word-break: break-all;
+  `;
+  toast.textContent = message;
+  
+  // 添加动画样式（如果不存在）
+  if (!document.getElementById('toastStyle')) {
+    const style = document.createElement('style');
+    style.id = 'toastStyle';
+    style.textContent = `
+      @keyframes toastIn {
+        from { opacity: 0; transform: translateX(100px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes toastOut {
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(100px); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  document.body.appendChild(toast);
+  cloudSyncToastEl = toast;
+  
+  // 3秒后消失
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.style.animation = 'toastOut 0.3s ease';
+      setTimeout(() => toast.remove(), 300);
+    }
+  }, 3000);
 }
 
 // ========== GitHub API 函数 ==========
@@ -2047,17 +2124,21 @@ function getSeverityColor(severity) {
   const count = stars ? stars.length : 0;
   if (count === 1) return '#2ecc71';   // 1星 - 绿色
   if (count === 2) return '#f1c40f';   // 2星 - 黄色
-  return '#e74c3c';                     // 3-5星 - 红色
+  if (count === 3) return '#e74c3c';   // 3星 - 红色
+  if (count === 4) return '#e74c3c';   // 4星 - 红色
+  return '#8b0000';                     // 5星 - 深红色
 }
 
-// 获取严重度颜色优先级（用于排序：红>黄>绿）
+// 获取严重度优先级（用于排序：5星>4星>3星>2星>1星）
 function getSeverityPriority(severity) {
   if (!severity) return 3;
   const stars = severity.match(/★/g);
   const count = stars ? stars.length : 0;
-  if (count === 1) return 1;   // 绿色 - 最低
-  if (count === 2) return 2;   // 黄色 - 中等
-  return 3;                     // 红色 - 最高
+  if (count === 1) return 1;   // 1星 - 最低
+  if (count === 2) return 2;   // 2星 - 中等
+  if (count === 3) return 3;   // 3星
+  if (count === 4) return 4;   // 4星
+  return 5;                     // 5星 - 最高
 }
 
 function renderSeverityStars(severity) {
@@ -2630,14 +2711,14 @@ function doSearch() {
   if (fCustomer) cards = cards.filter(c => c.customer === fCustomer);
   if (fSeverity) cards = cards.filter(c => c.severity && c.severity.includes(fSeverity));
 
-  // 统一排序：先按匹配级别（1→2→3→4），同级内按颜色（红>黄>绿）
+  // 统一排序：先按匹配级别（1→2→3→4），同级内按严重性（5星>4星>3星>2星>1星）
   cards.sort((a, b) => {
     const lvlA = a._matchLevel || 99;
     const lvlB = b._matchLevel || 99;
-    if (lvlA !== lvlB) return lvlA - lvlB;
+    if (lvlA !== lvlB) return lvlA - lvlB;  // 匹配级别低的排前面（1级最高）
     const priA = getSeverityPriority(a.severity);
     const priB = getSeverityPriority(b.severity);
-    return priB - priA;
+    return priB - priA;  // 严重性高的排前面（5星最高）
   });
 
   lastResults = cards;
@@ -3014,9 +3095,8 @@ function generateDemoData() {
 
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', async () => {
-  initDemoData();
-
-  // 【v1.20 修复】新设备检测
+  // 【v1.21 修复】删除 initDemoData() 调用，避免任何测试数据生成的可能
+  // 新设备逻辑完全由下面的代码处理（第3094-3103行）
   if (localStorage.getItem('qc_demo_initialized') !== '1') {
     // 新设备：先尝试从云端恢复
     const ok = await tryRestoreFromCloud();
@@ -3053,6 +3133,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
   });
+  // 版本检测：如果有新版本，显示更新提示条（不自动刷新，避免打断用户操作）
+  const CURRENT_VERSION = '1.21.20260612.0221';
+  const savedVersion = localStorage.getItem('qc_app_version');
+  if (savedVersion !== CURRENT_VERSION) {
+    localStorage.setItem('qc_app_version', CURRENT_VERSION);
+    // 如果不是首次打开（savedVersion不为null），显示更新提示
+    if (savedVersion !== null) {
+      document.getElementById('updateBanner').style.display = 'block';
+    }
+  }
+  
   // 监听 localStorage 变化（管理员开新版本时通知其他页面自动刷新）
   window.addEventListener('storage', function(e) {
     if (e.key === 'qc_demo_version' && e.newValue && e.newValue !== e.oldValue) {
