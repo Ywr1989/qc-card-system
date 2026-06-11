@@ -2,6 +2,9 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>质量问题卡片系统 v1.21</title>
 <style>
@@ -3130,6 +3133,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     }
   });
+  // 版本检测：如果有新版本，显示更新提示条（不自动刷新，避免打断用户操作）
+  const CURRENT_VERSION = '1.21.20260612.0221';
+  const savedVersion = localStorage.getItem('qc_app_version');
+  if (savedVersion !== CURRENT_VERSION) {
+    localStorage.setItem('qc_app_version', CURRENT_VERSION);
+    // 如果不是首次打开（savedVersion不为null），显示更新提示
+    if (savedVersion !== null) {
+      document.getElementById('updateBanner').style.display = 'block';
+    }
+  }
+  
   // 监听 localStorage 变化（管理员开新版本时通知其他页面自动刷新）
   window.addEventListener('storage', function(e) {
     if (e.key === 'qc_demo_version' && e.newValue && e.newValue !== e.oldValue) {
