@@ -305,7 +305,7 @@
   },
   {
     "id": "QR-2026-011",
-    "defectType": "",
+    "defectType": "欠注",
     "materialCode": "DAWE-PC10-AC5410-ESD",
     "productDesc": "2寸全黑PC方盒，长效防静电，长方形扣位，上盖带4个顶柱.磨砂面，DAWE刻字",
     "severity": "★★★★☆ 很高",
