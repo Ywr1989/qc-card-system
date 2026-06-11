@@ -424,14 +424,10 @@ body {
 /* 外层滚动容器 */
 .hand-scroll {
   width: 100%;
-  overflow-x: scroll;
-  overflow-y: auto;
   padding: 42px 20px 8px 20px;
-  scrollbar-width: auto;
-  scrollbar-color: rgba(255,255,255,0.8) rgba(255,255,255,0.35);
-  min-height: 260px;
-  max-height: 310px;
+  /* v1.20: 删除内部滚动条，改为页面整体滚动 */
 }
+
 /* 横向滚动条 - 始终可见 */
 .hand-scroll::-webkit-scrollbar {
   height: 18px;
@@ -1626,6 +1622,7 @@ body {
 // ========== 数据 ==========
 const STORAGE_KEY = 'qc_cards_v1.34';
 const LAST_SYNC_KEY = 'qc_last_sync_v1';
+const BACKUP_KEY = 'qc_cards_backup'; // 本地备份key（v1.20）
 // 客户代码→名称映射
 const CUSTOMER_MAP = {
   'CJX085902': '林总',
@@ -1654,6 +1651,8 @@ let githubToken = localStorage.getItem('qc_github_token') || HARDCODED_TOKEN;
 function loadCards() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { return []; } }
 async function saveCards(cards) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+  // v1.20: 同时保存到本地备份（万一GitHub上传失败，可从备份恢复）
+  localStorage.setItem(BACKUP_KEY, JSON.stringify(cards));
   if (githubToken) {
     try {
       const result = await pushToGitHubWithConflictHandling(cards);
@@ -1661,10 +1660,13 @@ async function saveCards(cards) {
         localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(cards));
       } else {
         console.warn('GitHub 推送失败:', result.error);
+        // v1.20: 推送失败时提示用户数据已备份到本地
+        alert('云端保存失败，数据已备份到本地。\n网络恢复后请点击"保存到云端"重新同步。');
       }
       return result;
     } catch(err) {
       console.warn('GitHub 推送异常:', err);
+      alert('云端保存异常，数据已备份到本地。\n错误：' + err.message);
       return { success: false, error: err.message };
     }
   }
@@ -3019,27 +3021,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 新设备：先尝试从云端恢复
     const ok = await tryRestoreFromCloud();
     if (ok) return; // 恢复成功，页面已重新加载
-    // 恢复失败或云端无数据：让用户选择
-    const choice = await showNewDeviceDialog();
-    if (choice === 'restore') {
-      // 用户再次选择"从云端恢复"——重新尝试（递归保护：最多一次）
-      const ok2 = await tryRestoreFromCloud();
-      if (ok2) return;
-      alert('恢复仍然失败，请检查网络或联系管理员。');
-      alert('恢复仍然失败，将刷新页面重新选择。');
-      location.reload();
-      return;
-    } else if (choice === 'demo') {
-      generateDemoData();
-      location.reload();
-      return;
-    } else {
-      // blank
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
-      localStorage.setItem('qc_demo_initialized', '1');
-      location.reload();
-      return;
-    }
+    // 恢复失败：直接提示用户，不自动生成demo或空白
+    alert('数据恢复失败，云端暂无数据或网络异常。\n\n当前显示的可能不是最新数据，请检查网络后刷新页面重试。');
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+    localStorage.setItem('qc_demo_initialized', '1');
   }
 
   // 以下为正常设备初始化流程
