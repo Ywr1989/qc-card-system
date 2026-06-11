@@ -2118,17 +2118,21 @@ function getSeverityColor(severity) {
   const count = stars ? stars.length : 0;
   if (count === 1) return '#2ecc71';   // 1星 - 绿色
   if (count === 2) return '#f1c40f';   // 2星 - 黄色
-  return '#e74c3c';                     // 3-5星 - 红色
+  if (count === 3) return '#e74c3c';   // 3星 - 红色
+  if (count === 4) return '#e74c3c';   // 4星 - 红色
+  return '#8b0000';                     // 5星 - 深红色
 }
 
-// 获取严重度颜色优先级（用于排序：红>黄>绿）
+// 获取严重度优先级（用于排序：5星>4星>3星>2星>1星）
 function getSeverityPriority(severity) {
   if (!severity) return 3;
   const stars = severity.match(/★/g);
   const count = stars ? stars.length : 0;
-  if (count === 1) return 1;   // 绿色 - 最低
-  if (count === 2) return 2;   // 黄色 - 中等
-  return 3;                     // 红色 - 最高
+  if (count === 1) return 1;   // 1星 - 最低
+  if (count === 2) return 2;   // 2星 - 中等
+  if (count === 3) return 3;   // 3星
+  if (count === 4) return 4;   // 4星
+  return 5;                     // 5星 - 最高
 }
 
 function renderSeverityStars(severity) {
@@ -2701,14 +2705,14 @@ function doSearch() {
   if (fCustomer) cards = cards.filter(c => c.customer === fCustomer);
   if (fSeverity) cards = cards.filter(c => c.severity && c.severity.includes(fSeverity));
 
-  // 统一排序：先按匹配级别（1→2→3→4），同级内按颜色（红>黄>绿）
+  // 统一排序：先按严重性优先级（5星>4星>3星>2星>1星），同级内按匹配级别（1→2→3→4）
   cards.sort((a, b) => {
-    const lvlA = a._matchLevel || 99;
-    const lvlB = b._matchLevel || 99;
-    if (lvlA !== lvlB) return lvlA - lvlB;
     const priA = getSeverityPriority(a.severity);
     const priB = getSeverityPriority(b.severity);
-    return priB - priA;
+    if (priB !== priA) return priB - priA;  // 严重性高的排前面
+    const lvlA = a._matchLevel || 99;
+    const lvlB = b._matchLevel || 99;
+    return lvlA - lvlB;  // 匹配级别低的排前面（1级最高）
   });
 
   lastResults = cards;
