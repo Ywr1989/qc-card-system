@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.12</title>
+<title>质量问题卡片系统 v1.13</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -929,6 +929,25 @@ body {
   resize: none;
 }
 
+/* 缺陷类型内联下拉 */
+.defect-inline-select {
+  position: absolute;
+  top: 2mm; left: 2mm;
+  width: 24mm;
+  height: 22mm;
+  border: none;
+  background: rgba(255,255,255,0.95);
+  color: #000;
+  font-size: 12px;
+  font-weight: bold;
+  font-family: inherit;
+  outline: none;
+  z-index: 50;
+  padding: 2mm 1mm;
+  text-align: center;
+  cursor: pointer;
+}
+
 /* ========== 可编辑卡片模式 ========== */
 .edit-card-container {
   flex-shrink: 0;
@@ -1361,7 +1380,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
- <div class="nav-right" id="navRight">v1.12</div>
+ <div class="nav-right" id="navRight">v1.13</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1970,7 +1989,7 @@ function renderSeverityStars(severity) {
 }
 
 // ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.12';
+const APP_VERSION = 'v1.13';
 const DEMO_VERSION_KEY = 'qc_demo_version';
 
 // 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
@@ -2855,7 +2874,7 @@ function renderEditCard() {
   const triangleWrap = document.createElement('div');
   triangleWrap.className = 'triangle-wrap';
   triangleWrap.style.cursor = 'pointer';
-  triangleWrap.title = '点击输入缺陷类型';
+  triangleWrap.title = '点击选择缺陷类型';
   const triangleText = document.createElement('div');
   const dt = card.defectType || '问题';
   const dtLen = dt.length;
@@ -2865,21 +2884,28 @@ function renderEditCard() {
   triangleText.className = 'triangle-text ' + defectCls;
   triangleText.innerHTML = dt.split('').join('<br>');
   triangleWrap.appendChild(triangleText);
-  // 点击三角形直接输入缺陷类型
+  // 点击三角形弹出缺陷类型下拉菜单
   triangleWrap.onclick = (e) => {
-    if (triangleWrap.querySelector('.defect-inline-input')) return;
-    const inp = document.createElement('input');
-    inp.className = 'defect-inline-input';
-    inp.value = card.defectType || '';
-    inp.placeholder = '缺陷类型';
-    inp.onblur = () => {
-      editCardData.defectType = inp.value;
-      inp.remove();
+    if (triangleWrap.querySelector('.defect-inline-select')) return;
+    const sel = document.createElement('select');
+    sel.className = 'defect-inline-select';
+    const settings = loadSettings();
+    const options = [''].concat(settings.defectTypes);
+    options.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o;
+      opt.textContent = o || '请选择';
+      if (card.defectType === o) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    sel.onchange = () => {
+      editCardData.defectType = sel.value;
+      sel.remove();
       renderEditCard();
     };
-    inp.onkeydown = (ev) => { if (ev.key === 'Enter') inp.blur(); };
-    triangleWrap.appendChild(inp);
-    inp.focus();
+    sel.onblur = () => { setTimeout(() => sel.remove(), 200); };
+    triangleWrap.appendChild(sel);
+    sel.focus();
   };
   header.appendChild(triangleWrap);
 
@@ -2927,7 +2953,8 @@ function renderEditCard() {
   timeCard.querySelector('.value-wrap').appendChild(dateInput);
   row2.appendChild(timeCard);
 
-  const custCard = makeFieldCard('客户', 'customer', card.customer);
+  const custCard = makeFieldCard('客户', 'customer', card.customer,
+    [''].concat(loadSettings().customers));
   custCard.style.flex = '0.5';
   row2.appendChild(custCard);
   cardEl.appendChild(row2);
