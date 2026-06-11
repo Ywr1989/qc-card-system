@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.10</title>
+<title>质量问题卡片系统 v1.11</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1333,7 +1333,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
-  <div class="nav-right" id="navRight">v1.10</div>
+  <div class="nav-right" id="navRight">v1.11</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1917,7 +1917,7 @@ function renderSeverityStars(severity) {
 }
 
 // ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.10';
+const APP_VERSION = 'v1.11';
 const DEMO_VERSION_KEY = 'qc_demo_version';
 
 // 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
@@ -2758,7 +2758,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // 启动轮询：定期检查HTML文件是否有更新（自动检测新版，无需手动改版本号）
-  startAutoUpdateCheck();
+  // startAutoUpdateCheck(); // 已禁用：会导致正在记录卡片时页面自动刷新
   
   // 启动自动定时同步（每2分钟检查一次）
   autoSyncTimer = setInterval(autoSyncFromGitHub, 2 * 60 * 1000);
