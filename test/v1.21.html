@@ -3089,9 +3089,8 @@ function generateDemoData() {
 
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', async () => {
-  initDemoData();
-
-  // 【v1.20 修复】新设备检测
+  // 【v1.21 修复】删除 initDemoData() 调用，避免任何测试数据生成的可能
+  // 新设备逻辑完全由下面的代码处理（第3094-3103行）
   if (localStorage.getItem('qc_demo_initialized') !== '1') {
     // 新设备：先尝试从云端恢复
     const ok = await tryRestoreFromCloud();
