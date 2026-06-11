@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.17</title>
+<title>质量问题卡片系统 v1.18</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1395,7 +1395,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
- <div class="nav-right" id="navRight">v1.17</div>
+ <div class="nav-right" id="navRight">v1.18</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1734,6 +1734,18 @@ async function fetchCardsFromGitHub() {
     });
     if (!resp.ok) return null;
     const data = await resp.json();
+    // GitHub API 对 >1MB 的文件返回空 content，需要用 download_url 获取
+    if (!data.content || !data.content.trim()) {
+      if (data.download_url) {
+        const rawResp = await fetch(data.download_url);
+        if (rawResp.ok) {
+          const rawText = await rawResp.text();
+          // 将原始文本编码为 base64（兼容中文）
+          const base64Content = btoa(unescape(encodeURIComponent(rawText)));
+          return { content: base64Content, sha: data.sha };
+        }
+      }
+    }
     return { content: data.content, sha: data.sha };
   } catch(e) {
     console.warn('fetchCardsFromGitHub error:', e);
