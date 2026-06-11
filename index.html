@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.11</title>
+<title>质量问题卡片系统 v1.12</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1318,6 +1318,34 @@ body {
 .cm-pagination button.active { background: #2c3e50; color: #fff; border-color: #2c3e50; }
 .cm-pagination .cm-ellipsis { color: #999; padding: 0 4px; font-size: 13px; }
 
+/* 数据更新提示条 */
+#updateNotice {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: #4CAF50;
+  color: white;
+  padding: 10px 16px;
+  text-align: center;
+  z-index: 9999;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+#updateNotice .notice-text {
+  cursor: pointer;
+  text-decoration: underline;
+}
+#updateNotice .notice-text:hover { opacity: 0.8; }
+#updateNotice .notice-close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.8;
+}
+#updateNotice .notice-close:hover { opacity: 1; }
 </style>
 </head>
 <body>
@@ -1333,7 +1361,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
-  <div class="nav-right" id="navRight">v1.11</div>
+ <div class="nav-right" id="navRight">v1.12</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1802,16 +1830,41 @@ async function autoSyncFromGitHub() {
       // 同步完成后，更新 lastSync 为当前远程状态
       localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards));
 
-      // 刷新页面显示（如果在首页或查找页）
+      // 显示"数据已更新"提示条（非阻塞，用户可点击刷新）
+      showUpdateNotice();
+      // 如果当前在查找页，也立即刷新搜索结果（用户正在查看，应该看到最新数据）
       if (currentPage === 'search') {
-        doSearch(); // 重新渲染搜索结果
+        doSearch();
       }
-      // 首页不需要刷新（没有数据展示）
     }
   } catch(e) {
     // 失败静默处理，不打扰用户
     console.warn('autoSyncFromGitHub error:', e);
   }
+}
+
+// 显示"数据已更新"提示条
+function showUpdateNotice() {
+  const notice = document.getElementById('updateNotice');
+  if (notice) notice.style.display = 'block';
+}
+
+// 隐藏"数据已更新"提示条
+function hideUpdateNotice() {
+  const notice = document.getElementById('updateNotice');
+  if (notice) notice.style.display = 'none';
+}
+
+// 安全刷新页面（检查是否有未保存的数据）
+function refreshPageSafe() {
+  // 检查是否在记录页且有未保存的数据
+  if (currentPage === 'record' && editCardData && editCardData.id) {
+    if (!confirm('当前正在编辑卡片，刷新会丢失未保存的数据。确定要刷新吗？')) {
+      return; // 用户取消，不刷新
+    }
+  }
+  // 刷新页面
+  location.reload();
 }
 
 // 三路合并：基于上次同步状态，正确合并本地和远程的增删改
@@ -1917,7 +1970,7 @@ function renderSeverityStars(severity) {
 }
 
 // ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.11';
+const APP_VERSION = 'v1.12';
 const DEMO_VERSION_KEY = 'qc_demo_version';
 
 // 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
@@ -3382,6 +3435,12 @@ async function cmBatchDelete() {
 // 旧版 submitRecord 已在上面被新版覆盖，这里不需要重复
 
 </script>
+<!-- 数据更新提示条 -->
+<div id="updateNotice">
+  <span class="notice-text" onclick="refreshPageSafe()">🔄 数据已更新，点击此处刷新页面查看最新数据</span>
+  <span style="margin-left:12px;font-size:12px;opacity:0.8;">（正在编辑？忽略此提示即可）</span>
+  <span class="notice-close" onclick="hideUpdateNotice()">×</span>
+</div>
 </body>
 </html>
 
