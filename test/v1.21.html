@@ -2705,14 +2705,14 @@ function doSearch() {
   if (fCustomer) cards = cards.filter(c => c.customer === fCustomer);
   if (fSeverity) cards = cards.filter(c => c.severity && c.severity.includes(fSeverity));
 
-  // 统一排序：先按严重性优先级（5星>4星>3星>2星>1星），同级内按匹配级别（1→2→3→4）
+  // 统一排序：先按匹配级别（1→2→3→4），同级内按严重性（5星>4星>3星>2星>1星）
   cards.sort((a, b) => {
-    const priA = getSeverityPriority(a.severity);
-    const priB = getSeverityPriority(b.severity);
-    if (priB !== priA) return priB - priA;  // 严重性高的排前面
     const lvlA = a._matchLevel || 99;
     const lvlB = b._matchLevel || 99;
-    return lvlA - lvlB;  // 匹配级别低的排前面（1级最高）
+    if (lvlA !== lvlB) return lvlA - lvlB;  // 匹配级别低的排前面（1级最高）
+    const priA = getSeverityPriority(a.severity);
+    const priB = getSeverityPriority(b.severity);
+    return priB - priA;  // 严重性高的排前面（5星最高）
   });
 
   lastResults = cards;
