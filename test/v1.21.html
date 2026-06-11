@@ -594,7 +594,7 @@ body {
   color: #888;
 }
 
-/* 料号匹配级别标识 - 方案I：竖条阶梯（放大版） */
+/* 料号匹配级别标识 - 手机信号风格（从右往左灭） */
 .card-thumb .thumb-level {
   position: absolute;
   bottom: 3px;
@@ -609,19 +609,19 @@ body {
   height: 22px;
   background: #4a5568;
   border-radius: 2px;
-  transition: opacity 0.2s;
+  transition: background-color 0.2s;
 }
-/* Level 1: 4条全实 */
-.card-thumb .thumb-level.level-1 .bar { opacity: 1; }
-/* Level 2: 3实1淡30% */
-.card-thumb .thumb-level.level-2 .bar:nth-child(4) { opacity: 0.3; }
-/* Level 3: 2实2淡15% */
+/* Level 1: 4条全亮（信号满格） */
+.card-thumb .thumb-level.level-1 .bar { background: #4a5568; }
+/* Level 2: 第4条（最高）灰，其余亮 */
+.card-thumb .thumb-level.level-2 .bar:nth-child(4) { background: #cbd5e0; }
+/* Level 3: 第3、4条灰，第1、2条亮 */
 .card-thumb .thumb-level.level-3 .bar:nth-child(3),
-.card-thumb .thumb-level.level-3 .bar:nth-child(4) { opacity: 0.15; }
-/* Level 4: 1实3淡5% */
+.card-thumb .thumb-level.level-3 .bar:nth-child(4) { background: #cbd5e0; }
+/* Level 4: 第2、3、4条灰，只有第1条（最矮）亮 */
 .card-thumb .thumb-level.level-4 .bar:nth-child(2),
 .card-thumb .thumb-level.level-4 .bar:nth-child(3),
-.card-thumb .thumb-level.level-4 .bar:nth-child(4) { opacity: 0.05; }
+.card-thumb .thumb-level.level-4 .bar:nth-child(4) { background: #cbd5e0; }
 
 /* ========== 完整卡片（桌面展示用） ========== */
 .qr-card {
