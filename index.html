@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.13</title>
+<title>质量问题卡片系统 v1.14</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1365,6 +1365,21 @@ body {
   opacity: 0.8;
 }
 #updateNotice .notice-close:hover { opacity: 1; }
+
+/* 卡片管理-修改按钮 */
+.cm-edit-btn {
+  padding: 4px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  flex-shrink: 0;
+}
+.cm-edit-btn:hover { background: #2980b9; }
+
 </style>
 </head>
 <body>
@@ -1380,7 +1395,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
- <div class="nav-right" id="navRight">v1.13</div>
+ <div class="nav-right" id="navRight">v1.14</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1454,7 +1469,7 @@ body {
 
       <!-- 提交栏 -->
       <div class="submit-bar-compact">
-        <button class="btn-primary" onclick="submitRecord()">确认记录</button>
+        <button class="btn-primary" id="submitBtn" onclick="submitRecord()">确认记录</button>
         <button class="btn-secondary" onclick="goHome()">取消返回</button>
       </div>
     </div>
@@ -2140,7 +2155,11 @@ function showRecord() {
     photos: []
   };
   renderEditCard();
-  setTimeout(() => { const el = document.getElementById('pasteInput'); if (el) el.focus(); }, 350);
+  setTimeout(() => { const el = document.getElementById('pasteInput'); if (el) el.focus(); 
+    // 恢复按钮文本为"确认记录"
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) submitBtn.textContent = '确认记录';
+  }, 350);
 }
 
 function showSearch() {
@@ -2188,6 +2207,28 @@ function clearPaste() {
 
 function parsePaste(text) {
   const res = { found: false, matches: [] };
+  
+  // 新逻辑：先按 tab 或换行符分割，支持一次粘贴识别料号和规格
+  const lines = text.split(/\t|\n/).filter(l => l.trim());
+  if (lines.length >= 2) {
+    // 第一行 = 料号，第二行 = 规格
+    const line1 = lines[0].trim();
+    const line2 = lines[1].trim();
+    if (line1.length >= 3) {
+      res.materialCode = line1;
+      res.found = true;
+      res.matches.push('料号');
+    }
+    if (line2.length >= 2) {
+      res.productDesc = line2;
+      res.found = true;
+      res.matches.push('规格');
+    }
+    // 如果识别成功，直接返回（不执行旧逻辑）
+    if (res.found) return res;
+  }
+  
+  // 旧逻辑：单行文本，尝试用正则识别各个字段
   const mCode = text.match(/([A-Z0-9][A-Z0-9\-/]*[A-Z0-9])/i);
   if (mCode && mCode[0].length >= 5) { res.materialCode = mCode[0]; res.found = true; res.matches.push('料号'); }
   const custs = loadSettings().customers;
@@ -2199,6 +2240,17 @@ function parsePaste(text) {
   const mDate = text.match(/(\d{4}[年/\-]\d{1,2}[月/\-]\d{1,2})/);
   if (mDate) { res.updateTime = mDate[1].replace(/[年月]/g, '-').replace(/-$/g, ''); res.found = true; res.matches.push('日期'); }
   if (text.includes('严重') || text.includes('高')) { res.severity = '★★★☆☆ 高'; res.found = true; res.matches.push('严重性'); }
+  
+  // 如果还没找到料号，尝试把整行作为料号（支持中文规格场景）
+  if (!res.materialCode && lines.length >= 1) {
+    const possibleCode = lines[0].trim();
+    if (possibleCode.length >= 3 && possibleCode.length <= 50) {
+      res.materialCode = possibleCode;
+      res.found = true;
+      res.matches.push('料号');
+    }
+  }
+  
   return res;
 }
 
@@ -3122,11 +3174,32 @@ if (photoInputEl) {
 function submitRecord() {
   if (!editCardData) return;
   if (!editCardData.materialCode && !editCardData.productDesc) { alert('请至少填写料号或产品描述'); return; }
-  editCardData.createdAt = new Date().toISOString();
+  
   const cards = loadCards();
-  cards.unshift(editCardData);
+  
+  if (editCardData._isEditing) {
+    // 编辑模式：找到原卡片并替换
+    const idx = cards.findIndex(c => c.id === editCardData.id);
+    if (idx >= 0) {
+      // 保留原有的 createdAt，更新其他字段
+      editCardData.createdAt = cards[idx].createdAt || new Date().toISOString();
+      // 删除 _isEditing 属性，避免污染数据
+      delete editCardData._isEditing;
+      cards[idx] = JSON.parse(JSON.stringify(editCardData));
+    } else {
+      // 原卡片不存在（可能被删除），作为新增处理
+      delete editCardData._isEditing;
+      editCardData.createdAt = new Date().toISOString();
+      cards.unshift(editCardData);
+    }
+  } else {
+    // 新增模式
+    editCardData.createdAt = new Date().toISOString();
+    cards.unshift(editCardData);
+  }
+  
   saveCards(cards);
-  alert(`记录成功！\n报告编号：${editCardData.id}`);
+  alert(`${editCardData._isEditing ? '修改成功' : '记录成功'}！\n报告编号：${editCardData.id}`);
   editCardData = null;
   goHome();
 }
@@ -3406,6 +3479,7 @@ function cmRender() {
         <div class="cm-desc">${c.defectType || '-'} | ${c.productDesc || '-'}</div>
         <div class="cm-customer">${c.customer ? c.customer + (CUSTOMER_MAP[c.customer] ? '('+CUSTOMER_MAP[c.customer]+')' : '') : '-'}</div>
         <div class="cm-date">${c.updateTime || '-'}</div>
+        <button class="cm-edit-btn" onclick="editCard('${c.id}')">修改</button>
       </div>
     `).join('');
 
@@ -3456,6 +3530,27 @@ async function cmBatchDelete() {
     cmRender();
     alert('本地删除成功，但同步到云端失败：' + (result.error || '未知错误') + '\n请检查网络后重试，或稍后点击「更新」按钮手动同步。');
   }
+}
+
+// 编辑卡片：加载指定ID的卡片到编辑模式
+function editCard(cardId) {
+  const cards = loadCards();
+  const card = cards.find(c => c.id === cardId);
+  if (!card) { alert('未找到该卡片'); return; }
+  // 进入记录页面（编辑模式）
+  showSection('record', '修改卡片');
+  // 深拷贝卡片数据到 editCardData
+  editCardData = JSON.parse(JSON.stringify(card));
+  // 标记编辑模式
+  editCardData._isEditing = true;
+  renderEditCard();
+  // 修改按钮文本为"确认修改"
+  setTimeout(() => {
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) submitBtn.textContent = '确认修改';
+    const recordWrap = document.querySelector('.record-wrap');
+    if (recordWrap) recordWrap.scrollTop = 0;
+  }, 100);
 }
 
 // 也保留旧的 submitRecord 函数名（如果有其他地方调用）
