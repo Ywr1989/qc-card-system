@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.16</title>
+<title>质量问题卡片系统 v1.17</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1395,7 +1395,7 @@ body {
     <button class="back-btn" onclick="goHome()">← 返回</button>
     <div class="nav-title" id="navTitle">质量问题卡片系统</div>
   </div>
- <div class="nav-right" id="navRight">v1.14</div>
+ <div class="nav-right" id="navRight">v1.17</div>
 </div>
 
 <!-- ========== 首页 ========== -->
@@ -1793,7 +1793,15 @@ async function syncFromGitHub() {
     }
     
     // 解析 GitHub 上的数据
-    const remoteCards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+    let remoteCards = [];
+    try {
+      if (data.content && data.content.trim()) {
+        remoteCards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+      }
+    } catch(e) {
+      console.warn('解析 GitHub 数据失败，视为空数据:', e);
+      remoteCards = [];
+    }
     const localCards = loadCards();
     
     // 比较本地和远程数据
@@ -1834,10 +1842,18 @@ async function autoSyncFromGitHub() {
   try {
     // 从 GitHub 拉取最新数据
     const data = await fetchCardsFromGitHub();
-    if (!data) return; // 失败静默处理
+    if (!data)       return; // 失败静默处理
     
     // 解析 GitHub 上的数据
-    const remoteCards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+    let remoteCards = [];
+    try {
+      if (data.content && data.content.trim()) {
+        remoteCards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+      }
+    } catch(e) {
+      console.warn('autoSync: 解析 GitHub 数据失败，视为空数据:', e);
+      remoteCards = [];
+    }
     const localCards = loadCards();
     
     // 比较本地和远程数据
