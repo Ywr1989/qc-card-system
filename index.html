@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.19</title>
+<title>质量问题卡片系统 v1.20</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -2089,6 +2089,10 @@ function initDemoData() {
     localStorage.setItem('qc_demo_initialized', '1');
     return;
   }
+  // 【修复 v1.20】新设备（existing.length===0）不再自动生成 demo
+  // 留空，让 DOMContentLoaded 中的 initApp() 处理新设备逻辑
+  return;
+  // 以下为原逻辑（已禁用）：
   const existingIds = new Set(existing.map(c => c.id));
 
   const defects = ['毛刺','缩水','色差','缺料','划痕','变形','气泡','熔接痕','银丝','黑点','尺寸超差'];
@@ -2916,9 +2920,129 @@ function startAutoUpdateCheck() {
   }, 60 * 1000); // 每分钟检查一次
 }
 
+// ========== 新设备初始化流程（v1.20 修复）==========
+
+// 从云端恢复数据（返回 true 表示成功）
+async function tryRestoreFromCloud() {
+  // 显示加载中
+  const loadingEl = document.createElement('div');
+  loadingEl.id = 'initLoading';
+  loadingEl.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;';
+  loadingEl.innerHTML = '<div style="border:4px solid #f3f3f3;border-top:4px solid #1976D2;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;"></div><div style="color:white;font-size:16px;">正在从云端恢复数据...</div><style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>';
+  document.body.appendChild(loadingEl);
+  try {
+    const data = await fetchCardsFromGitHub();
+    if (data && data.content && data.content.trim()) {
+      const cards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+      localStorage.setItem('qc_demo_initialized', '1');
+      loadingEl.remove();
+      alert(`已从云端恢复 ${cards.length} 张卡片，页面将刷新`);
+      location.reload();
+      return true;
+    }
+  } catch(e) {
+    console.warn('从云端恢复失败:', e);
+  }
+  loadingEl.remove();
+  return false;
+}
+
+// 显示新设备选择对话框，返回用户选择（Promise）
+function showNewDeviceDialog() {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.id = 'newDeviceDialog';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    overlay.innerHTML = `
+      <div style="background:white;border-radius:16px;padding:40px 36px;max-width:480px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <div style="font-size:48px;margin-bottom:16px;">📋</div>
+        <h2 style="margin:0 0 12px 0;color:#333;font-size:22px;">欢迎使用质量问题卡片系统</h2>
+        <p style="margin:0 0 8px 0;color:#666;font-size:15px;">检测到这是新设备，本地没有数据。</p>
+        <p style="margin:0 0 28px 0;color:#999;font-size:13px;">请选择操作方式：</p>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <button id="btnRestore" style="padding:14px;font-size:16px;font-weight:600;border:none;border-radius:10px;cursor:pointer;background:#1976D2;color:white;">🔄 从云端恢复数据</button>
+          <button id="btnDemo" style="padding:14px;font-size:16px;font-weight:600;border:none;border-radius:10px;cursor:pointer;background:#F5F5F5;color:#333;">📊 生成演示数据</button>
+          <button id="btnBlank" style="padding:14px;font-size:16px;font-weight:600;border:none;border-radius:10px;cursor:pointer;background:white;color:#666;border:1px solid #ddd;">🚀 空白开始</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById('btnRestore').onclick = () => { overlay.remove(); resolve('restore'); };
+    document.getElementById('btnDemo').onclick = () => { overlay.remove(); resolve('demo'); };
+    document.getElementById('btnBlank').onclick = () => { overlay.remove(); resolve('blank'); };
+  });
+}
+
+// 生成演示数据（原 initDemoData 里的逻辑）
+function generateDemoData() {
+  const existing = loadCards();
+  const existingIds = new Set(existing.map(c => c.id));
+  const defects = ['毛刺','缩水','色差','缺料','划痕','变形','气泡','熔接痕','银丝','黑点','尺寸超差'];
+  const customers = ['凯崴','德威','林总','李总','德泰克','帝奥'];
+  const severities = ['★★★★★ 极高','★★★★☆ 很高','★★★☆☆ 高','★★☆☆☆ 中','★☆☆☆☆ 低'];
+  const occurrences = ['偶发','频发','连续','批次性'];
+  const codes = ['KW','DW','LZ','CL','DTK','DA'];
+  const notes = ['模温偏高，冷却时间不足','注塑压力偏低，需调整','原料批次不同，颜色有偏差','模具磨损严重','保压时间不够','射速过快导致喷射','模具温度不均匀','顶针布局不合理','排气不畅','螺杆转速过高'];
+  const problems = ['产品边缘有明显毛刺，影响装配','表面出现凹陷，壁厚不均区域严重','颜色与样板有明显偏差，整体偏黄','局部填充不完整，边角缺料','表面有细长划痕，长度3-8mm','产品翘曲变形，平面度超差','内部有气泡，敲击有空洞声','熔接痕明显，强度降低','表面有银色条纹，影响外观','有黑色杂质点，分布不均','关键尺寸超出公差范围'];
+  const causes = ['模具分型面磨损产生毛刺','保压不足导致收缩不均','色母添加比例不准或分散不良','注塑压力不足或射速过慢','模具表面有异物或损伤','冷却不均匀，内应力大','原料含水率过高或温度过高','熔体温度低，汇合处融合不良','原料降解或含有杂质','原料污染或螺杆积碳','模具尺寸磨损或注塑参数漂移'];
+  const solutions = ['修模抛光分型面，调整合模力','增加保压压力和保压时间','重新配色，检查色母质量','提高注塑压力和射速','清洁模具表面，检查损伤','优化冷却水路，降低模温','干燥原料，降低熔体温度','提高熔体温度，增加汇合角','更换原料，清洗螺杆','清理螺杆和料筒，过滤原料','修模或调整注塑参数补偿'];
+  const demos = [];
+  for (let i = 0; i < 60; i++) {
+    const cIdx = i % customers.length;
+    const dIdx = i % defects.length;
+    const month = String((i % 12) + 1).padStart(2, '0');
+    const day = String((i % 28) + 1).padStart(2, '0');
+    demos.push({ id:`QR-2026-${String(i+1).padStart(3,'0')}`, defectType:defects[dIdx], materialCode:`5510-E/ABS01-BK-P000-${codes[cIdx]}`, productDesc:`5510-防静电ABS01-黑色-不印刷-${customers[cIdx]}`, severity:severities[i%severities.length], defectRate:`${(Math.random()*5+0.1).toFixed(1)}%`, occurrence:occurrences[i%occurrences.length], updateTime:`2026-${month}-${day}`, customer:customers[cIdx], note:notes[i%notes.length], problemDesc:problems[dIdx], causeAnalysis:causes[dIdx], solution:solutions[dIdx], photos:[], createdAt:new Date().toISOString() });
+  }
+  const testCards = [
+    { id:'QR-TEST-001', defectType:'毛刺', materialCode:'TEST-001-A-B-C', productDesc:'测试-1级-红色', severity:'★★★★★ 极高', defectRate:'5.0%', occurrence:'连续', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'1级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() },
+    { id:'QR-TEST-002', defectType:'划痕', materialCode:'TEST-001-X-Y-Z', productDesc:'测试-2级-黄色', severity:'★★☆☆☆ 中', defectRate:'3.0%', occurrence:'频发', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'2级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() },
+    { id:'QR-TEST-003', defectType:'气泡', materialCode:'TEST-999-A-B-C', productDesc:'测试-3级-绿色', severity:'★☆☆☆☆ 低', defectRate:'1.0%', occurrence:'偶发', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'3级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() },
+    { id:'QR-TEST-004', defectType:'缩水', materialCode:'OTHER-001-A-B-C', productDesc:'测试-4级-红色', severity:'★★★☆☆ 高', defectRate:'4.0%', occurrence:'批次性', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'4级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() }
+  ];
+  const allDemoCards = [...demos, ...testCards];
+  const toAdd = allDemoCards.filter(c => !existingIds.has(c.id));
+  if (toAdd.length > 0) {
+    saveCards([...existing, ...toAdd]);
+  }
+  localStorage.setItem(DEMO_VERSION_KEY, Date.now().toString());
+  localStorage.setItem('qc_demo_initialized', '1');
+}
+
 // ========== 初始化 ==========
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   initDemoData();
+
+  // 【v1.20 修复】新设备检测
+  if (localStorage.getItem('qc_demo_initialized') !== '1') {
+    // 新设备：先尝试从云端恢复
+    const ok = await tryRestoreFromCloud();
+    if (ok) return; // 恢复成功，页面已重新加载
+    // 恢复失败或云端无数据：让用户选择
+    const choice = await showNewDeviceDialog();
+    if (choice === 'restore') {
+      // 用户再次选择"从云端恢复"——重新尝试（递归保护：最多一次）
+      const ok2 = await tryRestoreFromCloud();
+      if (ok2) return;
+      alert('恢复仍然失败，请检查网络或联系管理员。');
+      alert('恢复仍然失败，将刷新页面重新选择。');
+      location.reload();
+      return;
+    } else if (choice === 'demo') {
+      generateDemoData();
+      location.reload();
+      return;
+    } else {
+      // blank
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
+      localStorage.setItem('qc_demo_initialized', '1');
+      location.reload();
+      return;
+    }
+  }
+
+  // 以下为正常设备初始化流程
   // 检测URL参数，自动搜索
   checkUrlSearch();
   // 自动从 GitHub 拉取最新数据（静默更新）
