@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.18</title>
+<title>质量问题卡片系统 v1.19</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1734,19 +1734,46 @@ async function fetchCardsFromGitHub() {
     });
     if (!resp.ok) return null;
     const data = await resp.json();
-    // GitHub API 对 >1MB 的文件返回空 content，需要用 download_url 获取
-    if (!data.content || !data.content.trim()) {
-      if (data.download_url) {
+
+    // 小文件：直接返回 content
+    if (data.content && data.content.trim()) {
+      return { content: data.content, sha: data.sha };
+    }
+
+    // 大文件（>1MB）：GitHub API 返回空 content
+    // 先尝试 download_url（快，但可能受 CORS 限制）
+    if (data.download_url) {
+      try {
         const rawResp = await fetch(data.download_url);
         if (rawResp.ok) {
           const rawText = await rawResp.text();
-          // 将原始文本编码为 base64（兼容中文）
           const base64Content = btoa(unescape(encodeURIComponent(rawText)));
           return { content: base64Content, sha: data.sha };
         }
+      } catch(e) {
+        console.warn('download_url fetch failed (CORS?), trying blobs API:', e);
       }
     }
-    return { content: data.content, sha: data.sha };
+
+    // Fallback：使用 Git Blobs API（同一域名，无 CORS 问题）
+    if (data.sha) {
+      try {
+        const blobResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs/${data.sha}`, {
+          headers: headers
+        });
+        if (blobResp.ok) {
+          const blobData = await blobResp.json();
+          if (blobData.content && blobData.encoding === 'base64') {
+            return { content: blobData.content, sha: data.sha };
+          }
+        }
+      } catch(e) {
+        console.warn('blobs API failed:', e);
+      }
+    }
+
+    // 全部失败，返回空内容（让调用方处理）
+    return { content: '', sha: data.sha };
   } catch(e) {
     console.warn('fetchCardsFromGitHub error:', e);
     return null;
@@ -1791,54 +1818,64 @@ async function pushCardsToGitHub(cards, sha) {
 }
 
 // ========== 同步函数（从云端更新数据）==========
+let isSyncing = false;
 async function syncFromGitHub() {
-  // 读取公开仓库数据不需要 Token，直接拉取
+  if (isSyncing) {
+    alert('正在同步中，请稍候...');
+    return;
+  }
+  isSyncing = true;
+
   try {
     // 从 GitHub 拉取最新数据
     const data = await fetchCardsFromGitHub();
     if (!data) {
-      alert('从 GitHub 拉取失败，请检查 Token 和仓库设置');
-      // 不清除硬编码的 Token，只清除 localStorage 中的
+      alert('从 GitHub 拉取失败\n\n可能原因：\n1. 网络连接问题\n2. GitHub API 暂时不可用\n3. Token 已过期\n\n请检查网络后重试，或联系管理员更新 Token。');
       localStorage.removeItem('qc_github_token');
-      // githubToken = '';  // 注释掉，保留硬编码的 Token
       return;
     }
-    
+
     // 解析 GitHub 上的数据
     let remoteCards = [];
     try {
       if (data.content && data.content.trim()) {
         remoteCards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+      } else {
+        alert('GitHub 上的数据为空，请确认云端数据已正确保存。\n\n如果问题持续，请联系管理员。');
+        return;
       }
     } catch(e) {
-      console.warn('解析 GitHub 数据失败，视为空数据:', e);
-      remoteCards = [];
+      console.warn('解析 GitHub 数据失败:', e);
+      alert('解析云端数据失败，数据格式异常。\n\n错误：' + e.message + '\n\n请联系管理员处理。');
+      return;
     }
     const localCards = loadCards();
-    
+
     // 比较本地和远程数据
     const localStr = JSON.stringify(localCards);
     const remoteStr = JSON.stringify(remoteCards);
-    
+
     if (localStr === remoteStr) {
-      alert('已是最新数据，无需更新');
+      alert('已是最新数据，无需更新（共 ' + remoteCards.length + ' 张卡片）');
       return;
     }
-    
+
     // 更新本地数据
     localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
-    
+    localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards));
+
     // 成功后提示
-    alert('已更新 ' + remoteCards.length + ' 张卡片' + '\n\n提示：Token 已内置，可直接保存数据到云端');
-    
+    alert('更新成功！\n\n已从云端同步 ' + remoteCards.length + ' 张卡片');
+
     // 刷新页面显示（如果在首页或查找页）
     if (currentPage === 'search') {
       doSearch(); // 重新渲染搜索结果
     }
-    // 首页不需要刷新（没有数据展示）
-    
+
   } catch(e) {
-    alert('更新失败：' + e.message);
+    alert('更新失败：' + e.message + '\n\n请检查网络连接后重试。');
+  } finally {
+    isSyncing = false;
   }
 }
 
@@ -1848,20 +1885,22 @@ let autoSyncTimer = null;
 async function autoSyncFromGitHub() {
   // 如果页面不可见，则不执行
   if (document.hidden) return;
-  
-  // 读取公开仓库数据不需要 Token
-  
+
   try {
     // 从 GitHub 拉取最新数据
     const data = await fetchCardsFromGitHub();
-    if (!data)       return; // 失败静默处理
-    
+    if (!data) return; // 失败静默处理
+
+    // 如果 content 为空，说明所有 fallback 都失败了，不要覆盖本地数据
+    if (!data.content || !data.content.trim()) {
+      console.warn('autoSync: 云端数据为空，跳过同步（保护本地数据）');
+      return;
+    }
+
     // 解析 GitHub 上的数据
     let remoteCards = [];
     try {
-      if (data.content && data.content.trim()) {
-        remoteCards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-      }
+      remoteCards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
     } catch(e) {
       console.warn('autoSync: 解析 GitHub 数据失败，视为空数据:', e);
       remoteCards = [];
