@@ -6,7 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.22</title>
+<title>质量问题卡片系统 v1.23</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -2691,23 +2691,36 @@ const MATERIAL_CODE_GROUPS = [
 // 判断两个料号前缀是否属于同一分组
 function isSameMaterialGroup(prefixA, prefixB) {
   if (prefixA === prefixB) return true;
+  const lowerA = prefixA.toLowerCase();
+  const lowerB = prefixB.toLowerCase();
   for (const group of MATERIAL_CODE_GROUPS) {
-    if (group.includes(prefixA) && group.includes(prefixB)) return true;
+    const groupLower = group.map(g => g.toLowerCase());
+    if (groupLower.includes(lowerA) && groupLower.includes(lowerB)) return true;
   }
-  // PBA10-PBA99 视为同一组
-  const pbaA = /^PBA(\d{2})$/.exec(prefixA);
-  const pbaB = /^PBA(\d{2})$/.exec(prefixB);
+  // PBA10-PBA99 视为同一组（互相匹配）
+  const pbaA = /^PBA(\d{2})$/i.exec(prefixA);
+  const pbaB = /^PBA(\d{2})$/i.exec(prefixB);
   if (pbaA && pbaB) return true;
+  // 【v1.22-fix2】PBA 与 HWD/LHP 固定分组也互为同组
+  const inFixedGroup = (prefix) => {
+    const lower = prefix.toLowerCase();
+    for (const group of MATERIAL_CODE_GROUPS) {
+      if (group.some(g => g.toLowerCase() === lower)) return true;
+    }
+    return false;
+  };
+  if ((pbaA && inFixedGroup(prefixB)) || (pbaB && inFixedGroup(prefixA))) return true;
   return false;
 }
 
 // 判断字符串是否是已知料号前缀
 function isMaterialPrefix(str) {
   if (!str || str.length < 3) return false;
+  const upper = str.toUpperCase();
   for (const group of MATERIAL_CODE_GROUPS) {
-    if (group.includes(str)) return true;
+    if (group.some(g => g.toUpperCase() === upper)) return true;
   }
-  if (/^PBA\d{2}$/.test(str)) return true;
+  if (/^PBA\d{2}$/i.test(str)) return true;
   return false;
 }
 
@@ -2764,14 +2777,15 @@ function doSearch() {
       if (!materialMatch && isMaterialPrefix(kw)) {
         // 检查固定分组
         for (const group of MATERIAL_CODE_GROUPS) {
-          if (group.includes(kw)) {
+          if (group.some(g => g.toLowerCase() === kw)) {
             materialMatch = group.some(alias => materialCode.includes(alias.toLowerCase()));
             break;
           }
         }
-        // PBA系列
-        if (!materialMatch && /^PBA\d{2}$/.test(kw)) {
-          materialMatch = /^PBA\d{2}/i.test(c.materialCode || '');
+        // PBA系列 - 使用同组映射
+        if (!materialMatch && /^PBA\d{2}$/i.test(kw)) {
+          const cardPrefix = (c.materialCode || '').split('-')[0];
+          materialMatch = isSameMaterialGroup(kw, cardPrefix);
         }
       }
       return materialMatch ||
@@ -3170,72 +3184,104 @@ function generateDemoData() {
 
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', async () => {
-  // 【v1.21 修复】删除 initDemoData() 调用，避免任何测试数据生成的可能
-  // 新设备逻辑完全由下面的代码处理（第3094-3103行）
-  if (localStorage.getItem('qc_demo_initialized') !== '1') {
-    // 新设备：先尝试从云端恢复
-    const ok = await tryRestoreFromCloud();
-    if (ok) return; // 恢复成功，页面已重新加载
-    // 恢复失败：直接提示用户，不自动生成demo或空白
-    alert('数据恢复失败，云端暂无数据或网络异常。\n\n当前显示的可能不是最新数据，请检查网络后刷新页面重试。');
-    localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
-    localStorage.setItem('qc_demo_initialized', '1');
+  // 【v1.23 方案B】优先从云端加载，失败则用本地缓存
+  const loadingEl = document.createElement('div');
+  loadingEl.id = 'initLoading';
+  loadingEl.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;';
+  loadingEl.innerHTML = '<div style="border:4px solid #f3f3f3;border-top:4px solid #1976D2;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;"></div><div style="color:white;font-size:16px;">正在从云端加载最新数据...</div><style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>';
+  document.body.appendChild(loadingEl);
+
+  let cards = null;
+  let fromCloud = false;
+
+  try {
+    const remoteData = await fetchCardsFromGitHub();
+    if (remoteData) {
+      const remoteCards = JSON.parse(decodeURIComponent(escape(atob(remoteData.content))));
+      console.log('✅ 已从云端加载 ' + remoteCards.length + ' 张卡片');
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
+      localStorage.setItem('qc_demo_initialized', '1');
+      cards = remoteCards;
+      fromCloud = true;
+    } else {
+      // 云端返回空，尝试本地缓存
+      const localData = localStorage.getItem(STORAGE_KEY);
+      if (localData) {
+        cards = JSON.parse(localData);
+        console.warn('⚠️ 云端返回空，使用本地缓存（可能不是最新）');
+      } else {
+        loadingEl.remove();
+        alert('云端无数据且本地无缓存！\n\n可能原因：首次使用，云端尚无数据\n\n请先在能联网的电脑上打开系统，创建至少一张卡片。');
+        return;
+      }
+    }
+  } catch(err) {
+    // 网络错误，尝试本地缓存
+    const localData = localStorage.getItem(STORAGE_KEY);
+    if (localData) {
+      cards = JSON.parse(localData);
+      console.warn('⚠️ 云端加载出错，使用本地缓存（可能不是最新）: ' + err.message);
+    } else {
+      loadingEl.remove();
+      alert('加载云端数据失败：' + err.message + '\n\n且本地无缓存数据。\n\n请检查网络后刷新页面重试。');
+      return;
+    }
   }
 
-  // 以下为正常设备初始化流程
-  // 检测URL参数，自动搜索
+  loadingEl.remove();
+
+  // 如果用的不是云端数据，显示橙色警告条
+  if (!fromCloud) {
+    const warnBar = document.createElement('div');
+    warnBar.id = 'offlineWarnBar';
+    warnBar.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:#ff9800;color:white;text-align:center;padding:8px;z-index:99998;font-size:14px;';
+    warnBar.innerHTML = '⚠️ 当前使用本地缓存数据（可能不是最新），请检查网络后 <a href="javascript:location.reload()" style="color:#1976D2;font-weight:bold;text-decoration:underline;">刷新页面</a> 同步云端';
+    document.body.appendChild(warnBar);
+    // 推下去一点，避免遮挡顶部按钮
+    document.getElementById('topBar')?.style.setProperty('margin-top', '36px');
+  }
+
+  initApp(cards);
+});
+
+// 初始化应用（从云端或本地数据）
+
+function initApp(cards) {
   checkUrlSearch();
-  // 自动从 GitHub 拉取最新数据（静默更新）
-  autoSyncFromGitHub();
-  // 绑定表单变化事件（使用防抖）
   ['r_defectType','r_materialCode','r_productDesc','r_severity','r_defectRate','r_occurrence','r_customer','r_updateTime'].forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.addEventListener('input', debouncedUpdatePreview); el.addEventListener('change', debouncedUpdatePreview); }
   });
-  // 窗口大小变化时重新计算预览缩放
   window.addEventListener('resize', debounce(() => {
     lastPreviewScale = null;
     lastContainerWidth = null;
     fitPreviewScale();
   }, 300));
-  // 点击桌面展示区的卡片 = 收回（走playCard做飞回动画）
   document.getElementById('tableCards').addEventListener('click', function(e) {
     const wrap = e.target.closest('.table-card-wrap');
     if (wrap) {
       const cardId = wrap.dataset.tableId;
-      if (cardId) {
-        playCard(cardId);
-      }
+      if (cardId) playCard(cardId);
     }
   });
-  // 版本检测：如果有新版本，显示更新提示条（不自动刷新，避免打断用户操作）
-  const CURRENT_VERSION = '1.22.20260612.0221';
+  const CURRENT_VERSION = '1.23.20260612.1300';
   const savedVersion = localStorage.getItem('qc_app_version');
   if (savedVersion !== CURRENT_VERSION) {
     localStorage.setItem('qc_app_version', CURRENT_VERSION);
-    // 如果不是首次打开（savedVersion不为null），显示更新提示
     if (savedVersion !== null) {
       document.getElementById('updateBanner').style.display = 'block';
     }
   }
-  
-  // 监听 localStorage 变化（管理员开新版本时通知其他页面自动刷新）
   window.addEventListener('storage', function(e) {
     if (e.key === 'qc_demo_version' && e.newValue && e.newValue !== e.oldValue) {
-      // 3秒后自动刷新，加载新版HTML（含新示例卡片）
       document.getElementById('updateBanner').style.display = 'block';
       setTimeout(function() {
         location.href = location.href.split('?')[0] + '?t=' + Date.now();
       }, 3000);
     }
   });
-
-  // 启动轮询：定期检查HTML文件是否有更新（自动检测新版，无需手动改版本号）
-  // startAutoUpdateCheck(); // 已禁用：会导致正在记录卡片时页面自动刷新
-  
-  // 启动自动定时同步（每2分钟检查一次）
   autoSyncTimer = setInterval(autoSyncFromGitHub, 2 * 60 * 1000);
-});
+}
 
 
 // ========== 可编辑卡片模式JS ==========
