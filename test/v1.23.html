@@ -3184,39 +3184,68 @@ function generateDemoData() {
 
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', async () => {
-  // 【v1.23 重大变更】云端永远是对的 - 强制从GitHub加载数据
+  // 【v1.23 方案B】优先从云端加载，失败则用本地缓存
   const loadingEl = document.createElement('div');
   loadingEl.id = 'initLoading';
   loadingEl.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;';
   loadingEl.innerHTML = '<div style="border:4px solid #f3f3f3;border-top:4px solid #1976D2;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;"></div><div style="color:white;font-size:16px;">正在从云端加载最新数据...</div><style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>';
   document.body.appendChild(loadingEl);
 
+  let cards = null;
+  let fromCloud = false;
+
   try {
     const remoteData = await fetchCardsFromGitHub();
-    if (!remoteData) {
+    if (remoteData) {
+      const remoteCards = JSON.parse(decodeURIComponent(escape(atob(remoteData.content))));
+      console.log('✅ 已从云端加载 ' + remoteCards.length + ' 张卡片');
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
+      localStorage.setItem('qc_demo_initialized', '1');
+      cards = remoteCards;
+      fromCloud = true;
+    } else {
+      // 云端返回空，尝试本地缓存
+      const localData = localStorage.getItem(STORAGE_KEY);
+      if (localData) {
+        cards = JSON.parse(localData);
+        console.warn('⚠️ 云端返回空，使用本地缓存（可能不是最新）');
+      } else {
+        loadingEl.remove();
+        alert('云端无数据且本地无缓存！\n\n可能原因：首次使用，云端尚无数据\n\n请先在能联网的电脑上打开系统，创建至少一张卡片。');
+        return;
+      }
+    }
+  } catch(err) {
+    // 网络错误，尝试本地缓存
+    const localData = localStorage.getItem(STORAGE_KEY);
+    if (localData) {
+      cards = JSON.parse(localData);
+      console.warn('⚠️ 云端加载出错，使用本地缓存（可能不是最新）: ' + err.message);
+    } else {
       loadingEl.remove();
-      alert('无法从云端加载数据！\n\n可能原因：\n1. 网络连接问题\n2. GitHub Token失效\n3. 云端尚无数据\n\n请检查网络后刷新页面重试。\n\n（为确保数据一致性，在成功连接云端前无法使用系统）');
+      alert('加载云端数据失败：' + err.message + '\n\n且本地无缓存数据。\n\n请检查网络后刷新页面重试。');
       return;
     }
-
-    const remoteCards = JSON.parse(decodeURIComponent(escape(atob(remoteData.content))));
-    console.log('✅ 已从云端加载 ' + remoteCards.length + ' 张卡片');
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
-    localStorage.setItem('qc_demo_initialized', '1');
-
-    loadingEl.remove();
-    initApp(remoteCards);
-
-  } catch(err) {
-    const loadingEl2 = document.getElementById('initLoading');
-    if (loadingEl2) loadingEl2.remove();
-    alert('加载云端数据时发生错误：' + err.message + '\n\n请刷新页面重试。');
-    return;
   }
+
+  loadingEl.remove();
+
+  // 如果用的不是云端数据，显示橙色警告条
+  if (!fromCloud) {
+    const warnBar = document.createElement('div');
+    warnBar.id = 'offlineWarnBar';
+    warnBar.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:#ff9800;color:white;text-align:center;padding:8px;z-index:99998;font-size:14px;';
+    warnBar.innerHTML = '⚠️ 当前使用本地缓存数据（可能不是最新），请检查网络后 <a href="javascript:location.reload()" style="color:#1976D2;font-weight:bold;text-decoration:underline;">刷新页面</a> 同步云端';
+    document.body.appendChild(warnBar);
+    // 推下去一点，避免遮挡顶部按钮
+    document.getElementById('topBar')?.style.setProperty('margin-top', '36px');
+  }
+
+  initApp(cards);
 });
 
-// 初始化应用（从云端数据）
+// 初始化应用（从云端或本地数据）
+
 function initApp(cards) {
   checkUrlSearch();
   ['r_defectType','r_materialCode','r_productDesc','r_severity','r_defectRate','r_occurrence','r_customer','r_updateTime'].forEach(id => {
