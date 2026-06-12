@@ -2773,9 +2773,10 @@ function doSearch() {
             break;
           }
         }
-        // PBA系列
+        // PBA系列 - 使用同组映射
         if (!materialMatch && /^PBA\d{2}$/i.test(kw)) {
-          materialMatch = /^PBA\d{2}/i.test(c.materialCode || '');
+          const cardPrefix = (c.materialCode || '').split('-')[0];
+          materialMatch = isSameMaterialGroup(kw, cardPrefix);
         }
       }
       return materialMatch ||
