@@ -6,7 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.21</title>
+<title>质量问题卡片系统 v1.22</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1574,6 +1574,33 @@ body {
       </div>
     </div>
 
+    <!-- 系统逻辑说明 -->
+    <div class="manage-section" style="background:#1a2a3a;border:1px solid #2a4a6a;margin-top:20px;">
+      <div class="manage-section-header">
+        <h3>📋 系统逻辑说明</h3>
+        <span class="manage-section-hint">了解系统背后的搜索、排序和颜色逻辑</span>
+      </div>
+      <div style="padding:15px;color:#ccc;font-size:13px;line-height:1.8;">
+        <p><strong>当前版本：</strong>v1.22</p>
+
+        <p style="margin-top:10px;"><strong>1. 搜索排序规则</strong></p>
+        <p>先按搜索匹配级别排序（Level 1 最高），同级内按严重性排序（5星最前）。</p>
+        <p>Level 1 = 规格+材料+颜色相同 | Level 2 = 规格+材料 / 规格+颜色 / 规格+印刷相同 | Level 3 = 仅规格相同</p>
+
+        <p style="margin-top:10px;"><strong>2. 料号分组映射</strong></p>
+        <p>以下料号被视为同一规格（搜其中一个，同组都会出现）：</p>
+        <p style="font-family:monospace;color:#a0d0ff;">HWD70358 = HWD903 = HWD14288 = LHP9 = LHP1 = LHP4</p>
+        <p style="font-family:monospace;color:#a0d0ff;">PBA10 ~ PBA99（所有PBA系列互为同组）</p>
+        <p>示例：搜索 PBA33-E/ABS01-BK-P000-KW，HWD903-E/ABS01-BK-P000-KW 也会出现</p>
+
+        <p style="margin-top:10px;"><strong>3. 颜色逻辑（严重性）</strong></p>
+        <p><span style="color:#8b0000;">■</span> 5星（极高）深红 | <span style="color:#e74c3c;">■</span> 3-4星（高/很高）红 | <span style="color:#f1c40f;">■</span> 2星（中）黄 | <span style="color:#2ecc71;">■</span> 1星（低）绿</p>
+
+        <p style="margin-top:10px;"><strong>4. 微缩图信号条</strong></p>
+        <p>左下角4条柱子表示搜索匹配级别：4格全亮 = Level 1（最高），1格亮 = Level 4（最低）。信号从右往左灭。</p>
+      </div>
+    </div>
+
     <div class="manage-footer">
       <button class="btn-export-cards" onclick="exportCards()">📤 导出卡片</button>
       <button class="btn-import-cards" onclick="importCards()">📥 导入卡片</button>
@@ -2655,6 +2682,35 @@ function submitRecord() {
 }
 
 // ========== 查找 ==========
+// ========== 料号别名分组映射 ==========
+// 以下料号前缀被视为同一规格（搜其中一个，同组都会出现）
+const MATERIAL_CODE_GROUPS = [
+  ['HWD70358', 'HWD903', 'HWD14288', 'LHP9', 'LHP1', 'LHP4']
+];
+
+// 判断两个料号前缀是否属于同一分组
+function isSameMaterialGroup(prefixA, prefixB) {
+  if (prefixA === prefixB) return true;
+  for (const group of MATERIAL_CODE_GROUPS) {
+    if (group.includes(prefixA) && group.includes(prefixB)) return true;
+  }
+  // PBA10-PBA99 视为同一组
+  const pbaA = /^PBA(\d{2})$/.exec(prefixA);
+  const pbaB = /^PBA(\d{2})$/.exec(prefixB);
+  if (pbaA && pbaB) return true;
+  return false;
+}
+
+// 判断字符串是否是已知料号前缀
+function isMaterialPrefix(str) {
+  if (!str || str.length < 3) return false;
+  for (const group of MATERIAL_CODE_GROUPS) {
+    if (group.includes(str)) return true;
+  }
+  if (/^PBA\d{2}$/.test(str)) return true;
+  return false;
+}
+
 // ========== 料号分级匹配 ==========
 // 料号格式：规格-材料-颜色-印刷图案-商标（分隔符为 - ，/ 是普通字符）
 function parseMaterialCode(code) {
@@ -2673,7 +2729,10 @@ function parseMaterialCode(code) {
 function getMatchLevel(searchCode, cardCode) {
   const s = parseMaterialCode(searchCode);
   const c = parseMaterialCode(cardCode);
-  if (s[0] !== c[0]) return 4;
+  // 【v1.22】料号分组映射：检查是否属于同一料号分组
+  if (s[0] !== c[0] && !isSameMaterialGroup(s[0], c[0])) return 4;
+  // 如果在同一分组但名称不同，统一视为相同规格进行后续比较
+  if (s[0] !== c[0]) c[0] = s[0];
   if (s[0] === c[0] && s[1] === c[1] && s[2] === c[2]) return 1;
   if (s[0] === c[0] && s[1] === c[1]) return 2;
   if (s[0] === c[0] && s[2] === c[2]) return 2;
@@ -2698,13 +2757,29 @@ function doSearch() {
     })).filter(c => c._matchLevel <= 3);
   } else if (kw) {
     // 普通搜索模式：模糊匹配所有字段
-    cards = cards.filter(c =>
-      (c.materialCode && c.materialCode.toLowerCase().includes(kw)) ||
-      (c.productDesc && c.productDesc.toLowerCase().includes(kw)) ||
-      (c.customer && c.customer.toLowerCase().includes(kw)) ||
-      (c.id && c.id.toLowerCase().includes(kw)) ||
-      (c.defectType && c.defectType.toLowerCase().includes(kw))
-    );
+    // 【v1.22】料号分组映射：如果搜索词是料号前缀，扩展匹配同组料号
+    cards = cards.filter(c => {
+      const materialCode = (c.materialCode || '').toLowerCase();
+      let materialMatch = materialCode.includes(kw);
+      if (!materialMatch && isMaterialPrefix(kw)) {
+        // 检查固定分组
+        for (const group of MATERIAL_CODE_GROUPS) {
+          if (group.includes(kw)) {
+            materialMatch = group.some(alias => materialCode.includes(alias.toLowerCase()));
+            break;
+          }
+        }
+        // PBA系列
+        if (!materialMatch && /^PBA\d{2}$/.test(kw)) {
+          materialMatch = /^PBA\d{2}/i.test(c.materialCode || '');
+        }
+      }
+      return materialMatch ||
+        (c.productDesc && c.productDesc.toLowerCase().includes(kw)) ||
+        (c.customer && c.customer.toLowerCase().includes(kw)) ||
+        (c.id && c.id.toLowerCase().includes(kw)) ||
+        (c.defectType && c.defectType.toLowerCase().includes(kw));
+    });
   }
 
   if (fDefect) cards = cards.filter(c => c.defectType === fDefect);
@@ -3134,7 +3209,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
   // 版本检测：如果有新版本，显示更新提示条（不自动刷新，避免打断用户操作）
-  const CURRENT_VERSION = '1.21.20260612.0221';
+  const CURRENT_VERSION = '1.22.20260612.0221';
   const savedVersion = localStorage.getItem('qc_app_version');
   if (savedVersion !== CURRENT_VERSION) {
     localStorage.setItem('qc_app_version', CURRENT_VERSION);
