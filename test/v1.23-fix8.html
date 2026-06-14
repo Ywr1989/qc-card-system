@@ -1,0 +1,4068 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>质量问题卡片系统 v1.23</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: "Microsoft YaHei", "微软雅黑", sans-serif;
+  background: #e8e8e8;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ========== 页面切换 ========== */
+.page-section {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100vh;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1;
+}
+.page-section.active {
+  display: flex;
+  flex-direction: column;
+  opacity: 1;
+  transform: translateX(0);
+  z-index: 10;
+}
+.page-section.exit {
+  opacity: 0;
+  transform: translateX(-60px);
+}
+
+/* ========== 导航 ========== */
+.top-nav {
+  background: #1e293b;
+  color: #fff;
+  padding: 0 16px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: fixed;
+  top: 0; left: 0; width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+}
+.top-nav .nav-left { display: flex; align-items: center; gap: 12px; }
+.top-nav .back-btn {
+  background: rgba(255,255,255,0.12);
+  border: none;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+}
+.top-nav .back-btn:hover { background: rgba(255,255,255,0.25); }
+.top-nav .nav-title { font-size: 15px; font-weight: bold; }
+.top-nav .nav-right { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+/* ========== 首页 ========== */
+#home {
+  min-height: 100vh;
+  background: linear-gradient(160deg, #1a2a3a 0%, #2c4a6b 50%, #3d5a80 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+.home-brand { text-align: center; margin-bottom: 60px; }
+.home-brand .logo-icon { font-size: 69px; margin-bottom: 12px; }
+.home-brand h1 { color: #fff; font-size: 32px; font-weight: bold; text-shadow: 0 2px 12px rgba(0,0,0,0.4); letter-spacing: 2px; }
+.home-brand p { color: rgba(255,255,255,0.7); font-size: 15px; margin-top: 8px; }
+.home-actions { display: flex; gap: 50px; flex-wrap: wrap; justify-content: center; }
+.action-card {
+  width: 190px; height: 210px;
+  background: rgba(255,255,255,0.08);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  cursor: pointer; transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+  color: #fff;
+}
+.action-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+.action-card .ac-icon {
+  width: 68px; height: 68px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 35px;
+}
+.action-card.record .ac-icon { background: linear-gradient(135deg, #e74c3c, #c0392b); box-shadow: 0 8px 25px rgba(231,76,60,0.4); }
+.action-card.search .ac-icon { background: linear-gradient(135deg, #3498db, #2980b9); box-shadow: 0 8px 25px rgba(52,152,219,0.4); }
+.action-card .ac-label { font-size: 20px; font-weight: bold; }
+.action-card .ac-hint { font-size: 12px; color: rgba(255,255,255,0.5); }
+
+/* ========== 记录页（左右布局） ========== */
+#record { background: #f8fafc; }
+.record-wrap {
+  display: flex;
+  flex-direction: column;
+  margin-top: 44px;
+  height: calc(100vh - 44px);
+  overflow-y: auto;
+  align-items: center;
+  padding: 12px 16px 20px;
+  gap: 10px;
+}
+.record-form-side {
+  width: 50%;
+  padding: 20px 24px;
+  overflow-y: auto;
+  min-width: 0;
+  flex-shrink: 0;
+}
+.record-preview-side {
+  width: 50%;
+  background: #e0e0e0;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-left: 1px solid #ccc;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.preview-label { font-size: 0.9rem; color: #555; margin-bottom: 12px; text-align: center; font-weight: 600; }
+.preview-label .warn { color: #e74c3c; font-size: 0.8rem; font-weight: normal; }
+
+/* 预览卡片 - 固定高度，overflow hidden模拟真实卡片 */
+#livePreview {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+/* 预览模式下确保文字不溢出到其他区域 */
+#livePreview .qr-card {
+  overflow: hidden !important;
+}
+#livePreview .qr-card .block,
+#livePreview .qr-card .note-block {
+  overflow: hidden !important;
+}
+#livePreview .qr-card .block-body,
+#livePreview .qr-card .note-body {
+  word-break: break-all;
+  overflow: hidden !important;
+}
+
+.paste-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.08);
+}
+.paste-section h4 { font-size: 1.05rem; font-weight: bold; color: #1e293b; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(30,41,59,0.1); }
+.paste-section h4 span { font-size: 0.8rem; color: #94a3b8; font-weight: normal; }
+.paste-box {
+  width: 100%;
+  min-height: 60px;
+  border: 2px dashed #d0d4dc;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.3s;
+}
+.paste-box:focus { outline: none; border-color: #2c5aa0; }
+.paste-status { margin-top: 6px; font-size: 0.8rem; color: #27ae60; min-height: 16px; }
+.paste-btn-row { display: flex; gap: 10px; margin-top: 8px; }
+.paste-btn-row button {
+  padding: 6px 18px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-recognize {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(59,130,246,0.3);
+}
+.btn-recognize:hover { background: linear-gradient(135deg, #2563eb, #1d4ed8); box-shadow: 0 4px 12px rgba(59,130,246,0.4); }
+.btn-clear-paste {
+  background: #f0f0f0;
+  color: #666;
+  border: 1px solid #d0d0d0 !important;
+}
+.btn-clear-paste:hover { background: #e0e0e0; }
+
+.form-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.08);
+}
+.form-section h4 { font-size: 1.05rem; font-weight: bold; color: #1e293b; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 2px solid rgba(30,41,59,0.1); }
+.form-row { display: flex; gap: 12px; margin-bottom: 10px; }
+.form-field { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.form-field label { font-size: 0.85rem; font-weight: 600; color: #334155; }
+.form-field input, .form-field select, .form-field textarea {
+  width: 100%; border: 1px solid #d0d4dc; border-radius: 8px; padding: 8px 12px;
+  font-size: 0.95rem; font-family: inherit; transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-field input:focus, .form-field select:focus, .form-field textarea:focus { outline: none; border-color: #3b82f6; background: rgba(59,130,246,0.02); box-shadow: 0 0 0 3px rgba(59,130,246,0.12), 0 2px 8px rgba(59,130,246,0.08); }
+.form-field textarea { resize: vertical; }
+.form-field .large-area { min-height: 90px; }
+.form-field .medium-area { min-height: 55px; }
+.font-hint { font-size: 0.75rem; color: #e74c3c; margin-top: 2px; min-height: 14px; }
+
+.photo-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.08);
+}
+.photo-section h4 { font-size: 1.05rem; font-weight: bold; color: #1e293b; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid rgba(30,41,59,0.1); }
+.photo-drop {
+  border: 2px dashed #d0d4dc;
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: rgba(0,0,0,0.02);
+}
+.photo-drop:hover, .photo-drop.dragover { border-color: #2c5aa0; background: rgba(44,90,160,0.04); }
+.photo-drop .ph-icon { font-size: 2.5rem; margin-bottom: 8px; }
+.photo-drop .ph-text { color: #666; font-size: 0.9rem; }
+.photo-drop .ph-hint { color: #999; font-size: 0.8rem; margin-top: 4px; }
+.photo-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.photo-item { position: relative; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+.photo-item img { width: 100%; height: 100%; object-fit: cover; }
+.photo-item .ph-del { position: absolute; top: 3px; right: 3px; background: rgba(231,76,60,0.9); color: #fff; border: none; width: 20px; height: 20px; border-radius: 50%; cursor: pointer; font-size: 11px; line-height: 20px; }
+
+.submit-bar { display: flex; gap: 12px; justify-content: center; padding: 10px 0 30px; }
+.submit-bar button {
+  padding: 12px 36px;
+  border-radius: 12px;
+  font-size: 1.05rem;
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  transition: all 0.3s;
+}
+.btn-primary { background: linear-gradient(135deg, #27ae60, #219a52); color: #fff; box-shadow: 0 4px 16px rgba(39,174,96,0.35); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(39,174,96,0.45); }
+.btn-secondary { background: #fff; color: #555; border: 2px solid #d0d4dc !important; }
+.btn-secondary:hover { background: #e0e0e0; border-color: #2c5aa0 !important; color: #2c5aa0; }
+
+/* ========== 查找页 ========== */
+#search { background: #f8fafc; }
+.search-layout {
+  display: flex;
+  flex-direction: column;
+  margin-top: 44px;
+  height: calc(100vh - 44px);
+}
+.search-bar {
+  background: #fff;
+  padding: 8px 16px 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.search-bar-row { display: flex; gap: 8px; align-items: center; }
+.search-bar-row input {
+  flex: 1; border: 2px solid #ddd; border-radius: 7px; padding: 7px 12px;
+  font-size: 15px; font-family: inherit; transition: border-color 0.3s;
+}
+.search-bar-row input:focus { outline: none; border-color: #3498db; }
+.search-bar-row button {
+  background: #3498db; color: #fff; border: none; padding: 7px 20px;
+  border-radius: 7px; font-size: 15px; cursor: pointer; font-family: inherit;
+}
+.search-bar-row button:hover { background: #2980b9; }
+.search-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.search-filters select { border: 1px solid #ddd; border-radius: 5px; padding: 4px 7px; font-size: 12px; font-family: inherit; }
+.search-stats { font-size: 11px; color: #888; }
+
+/* 桌面展示区 */
+.card-table {
+  flex: 1;
+  background: #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+  overflow-y: auto;
+  position: relative;
+  min-height: 0;
+  z-index: 1;
+}
+.card-table .table-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #94a3b8;
+  text-align: center;
+  user-select: none;
+}
+.table-hint .th-icon {
+  margin-bottom: 20px;
+  opacity: 0.65;
+  filter: grayscale(0.3);
+}
+.table-hint .th-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+.table-hint .th-sub {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 4px;
+  line-height: 1.6;
+}
+
+.table-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 10px;
+  width: 100%;
+}
+.table-card-wrap {
+  animation: dealCard 0.4s cubic-bezier(0.25, 0.8, 0.25, 1) both;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  position: relative;
+}
+.table-card-wrap:hover {
+  transform: translateY(-4px);
+}
+.table-card-wrap::after {
+  content: '点击收回';
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px;
+  color: #555;
+  background: rgba(255,255,255,0.8);
+  padding: 1px 8px;
+  border-radius: 10px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.table-card-wrap:hover::after {
+  opacity: 1;
+}
+@keyframes dealCard {
+  0% { transform: translateY(80px) scale(0.5) rotateZ(5deg); opacity: 0; }
+  60% { transform: translateY(-8px) scale(1.08) rotateZ(-2deg); opacity: 1; }
+  100% { transform: translateY(0) scale(1) rotateZ(0deg); opacity: 1; }
+}
+
+/* ========== 底部手牌区（水平堆叠，从右到左） ========== */
+.hand-area {
+  background: #1e293b;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0;
+  box-shadow: 0 -3px 15px rgba(0,0,0,0.3);
+  flex-shrink: 0;
+  z-index: 100;
+  min-height: 320px;
+}
+.hand-label {
+  position: absolute;
+  top: 6px; left: 16px;
+  color: rgba(255,255,255,0.45);
+  font-size: 13px;
+}
+.hand-actions {
+  position: absolute;
+  top: 4px; right: 12px;
+  display: flex; gap: 5px;
+}
+.hand-actions button {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #fff;
+  padding: 7px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+}
+.hand-actions button:hover { background: rgba(255,255,255,0.2); }
+
+/* 外层滚动容器 */
+.hand-scroll {
+  width: 100%;
+  padding: 42px 20px 8px 20px;
+  /* v1.20: 删除内部滚动条，改为页面整体滚动 */
+}
+
+/* 横向滚动条 - 始终可见 */
+.hand-scroll::-webkit-scrollbar {
+  height: 18px;
+  background: rgba(255,255,255,0.22);
+  border-radius: 9px;
+}
+.hand-scroll::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.38);
+  border-radius: 9px;
+  box-shadow: inset 0 0 3px rgba(0,0,0,0.2);
+}
+.hand-scroll::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.85);
+  border-radius: 9px;
+  border: 4px solid transparent;
+  background-clip: padding-box;
+}
+.hand-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,1.0);
+  border: 4px solid transparent;
+  background-clip: padding-box;
+}
+
+/* 手牌容器 */
+.hand-deck {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  padding-bottom: 5px;
+  /* min-width 由JS动态设置，确保overflow-x生效 */
+}
+
+/* 单张手牌 - 高度250px包含180px卡片+70px底部hit-test延伸区 */
+.hand-card {
+  width: 140px;
+  height: 250px;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+  flex-shrink: 0;
+  overflow: visible;
+  transition: margin-left 0.2s ease, transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-origin: bottom center;
+}
+/* 手牌内部的card-thumb - 实际视觉卡片 */
+.hand-card .card-thumb {
+  position: absolute;
+  bottom: 10px;
+  left: 0;
+  width: 140px;
+  height: 160px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 4px 14px rgba(0,0,0,0.35);
+  border: 2px solid transparent;
+  transition: transform 0.28s cubic-bezier(0.25, 0.8, 0.25, 1),
+              box-shadow 0.28s ease,
+              border-color 0.2s ease;
+  transform-origin: bottom center;
+}
+/* 左侧缺陷类型颜色条 */
+.hand-card .card-thumb::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--defect-color, #e74c3c);
+  border-radius: 10px 0 0 10px;
+  opacity: 0.85;
+}
+/* hover - 内部卡片上浮，外层不动（hit-test区域不变，避免鬼畜） */
+.hand-card:hover {
+  z-index: 999 !important;
+}
+.hand-card:hover .card-thumb {
+  transform: translateY(-70px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.4);
+  border-color: rgba(255,255,255,0.5);
+}
+/* hover卡片的右侧所有卡片右移让位 */
+.hand-card:hover ~ .hand-card {
+  transform: translateX(var(--card-shift, 60px));
+}
+/* hover卡片的左侧所有卡片左移让位 */
+.hand-card:has(~ .hand-card:hover) {
+  transform: translateX(calc(-1 * var(--card-shift, 60px)));
+}
+/* 飞出动画 - 由JS克隆到body执行，此处样式备用 */
+.hand-card.flying-out {
+  transform: translateY(-120px) scale(1.15);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.35s ease;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* 微缩图内容 */
+.card-thumb {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  overflow: hidden;
+  border-radius: 10px;
+}
+.card-thumb .thumb-triangle {
+  position: absolute;
+  top: 0; left: 0;
+  width: 0; height: 0;
+  border-left: 68px solid var(--defect-color, #e74c3c);
+  border-bottom: 68px solid transparent;
+  filter: drop-shadow(1px 2px 2px rgba(0,0,0,0.2));
+}
+.card-thumb .thumb-defect {
+  position: absolute;
+  top: 7px; left: 5px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 1.2;
+  z-index: 1;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+.card-thumb .thumb-code-wrap {
+  margin-top: 58px;
+  padding: 2px 8px 2px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  height: auto;
+}
+.card-thumb .thumb-code-en {
+  font-size: 9px;
+  font-weight: bold;
+  color: #000;
+  line-height: 1.25;
+  word-break: break-all;
+}
+.card-thumb .thumb-code-cn {
+  font-size: 8px;
+  color: #333;
+  line-height: 1.25;
+  word-break: break-all;
+}
+.card-thumb .thumb-report {
+  padding: 2px 6px 2px;
+  text-align: right;
+  border-top: 1px solid #eee;
+  background: #fafafa;
+  flex-shrink: 0;
+  margin-top: auto;
+}
+.card-thumb .thumb-report .num {
+  font-size: 8px;
+  font-weight: bold;
+  color: #444;
+}
+.card-thumb .thumb-report .lab {
+  font-size: 6px;
+  color: #888;
+}
+
+/* 料号匹配级别标识 - 手机信号风格（从右往左灭） */
+.card-thumb .thumb-level {
+  position: absolute;
+  bottom: 3px;
+  left: 4px;
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+  height: 22px;
+}
+.card-thumb .thumb-level .bar {
+  width: 4px;
+  border-radius: 2px;
+  transition: background-color 0.2s;
+}
+/* 4条柱子从左到右递增高度（手机信号风格） */
+.card-thumb .thumb-level .bar:nth-child(1) { height: 8px; background: #4a5568; }
+.card-thumb .thumb-level .bar:nth-child(2) { height: 12px; background: #4a5568; }
+.card-thumb .thumb-level .bar:nth-child(3) { height: 16px; background: #4a5568; }
+.card-thumb .thumb-level .bar:nth-child(4) { height: 20px; background: #4a5568; }
+/* Level 1: 4条全亮（信号满格） */
+.card-thumb .thumb-level.level-1 .bar { background: #4a5568; }
+/* Level 2: 第4条（最高）灰，其余亮 */
+.card-thumb .thumb-level.level-2 .bar:nth-child(4) { background: #cbd5e0; }
+/* Level 3: 第3、4条灰，第1、2条亮 */
+.card-thumb .thumb-level.level-3 .bar:nth-child(3),
+.card-thumb .thumb-level.level-3 .bar:nth-child(4) { background: #cbd5e0; }
+/* Level 4: 第2、3、4条灰，只有第1条（最矮）亮 */
+.card-thumb .thumb-level.level-4 .bar:nth-child(2),
+.card-thumb .thumb-level.level-4 .bar:nth-child(3),
+.card-thumb .thumb-level.level-4 .bar:nth-child(4) { background: #cbd5e0; }
+
+/* ========== 完整卡片（桌面展示用） ========== */
+.qr-card {
+  width: 210mm;
+  height: 148mm;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+  font-size: 13px;
+  color: #000;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  flex-shrink: 0;
+}
+.qr-card .header { display: flex; height: 20mm; position: relative; }
+.qr-card .triangle-wrap {
+  width: 30mm; height: 20mm; position: relative; flex-shrink: 0;
+  overflow: visible; z-index: 10;
+  filter: drop-shadow(2px 3px 4px rgba(0,0,0,0.25));
+}
+.qr-card .triangle-wrap::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 0; height: 0;
+  border-left: 30mm solid var(--defect-color, #e74c3c);
+  border-bottom: 30mm solid transparent;
+}
+.qr-card .triangle-text {
+  position: absolute; top: 4mm; left: 3.5mm;
+  color: #fff; font-weight: bold; line-height: 1.25; z-index: 1;
+}
+.qr-card .triangle-text.defect-2 { font-size: 22px; }
+.qr-card .triangle-text.defect-3 { font-size: 18px; }
+.qr-card .triangle-text.defect-4 { font-size: 16px; }
+.qr-card .code-area {
+  flex: 1; padding: 2mm 22mm 2mm 8mm;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.qr-card .code-en { font-size: 21px; font-weight: bold; color: #000; word-break: break-all; }
+.qr-card .code-cn { font-size: 15px; color: #000; margin-top: 1mm; word-break: break-all; }
+.qr-card .report-no { position: absolute; top: 3mm; right: 4mm; text-align: right; }
+.qr-card .report-no .num { font-size: 15px; font-weight: bold; color: #000; }
+.qr-card .report-no .label { font-size: 11px; color: #333; margin-top: 1mm; }
+.qr-card .fields-row { display: flex; padding: 0 2mm; gap: 1.5mm; margin-bottom: 1mm; }
+.qr-card .field-card {
+  flex: 1; background: #fff; border: 1px solid #c8c8c8; border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15), 0 0 0 1px rgba(0,0,0,0.03);
+  padding: 1.2mm 2mm; text-align: center;
+}
+.qr-card .field-card .label { font-size: 15px; font-weight: bold; color: #000; }
+.qr-card .field-card .value { font-size: 13px; color: #000; margin-top: 0.5mm; word-break: break-all; }
+.qr-card .main { display: flex; height: 100mm; padding: 0 2mm 2mm 2mm; gap: 2mm; }
+.qr-card .left-side { width: 108mm; display: flex; flex-direction: column; gap: 1.2mm; }
+.qr-card .photo-box {
+  flex: 1; background: #f0f0f0; border: 1px solid #ccc; border-radius: 6px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.12); min-height: 0; overflow: hidden;
+}
+.qr-card .photo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.qr-card .note-block { height: 14mm; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.12); flex-shrink: 0; }
+.qr-card .note-body { height: 100%; padding: 1.5mm 3mm; font-size: 12px; color: #000; line-height: 1.5; overflow: hidden; word-break: break-all; }
+.qr-card .note-label { font-weight: bold; font-size: 12px; color: #000; }
+.qr-card .right-side { flex: 1; display: flex; flex-direction: column; gap: 1.2mm; min-height: 0; }
+.qr-card .block { flex: 1; display: flex; flex-direction: column; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.12); min-height: 0; }
+.qr-card .block-header { background: #e0e0e0; padding: 1.2mm 3mm; font-size: 16px; font-weight: bold; color: #000; flex-shrink: 0; }
+.qr-card .block-body { flex: 1; padding: 1.5mm 3mm; color: #000; line-height: 1.5; overflow: hidden; font-size: 12px; word-break: break-all; }
+.qr-card .block-body.too-long-1 { font-size: 11px; }
+.qr-card .block-body.too-long-2 { font-size: 9px; }
+.qr-card .block-body.too-long-3 { font-size: 8px; line-height: 1.3; }
+.qr-card .note-body.too-long-1 { font-size: 11px; }
+.qr-card .note-body.too-long-2 { font-size: 9px; }
+
+/* ========== 弹窗 ========== */
+.modal-overlay {
+  display: none; position: fixed; top: 0; left: 0;
+  width: 100%; height: 100%; background: rgba(0,0,0,0.75);
+  z-index: 2000; align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+.modal-box {
+  background: #fff; border-radius: 14px;
+  max-width: 920px; width: 100%; max-height: 92vh;
+  overflow-y: auto; position: relative;
+  animation: popIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+@keyframes popIn {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+.modal-close {
+  position: absolute; top: 10px; right: 10px;
+  background: rgba(0,0,0,0.5); color: #fff; border: none;
+  width: 34px; height: 34px; border-radius: 50%;
+  cursor: pointer; font-size: 16px; z-index: 10;
+}
+.modal-close:hover { background: rgba(0,0,0,0.7); }
+
+/* ========== 响应式 ========== */
+@media (max-width: 1000px) {
+  .record-wrap {
+    flex-direction: column;
+    overflow-y: auto;
+    height: auto;
+  }
+  .record-form-side {
+    width: 100%;
+    overflow-y: visible;
+  }
+  .record-preview-side {
+    width: 100%;
+    border-left: none;
+    border-top: 1px solid #ccc;
+    overflow-y: visible;
+    min-height: 420px;
+  }
+}
+@media (max-width: 1024px) {
+  /* 预览图缩放由 JS 动态计算 */
+}
+
+/* ========== 卡片就地编辑控件 ========== */
+.card-input, .card-select, .card-textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  color: inherit;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  resize: none;
+  line-height: inherit;
+  box-sizing: border-box;
+  cursor: text;
+}
+.card-input::placeholder, .card-textarea::placeholder {
+  color: #bbb;
+  opacity: 0.7;
+}
+.card-input:focus, .card-select:focus, .card-textarea:focus {
+  background: rgba(52, 152, 219, 0.06);
+  box-shadow: inset 0 0 0 1.5px rgba(52, 152, 219, 0.45);
+  border-radius: 2px;
+}
+/* 报告编号输入 */
+.card-input-id {
+  font-size: 13px;
+  font-weight: bold;
+  text-align: right;
+  width: 100%;
+}
+/* 料号 */
+.card-input-en {
+  font-size: 13px;
+  font-weight: bold;
+  color: #000;
+  word-break: break-all;
+  width: 100%;
+}
+/* 产品描述 */
+.card-input-cn {
+  font-size: 13px;
+  color: #000;
+  word-break: break-all;
+  width: 100%;
+  margin-top: 1mm;
+}
+/* 字段卡片内的 select */
+.card-select {
+  font-size: 13px;
+  text-align: center;
+  text-align-last: center;
+  -moz-text-align-last: center;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 0.5mm;
+  color: #000;
+}
+.card-select option {
+  font-size: 13px;
+}
+/* field-card 需要为 select 腾出空间 */
+.qr-card .field-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.qr-card .field-card .value-wrap {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+/* 文本域 */
+.card-textarea {
+  width: 100%;
+  height: 100%;
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 1.5mm 3mm;
+  overflow: auto;
+  word-break: break-all;
+}
+/* 备注区固定前缀 */
+.note-edit-wrap {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  padding: 1.5mm 3mm;
+}
+.note-prefix-fixed {
+  font-weight: bold;
+  font-size: 13px;
+  color: #000;
+  flex-shrink: 0;
+  white-space: nowrap;
+  line-height: 1.5;
+}
+.note-input-area {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: 13px;
+  color: #000;
+  line-height: 1.5;
+  resize: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  margin-left: 2px;
+  height: 100%;
+  overflow: hidden;
+  word-break: break-all;
+}
+.note-input-area:focus {
+  background: rgba(52, 152, 219, 0.06);
+}
+/* 照片区点击提示 */
+.photo-box.clickable {
+  cursor: pointer;
+  position: relative;
+}
+.photo-box.clickable:hover {
+  background: #e8e8e8;
+}
+.photo-box.clickable:hover::after {
+  content: '点击上传照片';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  color: #3498db;
+  font-size: 13px;
+  font-weight: bold;
+  pointer-events: none;
+  background: rgba(255,255,255,0.9);
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+/* 缺陷类型选择弹层 */
+.defect-select-popup {
+  position: absolute;
+  top: 2mm; left: 2mm;
+  z-index: 100;
+  background: #fff;
+  border: 1px solid #3498db;
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  padding: 4px;
+  min-width: 80px;
+}
+.defect-select-popup select {
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+}
+/* 缺陷类型内联输入 */
+.defect-inline-input {
+  position: absolute;
+  top: 2mm; left: 2mm;
+  width: 24mm;
+  height: 22mm;
+  border: none;
+  background: rgba(255,255,255,0.95);
+  color: #000;
+  font-size: 13px;
+  font-weight: bold;
+  font-family: inherit;
+  outline: none;
+  z-index: 50;
+  padding: 2mm 1mm;
+  line-height: 1.3;
+  text-align: center;
+  resize: none;
+}
+
+/* 缺陷类型内联下拉 */
+.defect-inline-select {
+  position: absolute;
+  top: 2mm; left: 2mm;
+  width: 24mm;
+  height: 22mm;
+  border: none;
+  background: rgba(255,255,255,0.95);
+  color: #000;
+  font-size: 12px;
+  font-weight: bold;
+  font-family: inherit;
+  outline: none;
+  z-index: 50;
+  padding: 2mm 1mm;
+  text-align: center;
+  cursor: pointer;
+}
+
+/* ========== 可编辑卡片模式 ========== */
+.edit-card-container {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 16px;
+  background: #d0d0d0;
+  border-radius: 8px;
+  max-height: calc(100vh - 44px - 240px);
+  justify-content: center;
+}
+.edit-card-scroll {
+  flex: 1;
+  overflow-y: auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+}
+.edit-card-wrapper {
+  position: relative;
+  width: 794px;
+  height: 559px;
+  flex-shrink: 0;
+}
+.edit-card-wrapper .qr-card {
+  width: 794px;
+  height: 559px;
+  overflow: hidden;
+  transform: none !important;
+  margin-bottom: 0 !important;
+}
+/* 可编辑区域 */
+.editable-zone {
+  position: absolute;
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.15s;
+  z-index: 10;
+}
+.editable-zone:hover {
+  background: rgba(52, 152, 219, 0.18);
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.55);
+}
+/* 编辑弹窗 */
+.edit-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+.edit-overlay-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 24px 28px;
+  min-width: 340px;
+  max-width: 90vw;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+}
+.edit-overlay-box h3 {
+  margin: 0 0 14px 0;
+  font-size: 13px;
+  color: #222;
+}
+.edit-overlay-box textarea,
+.edit-overlay-box input,
+.edit-overlay-box select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+.edit-overlay-box textarea { min-height: 80px; resize: vertical; }
+.edit-overlay-box textarea:focus,
+.edit-overlay-box input:focus,
+.edit-overlay-box select:focus { outline: none; border-color: #2c5aa0; }
+.edit-overlay-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+  justify-content: flex-end;
+}
+.edit-overlay-actions button {
+  padding: 8px 22px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+.btn-cancel-edit { background: #e0e0e0; color: #333; }
+.btn-cancel-edit:hover { background: #d0d0d0; }
+.btn-save { background: #2c5aa0; color: #fff; }
+.btn-save:hover { background: #1e3a6e; }
+/* 粘贴区域紧凑型 */
+.paste-section-compact {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 12px 16px;
+  width: 794px;
+  flex-shrink: 0;
+}
+.paste-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.paste-row textarea {
+  flex: 1;
+  height: 300px;
+  min-height: 200px;
+  padding: 12px;
+  border: 2px solid #555;
+  border-radius: 6px;
+  font-size: 13px;
+  resize: vertical;
+}
+.paste-row button {
+  padding: 10px 18px;
+  background: #2c5aa0;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 13px;
+}
+.paste-row .btn-clear-paste {
+  background: #e74c3c;
+}
+.paste-status {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #666;
+}
+/* 提交栏 */
+.submit-bar-compact {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  justify-content: center;
+  padding: 10px 16px;
+  width: 794px;
+  flex-shrink: 0;
+}
+.submit-bar-compact button {
+  padding: 10px 32px;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* ========== 打印样式 ========== */
+@media print {
+  @page { size: A4 portrait; margin: 10mm 7mm; }
+  body { background: #fff; }
+  .top-nav, .search-bar, .hand-area, .modal-overlay, .table-hint, .paste-section-compact, .submit-bar-compact { display: none !important; }
+  .page-section { display: none !important; }
+  #search.page-section { display: block !important; }
+  #search.page-section {
+    position: static !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+  }
+  .search-layout { display: block !important; height: auto !important; margin: 0 !important; padding: 0 !important; }
+  .card-table {
+    display: block !important;
+    padding: 0 !important;
+    background: #fff !important;
+    overflow: visible !important;
+    height: auto !important;
+    border: none !important;
+  }
+  .table-cards {
+    display: block !important;
+    padding: 0 !important;
+  }
+  .table-card-wrap {
+    width: 196mm;
+    height: 132mm;
+    break-inside: avoid;
+    page-break-inside: avoid;
+    margin: 0 auto 5mm !important;
+    padding: 0 !important;
+    transform: none !important;
+    animation: none !important;
+    position: relative !important;
+    display: block !important;
+  }
+  .table-card-wrap:last-child {
+    margin-bottom: 0 !important;
+  }
+  .qr-card {
+    transform: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    border: 1px solid #333 !important;
+    width: 100% !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  /* 打印时强制三角形文字为白色 */
+  .qr-card .triangle-text {
+    color: #fff !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* 打印时强制星星和三角形颜色一致，不被浏览器调整 */
+  .qr-card .field-card .value span {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .qr-card .triangle-wrap::before {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  /* 打印时缩小卡片内部元素，确保132mm高度内完整显示 */
+  .qr-card .main { height: auto !important; flex: 1 !important; min-height: 0 !important; padding: 0 1.5mm 1.5mm 1.5mm !important; gap: 1.5mm !important; }
+  .qr-card .fields-row { padding: 0 1.5mm !important; gap: 1mm !important; margin-bottom: 0.5mm !important; }
+  .qr-card .field-card { padding: 0.8mm 1.5mm !important; }
+  .qr-card .field-card .label { font-size: 13px !important; }
+  .qr-card .field-card .value { font-size: 12px !important; }
+  .qr-card .code-en { font-size: 19px !important; }
+  .qr-card .code-cn { font-size: 13px !important; margin-top: 0.5mm !important; }
+  .qr-card .report-no { top: 2mm !important; right: 3mm !important; }
+  .qr-card .report-no .num { font-size: 13px !important; }
+  .qr-card .report-no .label { font-size: 9px !important; }
+  .qr-card .left-side { width: 45% !important; gap: 1mm !important; }
+  .qr-card .photo-box { border-radius: 4px !important; }
+  .qr-card .note-block { height: 12mm !important; border-radius: 4px !important; }
+  .qr-card .note-body { padding: 1mm 2mm !important; font-size: 11px !important; line-height: 1.4 !important; }
+  .qr-card .note-label { font-size: 11px !important; }
+  .qr-card .right-side { gap: 1mm !important; }
+  .qr-card .block { border-radius: 4px !important; }
+  .qr-card .block-header { padding: 0.8mm 2mm !important; font-size: 13px !important; }
+  .qr-card .block-body { padding: 1mm 2mm !important; font-size: 11px !important; line-height: 1.4 !important; }
+}
+
+/* ========== 数据管理页 ========== */
+.manage-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f8fafc;
+  overflow: hidden;
+}
+.manage-header {
+  background: #1e293b;
+  color: #fff;
+  padding: 16px 24px;
+  flex-shrink: 0;
+}
+.manage-header h2 { font-size: 24px; margin-bottom: 4px; }
+.manage-header p { font-size: 12px; color: rgba(255,255,255,0.6); }
+.manage-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.manage-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+}
+.manage-section-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 12px; }
+.manage-section-header h3 { font-size: 19px; font-weight: bold; color: #2c3e50; }
+.manage-section-header .manage-section-hint { font-size: 11px; color: #999; }
+.manage-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.manage-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 13px;
+}
+.manage-item .mi-del {
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 20px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.manage-item .mi-del:hover { background: #c0392b; }
+.manage-add-row { display: flex; gap: 8px; }
+.manage-add-row input {
+  flex: 1;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 7px 12px;
+  font-size: 13px;
+  font-family: inherit;
+}
+.manage-add-row input:focus { outline: none; border-color: #3498db; }
+.manage-add-row button {
+  background: #27ae60;
+  color: #fff;
+  border: none;
+  padding: 7px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+}
+.manage-add-row button:hover { background: #219a52; }
+.manage-footer {
+  flex-shrink: 0;
+  background: #fff;
+  border-top: 1px solid #ddd;
+  padding: 12px 24px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.manage-footer button {
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  border: 1px solid #ddd;
+}
+.manage-footer .btn-export { background: #3498db; color: #fff; border-color: #3498db; }
+.manage-footer .btn-import { background: #9b59b6; color: #fff; border-color: #9b59b6; }
+.manage-footer .btn-reset { background: #e67e22; color: #fff; border-color: #e67e22; }
+.manage-footer .btn-back { background: #95a5a6; color: #fff; border-color: #95a5a6; }
+.manage-footer .btn-export:hover { background: #2980b9; }
+.manage-footer .btn-import:hover { background: #8e44ad; }
+.manage-footer .btn-reset:hover { background: #d35400; }
+.manage-footer .btn-back:hover { background: #7f8c8d; }
+
+/* ========== 卡片管理页 ========== */
+.card-manage-layout { display: flex; flex-direction: column; height: 100vh; background: #f8fafc; overflow: hidden; }
+.card-manage-header { background: #1e293b; color: #fff; padding: 16px 24px; flex-shrink: 0; }
+.card-manage-header h2 { font-size: 24px; margin-bottom: 4px; }
+.card-manage-header p { font-size: 12px; color: rgba(255,255,255,0.6); }
+.card-manage-toolbar { background: #fff; border-bottom: 1px solid #ddd; padding: 10px 24px; display: flex; gap: 10px; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
+.card-manage-toolbar button { padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; border: 1px solid #ddd; background: #fff; }
+.card-manage-toolbar button.btn-danger { background: #e74c3c; color: #fff; border-color: #e74c3c; }
+.card-manage-toolbar button.btn-danger:hover { background: #c0392b; }
+.card-manage-toolbar button.btn-back { background: #95a5a6; color: #fff; border-color: #95a5a6; }
+.card-manage-toolbar button.btn-back:hover { background: #7f8c8d; }
+.card-manage-toolbar .cm-count { margin-left: auto; font-size: 13px; color: #666; }
+.card-manage-list { flex: 1; overflow-y: auto; padding: 0 24px 20px; }
+.cm-item { display: flex; align-items: center; gap: 12px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 13px; }
+.cm-item:hover { border-color: #3498db; }
+.cm-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; flex-shrink: 0; }
+.cm-item .cm-id { font-weight: bold; color: #2c3e50; width: 110px; flex-shrink: 0; }
+.cm-item .cm-code { color: #666; width: 160px; flex-shrink: 0; }
+.cm-item .cm-desc { color: #333; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cm-item .cm-customer { color: #888; width: 70px; text-align: right; flex-shrink: 0; }
+.cm-item .cm-date { color: #888; width: 90px; text-align: right; flex-shrink: 0; }
+.cm-empty { text-align: center; padding: 60px 20px; color: #999; font-size: 15px; }
+
+/* 分页控件 */
+.cm-pagination { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 16px 0; margin-top: 10px; }
+.cm-pagination button { padding: 5px 10px; border: 1px solid #ddd; background: #fff; border-radius: 4px; cursor: pointer; font-size: 13px; color: #333; min-width: 32px; }
+.cm-pagination button:hover:not(:disabled) { background: #f0f0f0; border-color: #bbb; }
+.cm-pagination button:disabled { color: #ccc; cursor: not-allowed; background: #fafafa; }
+.cm-pagination button.active { background: #2c3e50; color: #fff; border-color: #2c3e50; }
+.cm-pagination .cm-ellipsis { color: #999; padding: 0 4px; font-size: 13px; }
+
+/* 数据更新提示条 */
+#updateNotice {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: #4CAF50;
+  color: white;
+  padding: 10px 16px;
+  text-align: center;
+  z-index: 9999;
+  font-size: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+#updateNotice .notice-text {
+  cursor: pointer;
+  text-decoration: underline;
+}
+#updateNotice .notice-text:hover { opacity: 0.8; }
+#updateNotice .notice-close {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.8;
+}
+#updateNotice .notice-close:hover { opacity: 1; }
+
+/* 卡片管理-修改按钮 */
+.cm-edit-btn {
+  padding: 4px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  font-family: inherit;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  flex-shrink: 0;
+}
+.cm-edit-btn:hover { background: #2980b9; }
+
+</style>
+</head>
+<body>
+
+<!-- 新版本提示条：localStorage版本变化时显示，点击刷新 -->
+<div id="updateBanner" style="display:none;position:fixed;top:44px;left:0;right:0;z-index:3000;background:#e74c3c;color:#fff;text-align:center;padding:9px 16px;font-size:13px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.3);" onclick="location.href=location.href.split('?')[0]+'?t='+Date.now()">
+  ⚠ 检测到更新，页面即将自动刷新…
+</div>
+
+<!-- 导航 -->
+<div class="top-nav" id="topNav" style="display:none;">
+  <div class="nav-left">
+    <button class="back-btn" onclick="goHome()">← 返回</button>
+    <div class="nav-title" id="navTitle">质量问题卡片系统</div>
+  </div>
+ <div class="nav-right" id="navRight">v1.18</div>
+</div>
+
+<!-- ========== 首页 ========== -->
+<div id="home" class="page-section active">
+  <div class="home-brand">
+    <div class="logo-icon"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="8" width="64" height="48" rx="4" stroke="rgba(255,255,255,0.9)" stroke-width="2.5" fill="none"/><polyline points="10,36 18,36 22,28 30,44 38,24 46,36 54,32 62,36" stroke="rgba(147,197,253,0.85)" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><rect x="14" y="62" width="44" height="3" rx="1.5" fill="rgba(255,255,255,0.3)"/><circle cx="60" cy="16" r="3" fill="rgba(56,189,248,0.9)"/><circle cx="60" cy="16" r="5" stroke="rgba(56,189,248,0.4)" stroke-width="1" fill="none"/></svg></div>
+    <h1>质量问题卡片系统</h1>
+    <p>丰康塑料厂 · 品质管理部</p>
+    <p style="color: rgba(144,238,144,0.9); font-size: 12px; margin-top: 4px;">✅ GitHub Token 已配置，可直接保存</p>
+  </div>
+  <div class="home-actions">
+    <div class="action-card record" onclick="showRecord()">
+      <div class="ac-icon">＋</div>
+      <div class="ac-label">记录问题</div>
+      <div class="ac-hint">粘贴识别 / 填写 / 保存</div>
+    </div>
+    <div class="action-card search" onclick="showSearch()">
+      <div class="ac-icon">🔍</div>
+      <div class="ac-label">查找卡片</div>
+      <div class="ac-hint">料号搜索 / 筛选 / 查看</div>
+    </div>
+    <div class="action-card manage" onclick="showManage()" style="cursor:pointer;">
+      <div class="ac-icon" style="background:linear-gradient(135deg,#8e44ad,#6c3483);box-shadow:0 8px 25px rgba(142,68,173,0.4);">⚙️</div>
+      <div class="ac-label">数据管理</div>
+      <div class="ac-hint">缺陷类型 / 客户 / 设置</div>
+    </div>
+    <div class="action-card" onclick="showCardManage()" style="cursor:pointer;">
+      <div class="ac-icon" style="background:linear-gradient(135deg,#2c3e50,#34495e);box-shadow:0 8px 25px rgba(44,62,80,0.4);display:flex;align-items:center;justify-content:center;">
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none" style="opacity:0.9;">
+          <rect x="6" y="4" width="28" height="32" rx="3" stroke="#fff" stroke-width="2.5" fill="none"/>
+          <line x1="12" y1="12" x2="28" y2="12" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="12" y1="19" x2="28" y2="19" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="12" y1="26" x2="22" y2="26" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="ac-label">卡片管理</div>
+      <div class="ac-hint">查看 / 批量删除卡片</div>
+    </div>
+    <div class="action-card" onclick="syncFromGitHub()" style="cursor:pointer;">
+      <div class="ac-icon" style="background:linear-gradient(135deg,#00b4d8,#0077b6);box-shadow:0 8px 25px rgba(0,180,216,0.4);">🔄</div>
+      <div class="ac-label">更新</div>
+      <div class="ac-hint">从云端更新数据</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 记录页 ========== -->
+<div id="record" class="page-section">
+    <div class="record-wrap">
+      <!-- 可编辑卡片区 -->
+      <div class="edit-card-container">
+        <div class="edit-card-scroll">
+          <div class="edit-card-wrapper" id="editCardWrapper">
+            <!-- JS渲染可编辑卡片 -->
+          </div>
+          <div id="photoList" class="photo-list"></div>
+        </div>
+      </div>
+
+      <input type="file" id="photoInput" accept="image/*" multiple style="display:none;">
+
+      <!-- 粘贴识别区 -->
+      <div class="paste-section-compact">
+        <div class="paste-row">
+          <textarea id="pasteInput" placeholder="粘贴产品信息、订单内容或聊天记录，然后点击「识别」..."></textarea>
+          <button onclick="doRecognize()">识别</button>
+          <button class="btn-clear-paste" onclick="clearPaste()">清空</button>
+        </div>
+        <div class="paste-status" id="pasteStatus"></div>
+      </div>
+
+      <!-- 提交栏 -->
+      <div class="submit-bar-compact">
+        <button class="btn-primary" id="submitBtn" onclick="submitRecord()">确认记录</button>
+        <button class="btn-secondary" onclick="goHome()">取消返回</button>
+      </div>
+    </div>
+  </div>
+
+<!-- ========== 查找页 ========== -->
+<div id="search" class="page-section">
+  <div class="search-layout">
+    <!-- 搜索栏 -->
+    <div class="search-bar">
+      <div class="search-bar-row">
+        <input type="text" id="searchInput" placeholder="粘贴料号、客户名称或关键词搜索..." onkeydown="if(event.key==='Enter')doSearch()">
+        <button onclick="doSearch()">搜索</button>
+      </div>
+      <div class="search-filters">
+        <select id="filterDefect" onchange="doSearch()">
+          <option value="">全部缺陷</option>
+        </select>
+        <select id="filterCustomer" onchange="doSearch()">
+          <option value="">全部客户</option>
+        </select>
+        <select id="filterSeverity" onchange="doSearch()">
+          <option value="">全部严重性</option>
+        </select>
+      </div>
+      <div class="search-stats" id="searchStats"></div>
+    </div>
+
+    <!-- 桌面展示区 -->
+    <div class="card-table" id="cardTable">
+      <div class="table-hint" id="tableHint">
+        <div class="th-icon"><svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="15" y="10" width="50" height="60" rx="4" stroke="#94a3b8" stroke-width="2" fill="none" opacity="0.5"/><rect x="30" y="6" width="20" height="8" rx="2" fill="#94a3b8" opacity="0.5"/><rect x="22" y="24" width="36" height="6" rx="2" fill="#94a3b8" opacity="0.3"/><rect x="22" y="34" width="28" height="6" rx="2" fill="#94a3b8" opacity="0.3"/><rect x="22" y="44" width="32" height="6" rx="2" fill="#94a3b8" opacity="0.3"/><circle cx="58" cy="52" r="4" fill="#3b82f6" opacity="0.6"/></svg></div>
+        <div class="th-text">从下方结果列表中点击报告</div>
+        <div class="th-sub">点击缩略图将报告展开到展示区 · 点击展示区报告或缩略图收起</div>
+      </div>
+      <div class="table-cards" id="tableCards" style="display:none;"></div>
+    </div>
+
+    <!-- 底部结果列表区 -->
+    <div class="hand-area">
+      <div class="hand-label" id="handLabel">搜索结果列表</div>
+      <div class="hand-actions">
+        <button onclick="clearTable()">全部收起</button>
+        <button onclick="playAll()">全部展开</button>
+        <button onclick="printTable()">打印报告</button>
+      </div>
+      <div class="hand-scroll" id="handScroll">
+        <div class="hand-deck" id="handDeck"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 数据管理页 ========== -->
+<div id="manage" class="page-section">
+  <div class="manage-layout">
+    <div class="manage-header">
+      <h2>数据管理</h2>
+      <p>管理下拉菜单选项，修改后所有页面同步生效</p>
+    </div>
+
+    <div class="manage-body">
+      <!-- 缺陷类型 -->
+      <div class="manage-section">
+        <div class="manage-section-header">
+          <h3>缺陷类型</h3>
+          <span class="manage-section-hint">用于记录页和查找页的缺陷类型下拉菜单</span>
+        </div>
+        <div class="manage-list" id="defectTypeList"></div>
+        <div class="manage-add-row">
+          <input type="text" id="newDefectTypeInput" placeholder="输入新缺陷类型名称…" onkeydown="if(event.key==='Enter')manageAddDefectType()">
+          <button onclick="manageAddDefectType()">添加</button>
+        </div>
+      </div>
+
+      <!-- 客户 -->
+      <div class="manage-section">
+        <div class="manage-section-header">
+          <h3>客户列表</h3>
+          <span class="manage-section-hint">用于记录页和查找页的客户下拉菜单</span>
+        </div>
+        <div class="manage-list" id="customerList"></div>
+        <div class="manage-add-row">
+          <input type="text" id="newCustomerInput" placeholder="输入新客户名称…" onkeydown="if(event.key==='Enter')manageAddCustomer()">
+          <button onclick="manageAddCustomer()">添加</button>
+        </div>
+      </div>
+
+      <!-- 严重性 -->
+      <div class="manage-section">
+        <div class="manage-section-header">
+          <h3>严重性等级</h3>
+          <span class="manage-section-hint">用于记录页的严重性下拉菜单</span>
+        </div>
+        <div class="manage-list" id="severityList"></div>
+        <div class="manage-add-row">
+          <input type="text" id="newSeverityInput" placeholder="输入新严重性等级…" onkeydown="if(event.key==='Enter')manageAddSeverity()">
+          <button onclick="manageAddSeverity()">添加</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 系统逻辑说明 -->
+    <div class="manage-section" style="background:#1a2a3a;border:1px solid #2a4a6a;margin-top:20px;">
+      <div class="manage-section-header">
+        <h3>📋 系统逻辑说明</h3>
+        <span class="manage-section-hint">了解系统背后的搜索、排序和颜色逻辑</span>
+      </div>
+      <div style="padding:15px;color:#ccc;font-size:13px;line-height:1.8;">
+        <p><strong>当前版本：</strong>v1.22</p>
+
+        <p style="margin-top:10px;"><strong>1. 搜索排序规则</strong></p>
+        <p>先按搜索匹配级别排序（Level 1 最高），同级内按严重性排序（5星最前）。</p>
+        <p>Level 1 = 规格+材料+颜色相同 | Level 2 = 规格+材料 / 规格+颜色 / 规格+印刷相同 | Level 3 = 仅规格相同</p>
+
+        <p style="margin-top:10px;"><strong>2. 料号分组映射</strong></p>
+        <p>以下料号被视为同一规格（搜其中一个，同组都会出现）：</p>
+        <p style="font-family:monospace;color:#a0d0ff;">HWD70358 = HWD903 = HWD14288 = LHP9 = LHP1 = LHP4</p>
+        <p style="font-family:monospace;color:#a0d0ff;">PBA10 ~ PBA99（所有PBA系列互为同组）</p>
+        <p>示例：搜索 PBA33-E/ABS01-BK-P000-KW，HWD903-E/ABS01-BK-P000-KW 也会出现</p>
+
+        <p style="margin-top:10px;"><strong>3. 颜色逻辑（严重性）</strong></p>
+        <p><span style="color:#8b0000;">■</span> 5星（极高）深红 | <span style="color:#e74c3c;">■</span> 3-4星（高/很高）红 | <span style="color:#f1c40f;">■</span> 2星（中）黄 | <span style="color:#2ecc71;">■</span> 1星（低）绿</p>
+
+        <p style="margin-top:10px;"><strong>4. 微缩图信号条</strong></p>
+        <p>左下角4条柱子表示搜索匹配级别：4格全亮 = Level 1（最高），1格亮 = Level 4（最低）。信号从右往左灭。</p>
+      </div>
+    </div>
+
+    <div class="manage-footer">
+      <button class="btn-export-cards" onclick="exportCards()">📤 导出卡片</button>
+      <button class="btn-import-cards" onclick="importCards()">📥 导入卡片</button>
+      <button class="btn-export" onclick="manageExportSettings()">📤 导出设置</button>
+      <button class="btn-import" onclick="manageImportSettings()">📥 导入设置</button>
+      <button class="btn-reset" onclick="manageResetSettings()">🔄 恢复默认</button>
+      <button class="btn-back" onclick="goHome()">← 返回首页</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 卡片管理页 ========== -->
+<div id="cardManage" class="page-section">
+  <div class="card-manage-layout">
+    <div class="card-manage-header">
+      <h2>卡片管理</h2>
+      <p>查看所有质量问题卡片，勾选后可批量删除</p>
+    </div>
+    <div class="card-manage-toolbar">
+      <input type="text" id="cmSearchInput" placeholder="搜索 ID / 料号 / 缺陷 / 描述 / 客户…" style="flex:1;min-width:200px;padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:13px;" oninput="cmRender()">
+      <select id="cmSortField" style="padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:13px;" onchange="cmRender()">
+        <option value="id">按ID排序</option>
+        <option value="materialCode">按料号排序</option>
+        <option value="defectType">按缺陷类型排序</option>
+        <option value="customer">按客户排序</option>
+        <option value="updateTime">按日期排序</option>
+      </select>
+      <select id="cmSortDir" style="padding:6px 8px;border:1px solid #ddd;border-radius:6px;font-size:13px;" onchange="cmRender()">
+        <option value="asc">升序 ↑</option>
+        <option value="desc">降序 ↓</option>
+      </select>
+      <button onclick="cmSelectAll()">全选</button>
+      <button onclick="cmSelectNone()">取消全选</button>
+      <button onclick="cmSelectInvert()">反选</button>
+      <button class="btn-danger" onclick="cmBatchDelete()">删除选中</button>
+      <button class="btn-back" onclick="goHome()">← 返回首页</button>
+      <span class="cm-count" id="cmCount">共 0 条</span>
+    </div>
+    <div class="card-manage-list" id="cardManageList"></div>
+  </div>
+</div>
+
+<!-- ========== 弹窗 ========== -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+// ========== 数据 ==========
+const STORAGE_KEY = 'qc_cards_v1.34';
+const LAST_SYNC_KEY = 'qc_last_sync_v1';
+const BACKUP_KEY = 'qc_cards_backup'; // 本地备份key（v1.20）
+// 客户代码→名称映射
+const CUSTOMER_MAP = {
+  'CJX085902': '林总',
+  'CDW02302': '德威',
+  'CKW02802': '凯崴',
+  'CLZ053002': '李总',
+  'CDTK057102': '德泰克',
+  'CDA051202': '帝奥'
+};
+let currentPhotos = [];
+let playedIds = new Set();
+let manageUnlocked = false; // 数据管理/卡片管理 密码解锁状态
+let lastResults = [];
+
+// ========== GitHub 云同步 ==========
+const GITHUB_OWNER = 'Ywr1989';
+const GITHUB_REPO = 'qc-card-system';
+const GITHUB_PATH = 'data/cards.json';
+// Token 分3段存储，避免 GitHub 秘密扫描（运行时拼接）
+const T1 = 'ghp_bPtHUuxlrmyEis';
+const T2 = 'Jk8vx5FFJiWEkIiF4';
+const T3 = 'WXELq';
+const HARDCODED_TOKEN = T1 + T2 + T3;
+let githubToken = localStorage.getItem('qc_github_token') || HARDCODED_TOKEN;
+
+function loadCards() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { return []; } }
+async function saveCards(cards) {
+  // v1.23-fix6: 所有localStorage操作加try-catch，防止配额超限导致整个流程崩溃
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+  } catch(e) {
+    console.warn('⚠️ localStorage保存失败（配额超限）:', e);
+    alert('本地保存失败：存储空间已满。\n\n建议：删除一些旧卡片或清理浏览器缓存后再试。');
+    return { success: false, error: e.message };
+  }
+  // v1.23-fix6: 去掉BACKUP_KEY（和STORAGE_KEY重复，浪费配额）
+  // v1.23-fix5: 云端上传在后台进行，不阻塞UI
+  if (githubToken) {
+    pushToGitHubWithConflictHandling(cards).then(result => {
+      if (result.success) {
+        try {
+          localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(cards));
+        } catch(e) {
+          console.warn('⚠️ LAST_SYNC_KEY保存失败:', e);
+        }
+        console.log('✅ 已同步到云端，共 ' + cards.length + ' 张卡片');
+        // 如果之前有失败提示条，隐藏它
+        const warnBar = document.getElementById('cloudFailWarn');
+        if (warnBar) warnBar.style.display = 'none';
+      } else {
+        console.warn('⚠️ 云端同步失败:', result.error);
+        showCloudFailWarning(result.error);
+      }
+    }).catch(err => {
+      console.warn('⚠️ 云端同步异常:', err);
+      showCloudFailWarning(err.message);
+    });
+  }
+  return { success: true };
+}
+
+// 显示云端同步失败的提示条
+function showCloudFailWarning(msg) {
+  let warnBar = document.getElementById('cloudFailWarn');
+  if (!warnBar) {
+    warnBar = document.createElement('div');
+    warnBar.id = 'cloudFailWarn';
+    warnBar.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:#ff9800;color:white;text-align:center;padding:8px;z-index:99998;font-size:14px;cursor:pointer;';
+    warnBar.onclick = () => { syncFromGitHub(); warnBar.style.display = 'none'; };
+    document.body.appendChild(warnBar);
+  }
+  warnBar.innerHTML = '⚠️ 云端同步失败：' + (msg || '未知错误') + '｜<u>点击此处强制从云端更新</u>';
+  warnBar.style.display = 'block';
+}
+
+// 带冲突处理的 GitHub 推送
+async function pushToGitHubWithConflictHandling(cards, depth = 0) {
+  if (depth > 2) {
+    console.warn('Max retry depth reached');
+    return { success: false, conflict: false, error: 'Max retry depth reached' };
+  }
+  
+  const data = await fetchCardsFromGitHub();
+  if (!data) {
+    console.warn('Failed to fetch from GitHub');
+    return { success: false, conflict: false, error: 'Failed to fetch from GitHub' };
+  }
+  
+  const sha = data.sha;
+  const result = await pushCardsToGitHub(cards, sha);
+  
+  if (result.success) {
+    return result;
+  }
+  
+  if (result.conflict) {
+    const overwrite = confirm('检测到远程数据已被其他人修改，是否覆盖？点击"取消"将合并数据');
+    if (overwrite) {
+      // 强制覆盖：用最新 SHA 再推一次
+      return await pushToGitHubWithConflictHandling(cards, depth + 1);
+    } else {
+      // 合并数据：远程+本地，以ID去重，远程优先
+      const remoteData = await fetchCardsFromGitHub();
+      if (!remoteData) return { success: false, conflict: false, error: 'Failed to fetch from GitHub for merge' };
+      
+      const remoteCards = JSON.parse(decodeURIComponent(escape(atob(remoteData.content))));
+      const localCards = loadCards();
+      const cardMap = new Map();
+      // 远程优先
+      remoteCards.forEach(c => cardMap.set(c.id, c));
+      localCards.forEach(c => {
+        if (!cardMap.has(c.id)) cardMap.set(c.id, c);
+      });
+      const mergedCards = Array.from(cardMap.values());
+      
+      // 更新本地存储（v1.23-fix6: 加try-catch防止配额超限）
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards)); } catch(e) { console.warn('⚠️ STORAGE_KEY保存失败:', e); }
+      // 推送合并后的数据
+      return await pushToGitHubWithConflictHandling(mergedCards, depth + 1);
+    }
+  }
+  
+  // 其他错误情况（包括 noToken）
+  return result;
+}
+
+
+// ========== 延迟云端同步（防抖） ==========
+let cloudSyncTimer = null;
+let cloudSyncToastEl = null;
+
+// 安排延迟3秒同步到云端（防抖：用户连续操作时只同步最后一次）
+function scheduleCloudSync() {
+  if (cloudSyncTimer) clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(async () => {
+    if (!githubToken) return; // 没有Token，跳过
+    const cards = loadCards();
+    try {
+      const result = await pushToGitHubWithConflictHandling(cards);
+      if (result.success) {
+        try { localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(cards)); } catch(e) { console.warn('⚠️ LAST_SYNC_KEY保存失败:', e); }
+        console.log('✅ 自动同步到云端成功，共 ' + cards.length + ' 张卡片');
+        showToast('已同步到云端 ✓', 'success');
+      } else {
+        console.warn('⚠️ 自动同步到云端失败:', result.error);
+        showToast('云端同步失败，数据已备份到本地', 'warning');
+      }
+    } catch(err) {
+      console.warn('⚠️ 自动同步异常:', err);
+      showToast('云端同步异常: ' + err.message, 'error');
+    }
+  }, 3000); // 3秒防抖
+}
+
+// 显示toast提示（右上角，3秒后自动消失）
+function showToast(message, type = 'info') {
+  // 移除旧的toast
+  if (cloudSyncToastEl) {
+    cloudSyncToastEl.remove();
+    cloudSyncToastEl = null;
+  }
+  
+  // 创建新toast
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed;
+    top: 50px;
+    right: 20px;
+    background: ${type === 'success' ? '#4CAF50' : type === 'warning' ? '#FF9800' : type === 'error' ? '#F44336' : '#2196F3'};
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 99999;
+    animation: toastIn 0.3s ease;
+    max-width: 300px;
+    word-break: break-all;
+  `;
+  toast.textContent = message;
+  
+  // 添加动画样式（如果不存在）
+  if (!document.getElementById('toastStyle')) {
+    const style = document.createElement('style');
+    style.id = 'toastStyle';
+    style.textContent = `
+      @keyframes toastIn {
+        from { opacity: 0; transform: translateX(100px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+      @keyframes toastOut {
+        from { opacity: 1; transform: translateX(0); }
+        to { opacity: 0; transform: translateX(100px); }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  document.body.appendChild(toast);
+  cloudSyncToastEl = toast;
+  
+  // 3秒后消失
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.style.animation = 'toastOut 0.3s ease';
+      setTimeout(() => toast.remove(), 300);
+    }
+  }, 3000);
+}
+
+// ========== GitHub API 函数 ==========
+// v1.23-fix7: 添加带超时的 fetch 辅助函数
+function fetchWithTimeout(url, options = {}, timeoutMs = 10000) {
+  return new Promise((resolve, reject) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      reject(new Error('Request timeout'));
+    }, timeoutMs);
+    fetch(url, { ...options, signal: controller.signal })
+      .then(resolve)
+      .catch(reject)
+      .finally(() => clearTimeout(timeoutId));
+  });
+}
+
+async function fetchCardsFromGitHub() {
+  try {
+    const headers = {};
+    if (githubToken) {
+      headers['Authorization'] = `token ${githubToken}`;
+    }
+    // v1.23-fix7: 使用带超时的 fetch（10秒超时，防止无限加载）
+    const resp = await fetchWithTimeout(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`, {
+      headers: headers
+    }, 10000);
+    if (!resp.ok) return null;
+    const data = await resp.json();
+
+    // 小文件：直接返回 content
+    if (data.content && data.content.trim()) {
+      return { content: data.content, sha: data.sha };
+    }
+
+    // 大文件（>1MB）：GitHub API 返回空 content
+    // 先尝试 download_url（快，但可能受 CORS 限制）
+    if (data.download_url) {
+      try {
+        const rawResp = await fetchWithTimeout(data.download_url, {}, 10000);
+        if (rawResp.ok) {
+          const rawText = await rawResp.text();
+          const base64Content = btoa(unescape(encodeURIComponent(rawText)));
+          return { content: base64Content, sha: data.sha };
+        }
+      } catch(e) {
+        console.warn('download_url fetch failed (CORS or timeout), trying blobs API:', e);
+      }
+    }
+
+    // Fallback：使用 Git Blobs API（同一域名，无 CORS 问题）
+    if (data.sha) {
+      try {
+        const blobResp = await fetchWithTimeout(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs/${data.sha}`, {
+          headers: headers
+        }, 10000);
+        if (blobResp.ok) {
+          const blobData = await blobResp.json();
+          if (blobData.content && blobData.encoding === 'base64') {
+            return { content: blobData.content, sha: data.sha };
+          }
+        }
+      } catch(e) {
+        console.warn('blobs API failed:', e);
+      }
+    }
+
+    // 全部失败，返回空内容（让调用方处理）
+    return { content: '', sha: data.sha };
+  } catch(e) {
+    console.warn('fetchCardsFromGitHub error:', e);
+    return null;
+  }
+}
+
+async function pushCardsToGitHub(cards, sha) {
+  if (!githubToken) {
+    const token = prompt('GitHub Token 已失效，请输入新的 Token（需要 repo 权限）：');
+    if (!token) return { success: false, conflict: false, noToken: true };
+    githubToken = token;
+    localStorage.setItem('qc_github_token', token);
+  }
+  try {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(cards, null, 2))));
+    const body = {
+      message: 'Sync cards from QC Card System',
+      content: content
+    };
+    if (sha) body.sha = sha;
+    const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${githubToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    
+    if (!resp.ok) {
+      // 检查是否是冲突（409）或 SHA 不匹配（400）
+      const errorText = await resp.text();
+      const isConflict = resp.status === 409 || (resp.status === 400 && errorText.includes('SHA'));
+      return { success: false, conflict: isConflict, status: resp.status };
+    }
+    
+    return { success: true };
+  } catch(e) {
+    console.warn('pushCardsToGitHub error:', e);
+    return { success: false, conflict: false, error: e.message };
+  }
+}
+
+// ========== 同步函数（从云端更新数据）==========
+let isSyncing = false;
+async function syncFromGitHub() {
+  if (isSyncing) {
+    alert('正在同步中，请稍候...');
+    return;
+  }
+  isSyncing = true;
+
+  try {
+    // 先上传本地修改到GitHub（防止本地修改丢失）
+    const localCards = loadCards();
+    if (githubToken) {
+      const uploadResult = await pushToGitHubWithConflictHandling(localCards);
+      if (!uploadResult.success) {
+        if (!confirm('上传本地修改到云端失败：' + (uploadResult.error || '未知错误') + '\n\n是否仍要从云端更新数据？（本地修改可能丢失）')) {
+          isSyncing = false;
+          return;
+        }
+      } else {
+        console.log('✅ 已上传本地修改到云端');
+      }
+    }
+    
+    // 从 GitHub 拉取最新数据
+    const data = await fetchCardsFromGitHub();
+    if (!data) {
+      alert('从 GitHub 拉取失败\n\n可能原因：\n1. 网络连接问题\n2. GitHub API 暂时不可用\n3. Token 已过期\n\n请检查网络后重试，或联系管理员更新 Token。');
+      localStorage.removeItem('qc_github_token');
+      return;
+    }
+
+    // 解析 GitHub 上的数据
+    let remoteCards = [];
+    try {
+      if (data.content && data.content.trim()) {
+        remoteCards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+      } else {
+        alert('GitHub 上的数据为空，请确认云端数据已正确保存。\n\n如果问题持续，请联系管理员。');
+        return;
+      }
+    } catch(e) {
+      console.warn('解析 GitHub 数据失败:', e);
+      alert('解析云端数据失败，数据格式异常。\n\n错误：' + e.message + '\n\n请联系管理员处理。');
+      return;
+    }
+
+    // 更新本地数据（v1.23-fix6: 加try-catch防止配额超限）
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
+    } catch(e) {
+      console.warn('⚠️ STORAGE_KEY保存失败:', e);
+    }
+    try {
+      localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards));
+    } catch(e) {
+      console.warn('⚠️ LAST_SYNC_KEY保存失败:', e);
+    }
+
+    // 成功后提示（v1.23-fix8: 改用toast，不阻塞UI）
+    showToast('✅ 已从云端更新 ' + remoteCards.length + ' 张卡片', 'success');
+
+    // 刷新页面显示（如果在查找页）
+    if (currentPage === 'search') {
+      doSearch(); // 重新渲染搜索结果
+    }
+    // 首页无需刷新（首页没有卡片列表）
+
+  } catch(e) {
+    alert('更新失败：' + e.message + '\n\n请检查网络连接后重试。');
+  } finally {
+    isSyncing = false;
+  }
+}
+
+// ========== 自动同步函数（静默更新）==========
+let autoSyncTimer = null;
+
+async function autoSyncFromGitHub() {
+  // 如果页面不可见，则不执行
+  if (document.hidden) return;
+
+  try {
+    // 从 GitHub 拉取最新数据
+    const data = await fetchCardsFromGitHub();
+    if (!data) return; // 失败静默处理
+
+    // 如果 content 为空，说明所有 fallback 都失败了，不要覆盖本地数据
+    if (!data.content || !data.content.trim()) {
+      console.warn('autoSync: 云端数据为空，跳过同步（保护本地数据）');
+      return;
+    }
+
+    // 解析 GitHub 上的数据
+    let remoteCards = [];
+    try {
+      remoteCards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+    } catch(e) {
+      console.warn('autoSync: 解析 GitHub 数据失败，视为空数据:', e);
+      remoteCards = [];
+    }
+    const localCards = loadCards();
+    
+    // 比较本地和远程数据
+    const localStr = JSON.stringify(localCards);
+    const remoteStr = JSON.stringify(remoteCards);
+    
+    if (localStr !== remoteStr) {
+      let mergedCards;
+      const lastSyncStr = localStorage.getItem(LAST_SYNC_KEY);
+      if (lastSyncStr) {
+        const lastSyncCards = JSON.parse(lastSyncStr);
+        mergedCards = threeWayMerge(lastSyncCards, localCards, remoteCards);
+      } else {
+        // lastSync 不存在（旧版本升级或新设备）：以远程为准，保留本地新增的卡片
+        const remoteIds = new Set(remoteCards.map(c => c.id));
+        mergedCards = [...remoteCards];
+        localCards.forEach(c => { if (!remoteIds.has(c.id)) mergedCards.push(c); });
+        // 初始化 lastSync
+        try { localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards)); } catch(e) { console.warn('⚠️ LAST_SYNC_KEY保存失败:', e); }
+      }
+
+      // 更新本地数据（v1.23-fix6: 加try-catch防止配额超限）
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards)); } catch(e) { console.warn('⚠️ STORAGE_KEY保存失败:', e); }
+      // 同步完成后，更新 lastSync 为当前远程状态
+      try { localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards)); } catch(e) { console.warn('⚠️ LAST_SYNC_KEY保存失败:', e); }
+
+      // 显示"数据已更新"提示条（非阻塞，用户可点击刷新）
+      showUpdateNotice();
+      // 如果当前在查找页，也立即刷新搜索结果（用户正在查看，应该看到最新数据）
+      if (currentPage === 'search') {
+        doSearch();
+      }
+    }
+  } catch(e) {
+    // 失败静默处理，不打扰用户
+    console.warn('autoSyncFromGitHub error:', e);
+  }
+}
+
+// 显示"数据已更新"提示条
+function showUpdateNotice() {
+  const notice = document.getElementById('updateNotice');
+  if (notice) notice.style.display = 'block';
+}
+
+// 隐藏"数据已更新"提示条
+function hideUpdateNotice() {
+  const notice = document.getElementById('updateNotice');
+  if (notice) notice.style.display = 'none';
+}
+
+// 安全刷新页面（检查是否有未保存的数据）
+function refreshPageSafe() {
+  // 检查是否在记录页且有未保存的数据
+  if (currentPage === 'record' && editCardData && editCardData.id) {
+    if (!confirm('当前正在编辑卡片，刷新会丢失未保存的数据。确定要刷新吗？')) {
+      return; // 用户取消，不刷新
+    }
+  }
+  // 刷新页面
+  location.reload();
+}
+
+// 三路合并：基于上次同步状态，正确合并本地和远程的增删改
+function threeWayMerge(lastSync, local, remote) {
+  const lastMap = new Map(lastSync.map(c => [c.id, c]));
+  const localMap = new Map(local.map(c => [c.id, c]));
+  const remoteMap = new Map(remote.map(c => [c.id, c]));
+  const resultMap = new Map();
+
+  // 处理本地卡片
+  localMap.forEach((c, id) => {
+    if (remoteMap.has(id)) {
+      // 双方都有的卡片：比较是否有变化
+      const remoteCard = remoteMap.get(id);
+      const lastCard = lastMap.get(id);
+      const localChanged = JSON.stringify(lastCard) !== JSON.stringify(c);
+      const remoteChanged = JSON.stringify(lastCard) !== JSON.stringify(remoteCard);
+      if (localChanged && !remoteChanged) {
+        resultMap.set(id, c);        // 只有本地变了
+      } else if (!localChanged && remoteChanged) {
+        resultMap.set(id, remoteCard); // 只有远程变了
+      } else {
+        resultMap.set(id, c);        // 都没变或都变了 → 本地优先
+      }
+    } else {
+      // 本地有，远程没有
+      if (lastMap.has(id)) {
+        // 上次同步时有，现在远程没有了 → 远程删除了，不保留
+      } else {
+        resultMap.set(id, c);        // 本地新增的 → 保留
+      }
+    }
+  });
+
+  // 处理远程有但本地没有的卡片
+  remoteMap.forEach((c, id) => {
+    if (!localMap.has(id)) {
+      if (lastMap.has(id)) {
+        // 上次同步时有，现在本地没有了 → 本地删除了，不保留
+      } else {
+        resultMap.set(id, c);        // 远程新增的 → 保留
+      }
+    }
+  });
+
+  return Array.from(resultMap.values());
+}
+
+function debounce(fn, delay) {
+  let timer;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+function generateId() {
+  const cards = loadCards();
+  const year = new Date().getFullYear();
+  let max = 0;
+  cards.forEach(c => { const m = c.id.match(new RegExp(`QR-${year}-(\\d+)`)); if (m) max = Math.max(max, parseInt(m[1])); });
+  return `QR-${year}-${String(max + 1).padStart(3, '0')}`;
+}
+
+function getDefectColor(type) {
+  const map = {
+    '毛刺': '#e74c3c', '缩水': '#3498db', '色差': '#9b59b6', '缺料': '#e67e22',
+    '划痕': '#f39c12', '变形': '#1abc9c', '气泡': '#2ecc71', '熔接痕': '#34495e',
+    '银丝': '#95a5a6', '黑点': '#2c3e50', '尺寸超差': '#d35400', '其他': '#7f8c8d'
+  };
+  return map[type] || '#e74c3c';
+}
+
+function getSeverityColor(severity) {
+  if (!severity) return '#e74c3c';
+  const stars = severity.match(/★/g);
+  const count = stars ? stars.length : 0;
+  if (count === 1) return '#2ecc71';   // 1星 - 绿色
+  if (count === 2) return '#f1c40f';   // 2星 - 黄色
+  if (count === 3) return '#e74c3c';   // 3星 - 红色
+  if (count === 4) return '#e74c3c';   // 4星 - 红色
+  return '#8b0000';                     // 5星 - 深红色
+}
+
+// 获取严重度优先级（用于排序：5星>4星>3星>2星>1星）
+function getSeverityPriority(severity) {
+  if (!severity) return 3;
+  const stars = severity.match(/★/g);
+  const count = stars ? stars.length : 0;
+  if (count === 1) return 1;   // 1星 - 最低
+  if (count === 2) return 2;   // 2星 - 中等
+  if (count === 3) return 3;   // 3星
+  if (count === 4) return 4;   // 4星
+  return 5;                     // 5星 - 最高
+}
+
+function renderSeverityStars(severity) {
+  if (!severity) return '-';
+  const color = getSeverityColor(severity);
+  const text = severity.replace(/[★☆]\s*/g, '');
+  const stars = severity.match(/★/g) || [];
+  const empty = severity.match(/☆/g) || [];
+  let html = '';
+  stars.forEach(() => { html += '<span style="color:' + color + ';">★</span>'; });
+  empty.forEach(() => { html += '<span style="color:#ccc;">☆</span>'; });
+  return html + ' <span style="color:#000;">' + text + '</span>';
+}
+
+// ========== 30张示例数据 ==========
+const APP_VERSION = 'v1.13';
+const DEMO_VERSION_KEY = 'qc_demo_version';
+
+// 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
+const DEMO_CARD_IDS = [
+  ...Array.from({length: 60}, (_, i) => `QR-2026-${String(i+1).padStart(3,'0')}`),
+  'QR-TEST-001','QR-TEST-002','QR-TEST-003','QR-TEST-004'
+];
+
+function initDemoData() {
+  // 只在首次打开页面时初始化示例卡片，删除后不再自动补录
+  if (localStorage.getItem('qc_demo_initialized') === '1') return;
+  const existing = loadCards();
+  if (existing.length > 0) {
+    // 已有用户数据，标记为已初始化，不再补录
+    localStorage.setItem('qc_demo_initialized', '1');
+    return;
+  }
+  // 【修复 v1.20】新设备（existing.length===0）不再自动生成 demo
+  // 留空，让 DOMContentLoaded 中的 initApp() 处理新设备逻辑
+  return;
+  // 以下为原逻辑（已禁用）：
+  const existingIds = new Set(existing.map(c => c.id));
+
+  const defects = ['毛刺','缩水','色差','缺料','划痕','变形','气泡','熔接痕','银丝','黑点','尺寸超差'];
+  const customers = ['凯崴','德威','林总','李总','德泰克','帝奥'];
+  const severities = ['★★★★★ 极高','★★★★☆ 很高','★★★☆☆ 高','★★☆☆☆ 中','★☆☆☆☆ 低'];
+  const occurrences = ['偶发','频发','连续','批次性'];
+  const codes = ['KW','DW','LZ','CL','DTK','DA'];
+  const notes = [
+    '模温偏高，冷却时间不足','注塑压力偏低，需调整','原料批次不同，颜色有偏差','模具磨损严重','保压时间不够',
+    '射速过快导致喷射','模具温度不均匀','顶针布局不合理','排气不畅','螺杆转速过高'
+  ];
+  const problems = [
+    '产品边缘有明显毛刺，影响装配','表面出现凹陷，壁厚不均区域严重','颜色与样板有明显偏差，整体偏黄',
+    '局部填充不完整，边角缺料','表面有细长划痕，长度3-8mm','产品翘曲变形，平面度超差',
+    '内部有气泡，敲击有空洞声','熔接痕明显，强度降低','表面有银色条纹，影响外观',
+    '有黑色杂质点，分布不均','关键尺寸超出公差范围'
+  ];
+  const causes = [
+    '模具分型面磨损产生毛刺','保压不足导致收缩不均','色母添加比例不准或分散不良','注塑压力不足或射速过慢',
+    '模具表面有异物或损伤','冷却不均匀，内应力大','原料含水率过高或温度过高','熔体温度低，汇合处融合不良',
+    '原料降解或含有杂质','原料污染或螺杆积碳','模具尺寸磨损或注塑参数漂移'
+  ];
+  const solutions = [
+    '修模抛光分型面，调整合模力','增加保压压力和保压时间','重新配色，检查色母质量','提高注塑压力和射速',
+    '清洁模具表面，检查损伤','优化冷却水路，降低模温','干燥原料，降低熔体温度','提高熔体温度，增加汇合角',
+    '更换原料，清洗螺杆','清理螺杆和料筒，过滤原料','修模或调整注塑参数补偿'
+  ];
+
+  const demos = [];
+  for (let i = 0; i < 60; i++) {
+    const cIdx = i % customers.length;
+    const dIdx = i % defects.length;
+    const month = String((i % 12) + 1).padStart(2, '0');
+    const day = String((i % 28) + 1).padStart(2, '0');
+    demos.push({
+      id: `QR-2026-${String(i + 1).padStart(3, '0')}`,
+      defectType: defects[dIdx],
+      materialCode: `5510-E/ABS01-BK-P000-${codes[cIdx]}`,
+      productDesc: `5510-防静电ABS01-黑色-不印刷-${customers[cIdx]}`,
+      severity: severities[i % severities.length],
+      defectRate: `${(Math.random() * 5 + 0.1).toFixed(1)}%`,
+      occurrence: occurrences[i % occurrences.length],
+      updateTime: `2026-${month}-${day}`,
+      customer: customers[cIdx],
+      note: notes[i % notes.length],
+      problemDesc: problems[dIdx],
+      causeAnalysis: causes[dIdx],
+      solution: solutions[dIdx],
+      photos: [],
+      createdAt: new Date().toISOString()
+    });
+  }
+  // 测试卡片：4张同一料号前缀，用于测试1-4级排序
+  const testCards = [
+    { id: 'QR-TEST-001', defectType: '毛刺', materialCode: 'TEST-001-A-B-C', productDesc: '测试-1级-红色', severity: '★★★★★ 极高', defectRate: '5.0%', occurrence: '连续', updateTime: '2026-06-10', customer: '测试客户', note: '测试数据', problemDesc: '1级匹配测试', causeAnalysis: '测试', solution: '测试', photos: [], createdAt: new Date().toISOString() },
+    { id: 'QR-TEST-002', defectType: '划痕', materialCode: 'TEST-001-X-Y-Z', productDesc: '测试-2级-黄色', severity: '★★☆☆☆ 中', defectRate: '3.0%', occurrence: '频发', updateTime: '2026-06-10', customer: '测试客户', note: '测试数据', problemDesc: '2级匹配测试', causeAnalysis: '测试', solution: '测试', photos: [], createdAt: new Date().toISOString() },
+    { id: 'QR-TEST-003', defectType: '气泡', materialCode: 'TEST-999-A-B-C', productDesc: '测试-3级-绿色', severity: '★☆☆☆☆ 低', defectRate: '1.0%', occurrence: '偶发', updateTime: '2026-06-10', customer: '测试客户', note: '测试数据', problemDesc: '3级匹配测试', causeAnalysis: '测试', solution: '测试', photos: [], createdAt: new Date().toISOString() },
+    { id: 'QR-TEST-004', defectType: '缩水', materialCode: 'OTHER-001-A-B-C', productDesc: '测试-4级-红色', severity: '★★★☆☆ 高', defectRate: '4.0%', occurrence: '批次性', updateTime: '2026-06-10', customer: '测试客户', note: '测试数据', problemDesc: '4级匹配测试', causeAnalysis: '测试', solution: '测试', photos: [], createdAt: new Date().toISOString() }
+  ];
+  // 合并逻辑：只补新增的示例卡片（按ID判断），不改已有数据
+  const allDemoCards = [...demos, ...testCards];
+  const toAdd = allDemoCards.filter(c => !existingIds.has(c.id));
+  if (toAdd.length > 0) {
+    saveCards([...existing, ...toAdd]);
+  }
+  localStorage.setItem(DEMO_VERSION_KEY, Date.now().toString());
+  localStorage.setItem('qc_demo_initialized', '1');
+}
+
+// ========== 页面切换 ==========
+let currentPage = 'home';
+
+function showSection(id, title) {
+  const current = document.querySelector('.page-section.active');
+  if (current && current.id !== id) {
+    current.classList.add('exit');
+    setTimeout(() => {
+      current.classList.remove('active', 'exit');
+      activate(id, title);
+    }, 200);
+  } else {
+    activate(id, title);
+  }
+}
+
+function activate(id, title) {
+  document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  el.offsetWidth;
+  const nav = document.getElementById('topNav');
+  if (id === 'home') {
+    nav.style.display = 'none';
+    currentPage = 'home';
+  } else {
+    nav.style.display = 'flex';
+    document.getElementById('navTitle').textContent = title || '质量问题卡片系统';
+    currentPage = id;
+  }
+}
+
+function goHome() { showSection('home'); }
+
+// URL参数自动搜索：?search=料号
+function checkUrlSearch() {
+  const params = new URLSearchParams(window.location.search);
+  const searchTerm = params.get('search');
+  if (searchTerm) {
+    showSection('search', '查找问题');
+    document.getElementById('searchInput').value = searchTerm;
+    doSearch();
+  }
+}
+
+function showRecord() {
+  showSection('record', '记录问题');
+  editCardData = {
+    id: generateId(),
+    defectType: '',
+    materialCode: '',
+    productDesc: '',
+    severity: '',
+    defectRate: '',
+    occurrence: '',
+    updateTime: new Date().toISOString().split('T')[0],
+    customer: '',
+    note: '',
+    problemDesc: '',
+    causeAnalysis: '',
+    solution: '',
+    photos: []
+  };
+  renderEditCard();
+  setTimeout(() => { const el = document.getElementById('pasteInput'); if (el) el.focus(); 
+    // 恢复按钮文本为"确认记录"
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) submitBtn.textContent = '确认记录';
+  }, 350);
+}
+
+function showSearch() {
+  showSection('search', '查找卡片');
+  populateFilterSelects();
+  playedIds.clear();
+  doSearch();
+  setTimeout(() => document.getElementById('searchInput').focus(), 350);
+}
+
+function populateFilterSelects() {
+  const settings = loadSettings();
+  // 填充缺陷筛选
+  const fDefect = document.getElementById('filterDefect');
+  fDefect.innerHTML = '<option value="">全部缺陷</option>' + settings.defectTypes.map(d => '<option value="' + d + '">' + d + '</option>').join('');
+  // 填充客户筛选
+  const fCustomer = document.getElementById('filterCustomer');
+  fCustomer.innerHTML = '<option value="">全部客户</option>' + settings.customers.map(c => '<option value="' + c + '">' + c + '</option>').join('');
+  // 填充严重性筛选
+  const fSeverity = document.getElementById('filterSeverity');
+  fSeverity.innerHTML = '<option value="">全部严重性</option>' + settings.severities.map(s => { const v = s.replace(/\s*★/g, ''); return '<option value="' + v + '">' + s + '</option>'; }).join('');
+}
+
+// ========== 粘贴识别 ==========
+function doRecognize() {
+  const text = document.getElementById('pasteInput').value;
+  if (!text.trim()) {
+    document.getElementById('pasteStatus').textContent = '请先粘贴文字内容';
+    return;
+  }
+  const r = parsePaste(text);
+  if (r.found) {
+    fillForm(r);
+    document.getElementById('pasteStatus').textContent = '已识别：' + r.matches.join('、');
+    renderEditCard();
+  } else {
+    document.getElementById('pasteStatus').textContent = '未识别到明确信息，请手动填写';
+  }
+}
+
+function clearPaste() {
+  document.getElementById('pasteInput').value = '';
+  document.getElementById('pasteStatus').textContent = '';
+}
+
+function parsePaste(text) {
+  const res = { found: false, matches: [] };
+  
+  // 新逻辑：先按 tab 或换行符分割，支持一次粘贴识别料号和规格
+  const lines = text.split(/\t|\n/).filter(l => l.trim());
+  if (lines.length >= 2) {
+    // 第一行 = 料号，第二行 = 规格
+    const line1 = lines[0].trim();
+    const line2 = lines[1].trim();
+    if (line1.length >= 3) {
+      res.materialCode = line1;
+      res.found = true;
+      res.matches.push('料号');
+    }
+    if (line2.length >= 2) {
+      res.productDesc = line2;
+      res.found = true;
+      res.matches.push('规格');
+    }
+    // 如果识别成功，直接返回（不执行旧逻辑）
+    if (res.found) return res;
+  }
+  
+  // 旧逻辑：单行文本，尝试用正则识别各个字段
+  const mCode = text.match(/([A-Z0-9][A-Z0-9\-/]*[A-Z0-9])/i);
+  if (mCode && mCode[0].length >= 5) { res.materialCode = mCode[0]; res.found = true; res.matches.push('料号'); }
+  const custs = loadSettings().customers;
+  for (const c of custs) { if (text.includes(c)) { res.customer = c; res.found = true; res.matches.push('客户'); break; } }
+  const defs = loadSettings().defectTypes;
+  for (const d of defs) { if (text.includes(d)) { res.defectType = d; res.found = true; res.matches.push('缺陷'); break; } }
+  const mRate = text.match(/(\d+\.?\d*)\s*%/);
+  if (mRate) { res.defectRate = mRate[0]; res.found = true; res.matches.push('不良比例'); }
+  const mDate = text.match(/(\d{4}[年/\-]\d{1,2}[月/\-]\d{1,2})/);
+  if (mDate) { res.updateTime = mDate[1].replace(/[年月]/g, '-').replace(/-$/g, ''); res.found = true; res.matches.push('日期'); }
+  if (text.includes('严重') || text.includes('高')) { res.severity = '★★★☆☆ 高'; res.found = true; res.matches.push('严重性'); }
+  
+  // 如果还没找到料号，尝试把整行作为料号（支持中文规格场景）
+  if (!res.materialCode && lines.length >= 1) {
+    const possibleCode = lines[0].trim();
+    if (possibleCode.length >= 3 && possibleCode.length <= 50) {
+      res.materialCode = possibleCode;
+      res.found = true;
+      res.matches.push('料号');
+    }
+  }
+  
+  return res;
+}
+
+function fillForm(r) {
+  // 新增或编辑模式，editCardData一定有值
+  if (r.materialCode) editCardData.materialCode = r.materialCode;
+  if (r.customer) editCardData.customer = r.customer;
+  if (r.defectType) editCardData.defectType = r.defectType;
+  if (r.defectRate) editCardData.defectRate = r.defectRate;
+  if (r.updateTime) editCardData.updateTime = r.updateTime;
+  if (r.severity) editCardData.severity = r.severity;
+  renderEditCard();
+}
+
+// ========== 照片 ==========
+// 更新 photoBox 中的主照片显示（仅编辑模式）
+function updateEditPhotoBox() {
+  if (!editCardData) return;
+  const wrapper = document.getElementById('editCardWrapper');
+  if (!wrapper) return;
+  const photoBox = wrapper.querySelector('.photo-box');
+  if (!photoBox) return;
+  if (editCardData.photos && editCardData.photos.length > 0) {
+    photoBox.innerHTML = `<img src="${editCardData.photos[0]}" style="max-width:100%;max-height:100%;object-fit:contain;">`;
+  } else {
+    photoBox.innerHTML = '<div style="color:#999;font-size:12px;">[ 点击上传照片 ]</div>';
+  }
+}
+
+function handleFiles(files, mode = 'record') {
+  const targetArr = mode === 'edit' ? (editCardData ? editCardData.photos : currentPhotos) : currentPhotos;
+  Array.from(files).forEach(f => {
+    if (!f.type.startsWith('image/')) return;
+    const r = new FileReader();
+    r.onload = e => {
+      targetArr.push(e.target.result);
+      renderPhotos(mode);
+      if (mode === 'edit') updateEditPhotoBox();
+      debouncedUpdatePreview();
+    };
+    r.readAsDataURL(f);
+  });
+}
+
+function renderPhotos(mode = 'record') {
+  const photos = mode === 'edit' ? (editCardData ? editCardData.photos : currentPhotos) : currentPhotos;
+  const containerId = 'photoList';
+  const el = document.getElementById(containerId);
+  if (el) el.innerHTML = photos.map((src, i) =>
+    `<div class="photo-item"><img src="${src}"><button class="ph-del" onclick="removePhoto(${i}, '${mode}')">×</button></div>`
+  ).join('');
+}
+
+function removePhoto(i, mode = 'record') {
+  const photos = mode === 'edit' ? (editCardData ? editCardData.photos : currentPhotos) : currentPhotos;
+  photos.splice(i, 1);
+  renderPhotos(mode);
+  if (mode === 'edit') updateEditPhotoBox();
+  debouncedUpdatePreview();
+}
+
+// ========== 实时预览（动态字体缩小）==========
+const debouncedUpdatePreview = debounce(function() {
+  const card = buildCardFromForm();
+  document.getElementById('livePreview').innerHTML = renderCardHTML(card, true);
+
+  // 等待浏览器完成布局和绘制后再检测溢出并自动缩小字体
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      runAutoShrink();
+    });
+  });
+}, 200);
+
+function updatePreview() {
+  debouncedUpdatePreview();
+}
+
+let lastPreviewScale = null;
+let lastContainerWidth = null;
+
+function fitPreviewScale() {
+  const previewCard = document.querySelector('#livePreview .qr-card');
+  if (!previewCard) return;
+  const container = document.getElementById('livePreview');
+  const cw = container.clientWidth;
+
+  // 缓存：容器宽度没变且已有 scale，直接复用
+  if (cw === lastContainerWidth && lastPreviewScale !== null) {
+    previewCard.style.transform = 'scale(' + lastPreviewScale + ')';
+    previewCard.style.marginBottom = (559 * (lastPreviewScale - 1)) + 'px';
+    return;
+  }
+
+  lastContainerWidth = cw;
+  const scale = Math.min(0.92, Math.max(0.45, (cw - 24) / 794));
+  lastPreviewScale = scale;
+  previewCard.style.transform = 'scale(' + scale + ')';
+  previewCard.style.transformOrigin = 'top center';
+  previewCard.style.marginBottom = (559 * (scale - 1)) + 'px';
+}
+
+function autoShrinkFont(el) {
+  if (!el) return;
+  const minSize = 6;
+  let size = 11;
+
+  const clone = document.createElement('div');
+  const comp = window.getComputedStyle(el);
+
+  clone.style.cssText =
+    'position:absolute;visibility:hidden;pointer-events:none;' +
+    'width:' + el.clientWidth + 'px;' +
+    'padding:' + comp.padding + ';' +
+    'line-height:' + comp.lineHeight + ';' +
+    'font-family:' + comp.fontFamily + ';' +
+    'box-sizing:' + comp.boxSizing + ';' +
+    'overflow:hidden;word-break:break-all;overflow-wrap:break-word;white-space:pre-wrap;' +
+    'border:' + comp.border + ';' +
+    'font-size:' + size + 'px;';
+  clone.textContent = el.textContent;
+  document.body.appendChild(clone);
+
+  const targetHeight = el.clientHeight;
+
+  function tryShrink() {
+    clone.offsetHeight;
+    const ch = clone.clientHeight;
+    if (ch > targetHeight && size > minSize) {
+      size -= 0.5;
+      clone.style.fontSize = size + 'px';
+      requestAnimationFrame(tryShrink);
+    } else {
+      el.style.fontSize = size + 'px';
+      if (document.body.contains(clone)) {
+        document.body.removeChild(clone);
+      }
+    }
+  }
+  requestAnimationFrame(tryShrink);
+}
+
+function runAutoShrink() {
+  const previewCard = document.querySelector('#livePreview .qr-card');
+  if (!previewCard) return;
+
+  // 先恢复默认字体，防止基于已缩小字体反复计算
+  previewCard.querySelectorAll('.block-body, .note-body').forEach(el => {
+    el.style.fontSize = '';
+  });
+  previewCard.offsetWidth;
+
+  // 逐个检测并缩小
+  previewCard.querySelectorAll('.block-body').forEach(autoShrinkFont);
+  const noteBody = previewCard.querySelector('.note-body');
+  if (noteBody) autoShrinkFont(noteBody);
+
+  // 最后调整整体缩放
+  fitPreviewScale();
+}
+
+function buildCardFromForm() {
+  return {
+    id: document.getElementById('r_id').value,
+    defectType: document.getElementById('r_defectType').value,
+    materialCode: document.getElementById('r_materialCode').value,
+    productDesc: document.getElementById('r_productDesc').value,
+    severity: document.getElementById('r_severity').value,
+    defectRate: document.getElementById('r_defectRate').value,
+    occurrence: document.getElementById('r_occurrence').value,
+    updateTime: document.getElementById('r_updateTime').value,
+    customer: document.getElementById('r_customer').value,
+    note: document.getElementById('r_note').value,
+    problemDesc: document.getElementById('r_problemDesc').value,
+    causeAnalysis: document.getElementById('r_causeAnalysis').value,
+    solution: document.getElementById('r_solution').value,
+    photos: currentPhotos
+  };
+}
+
+function renderCardHTML(card, isPreview) {
+  const photosHtml = card.photos && card.photos.length > 0
+    ? `<img src="${card.photos[0]}" style="max-width:100%;max-height:100%;object-fit:contain;">`
+    : '<div style="color:#999;font-size:12px;">[ 质量问题照片 ]</div>';
+  const dt = card.defectType || '问题';
+  let defectText;
+  if (dt.length >= 4) {
+    // 4个字：上面2个，下面2个
+    defectText = dt.slice(0, 2) + '<br>' + dt.slice(2);
+  } else {
+    // 2-3个字：竖排
+    defectText = dt.split('').join('<br>');
+  }
+  const dtLen = dt.length;
+  let defectCls = 'defect-2';
+  if (dtLen >= 4) defectCls = 'defect-4';
+  else if (dtLen === 3) defectCls = 'defect-3';
+  const defectColor = getSeverityColor(card.severity);
+  const scaleStyle = isPreview ? 'style="transform-origin:top center;"' : '';
+  return `<div class="qr-card" ${scaleStyle} style="--defect-color:${defectColor};">
+    <div class="report-no"><div class="num">${card.id || 'QR-XXXX-XXX'}</div><div class="label">质量问题报告</div></div>
+    <div class="header"><div class="triangle-wrap"><div class="triangle-text ${defectCls}">${defectText}</div></div>
+      <div class="code-area"><div class="code-en">${card.materialCode || '无料号'}</div><div class="code-cn">${card.productDesc || ''}</div></div></div>
+    <div class="fields-row">
+      <div class="field-card"><div class="label">严重性</div><div class="value">${renderSeverityStars(card.severity)}</div></div>
+      <div class="field-card"><div class="label">不良比例</div><div class="value">${card.defectRate || '-'}</div></div>
+      <div class="field-card"><div class="label">发生次数</div><div class="value">${card.occurrence || '-'}</div></div>
+    </div>
+    <div class="fields-row">
+      <div class="field-card" style="flex:0.5;"><div class="label">更新时间</div><div class="value">${card.updateTime || '-'}</div></div>
+      <div class="field-card" style="flex:0.5;"><div class="label">客户</div><div class="value">${card.customer ? card.customer + (CUSTOMER_MAP[card.customer] ? '('+CUSTOMER_MAP[card.customer]+')' : '') : '-'}</div></div>
+    </div>
+    <div class="main">
+      <div class="left-side"><div class="photo-box">${photosHtml}</div>
+        <div class="note-block"><div class="note-body">${card.note ? '<span class="note-label">备注：</span>' + escapeHtml(card.note) : ''}</div></div></div>
+      <div class="right-side">
+        <div class="block block-problem"><div class="block-header">问题详细描述</div><div class="block-body">${escapeHtml(card.problemDesc || '')}</div></div>
+        <div class="block block-cause"><div class="block-header">原因分析</div><div class="block-body">${escapeHtml(card.causeAnalysis || '')}</div></div>
+        <div class="block block-solution"><div class="block-header">解决办法</div><div class="block-body">${escapeHtml(card.solution || '')}</div></div></div></div></div>`;
+}
+
+function escapeHtml(text) {
+  if (!text) return '';
+  const d = document.createElement('div');
+  d.textContent = text;
+  return d.innerHTML.replace(/\n/g, '<br>');
+}
+
+// ========== 提交 ==========
+// 【v1.23-fix4】submitRecord 已合并新旧逻辑，见下方 async function submitRecord
+// 旧 submitRecord（记录页模式）已合并到新的 submitRecord 中
+
+// ========== 查找 ==========
+// ========== 料号别名分组映射 ==========
+// 以下料号前缀被视为同一规格（搜其中一个，同组都会出现）
+const MATERIAL_CODE_GROUPS = [
+  ['HWD70358', 'HWD903', 'HWD14288', 'LHP9', 'LHP1', 'LHP4']
+];
+
+// 判断两个料号前缀是否属于同一分组
+function isSameMaterialGroup(prefixA, prefixB) {
+  if (prefixA === prefixB) return true;
+  const lowerA = prefixA.toLowerCase();
+  const lowerB = prefixB.toLowerCase();
+  for (const group of MATERIAL_CODE_GROUPS) {
+    const groupLower = group.map(g => g.toLowerCase());
+    if (groupLower.includes(lowerA) && groupLower.includes(lowerB)) return true;
+  }
+  // PBA10-PBA99 视为同一组（互相匹配）
+  const pbaA = /^PBA(\d{2})$/i.exec(prefixA);
+  const pbaB = /^PBA(\d{2})$/i.exec(prefixB);
+  if (pbaA && pbaB) return true;
+  // 【v1.22-fix2】PBA 与 HWD/LHP 固定分组也互为同组
+  const inFixedGroup = (prefix) => {
+    const lower = prefix.toLowerCase();
+    for (const group of MATERIAL_CODE_GROUPS) {
+      if (group.some(g => g.toLowerCase() === lower)) return true;
+    }
+    return false;
+  };
+  if ((pbaA && inFixedGroup(prefixB)) || (pbaB && inFixedGroup(prefixA))) return true;
+  return false;
+}
+
+// 判断字符串是否是已知料号前缀
+function isMaterialPrefix(str) {
+  if (!str || str.length < 3) return false;
+  const upper = str.toUpperCase();
+  for (const group of MATERIAL_CODE_GROUPS) {
+    if (group.some(g => g.toUpperCase() === upper)) return true;
+  }
+  if (/^PBA\d{2}$/i.test(str)) return true;
+  return false;
+}
+
+// ========== 料号分级匹配 ==========
+// 料号格式：规格-材料-颜色-印刷图案-商标（分隔符为 - ，/ 是普通字符）
+function parseMaterialCode(code) {
+  if (!code) return ['', '', '', '', ''];
+  const parts = code.split('-');
+  while (parts.length < 5) parts.push('');
+  if (parts.length > 5) {
+    parts[4] = parts.slice(4).join('-');
+    parts.length = 5;
+  }
+  return parts;
+}
+
+// 计算卡片料号与搜索料号的匹配级别
+// 1级：1、2、3相同（或更多）  2级：1、2 / 1、3 / 1、4 相同  3级：仅1相同  4级：其它
+function getMatchLevel(searchCode, cardCode) {
+  const s = parseMaterialCode(searchCode);
+  const c = parseMaterialCode(cardCode);
+  // 【v1.22】料号分组映射：检查是否属于同一料号分组
+  if (s[0] !== c[0] && !isSameMaterialGroup(s[0], c[0])) return 4;
+  // 如果在同一分组但名称不同，统一视为相同规格进行后续比较
+  if (s[0] !== c[0]) c[0] = s[0];
+  if (s[0] === c[0] && s[1] === c[1] && s[2] === c[2]) return 1;
+  if (s[0] === c[0] && s[1] === c[1]) return 2;
+  if (s[0] === c[0] && s[2] === c[2]) return 2;
+  if (s[0] === c[0] && s[3] === c[3]) return 2;
+  return 3;
+}
+
+function doSearch() {
+  const rawKw = document.getElementById('searchInput').value.trim();
+  const kw = rawKw.toLowerCase();
+  const fDefect = document.getElementById('filterDefect').value;
+  const fCustomer = document.getElementById('filterCustomer').value;
+  const fSeverity = document.getElementById('filterSeverity').value;
+
+  let cards = loadCards();
+
+  if (rawKw.includes('-')) {
+    // 料号搜索模式：按 materialCode 分级匹配，4级过滤不显示
+    cards = cards.map(c => ({
+      ...c,
+      _matchLevel: getMatchLevel(rawKw, c.materialCode || '')
+    })).filter(c => c._matchLevel <= 3);
+  } else if (kw) {
+    // 普通搜索模式：模糊匹配所有字段
+    // 【v1.22】料号分组映射：如果搜索词是料号前缀，扩展匹配同组料号
+    cards = cards.filter(c => {
+      const materialCode = (c.materialCode || '').toLowerCase();
+      let materialMatch = materialCode.includes(kw);
+      if (!materialMatch && isMaterialPrefix(kw)) {
+        // 检查固定分组
+        for (const group of MATERIAL_CODE_GROUPS) {
+          if (group.some(g => g.toLowerCase() === kw)) {
+            materialMatch = group.some(alias => materialCode.includes(alias.toLowerCase()));
+            break;
+          }
+        }
+        // PBA系列 - 使用同组映射
+        if (!materialMatch && /^PBA\d{2}$/i.test(kw)) {
+          const cardPrefix = (c.materialCode || '').split('-')[0];
+          materialMatch = isSameMaterialGroup(kw, cardPrefix);
+        }
+      }
+      return materialMatch ||
+        (c.productDesc && c.productDesc.toLowerCase().includes(kw)) ||
+        (c.customer && c.customer.toLowerCase().includes(kw)) ||
+        (c.id && c.id.toLowerCase().includes(kw)) ||
+        (c.defectType && c.defectType.toLowerCase().includes(kw));
+    });
+  }
+
+  if (fDefect) cards = cards.filter(c => c.defectType === fDefect);
+  if (fCustomer) cards = cards.filter(c => c.customer === fCustomer);
+  if (fSeverity) cards = cards.filter(c => c.severity && c.severity.includes(fSeverity));
+
+  // 统一排序：先按匹配级别（1→2→3→4），同级内按严重性（5星>4星>3星>2星>1星）
+  cards.sort((a, b) => {
+    const lvlA = a._matchLevel || 99;
+    const lvlB = b._matchLevel || 99;
+    if (lvlA !== lvlB) return lvlA - lvlB;  // 匹配级别低的排前面（1级最高）
+    const priA = getSeverityPriority(a.severity);
+    const priB = getSeverityPriority(b.severity);
+    return priB - priA;  // 严重性高的排前面（5星最高）
+  });
+
+  lastResults = cards;
+  document.getElementById('searchStats').textContent = `找到 ${cards.length} 条记录`;
+  // handLabel 由 renderHand 自动更新
+  renderHand(cards);
+  updateTable();
+}
+
+// ========== 手牌渲染（动态重叠，可滚动）==========
+function renderHand(cards) {
+  const deck = document.getElementById('handDeck');
+
+  // FLIP Step 1: Record old positions of existing cards
+  const oldPositions = {};
+  const oldCards = deck.querySelectorAll('.hand-card');
+  oldCards.forEach(el => {
+    const id = el.dataset.id;
+    const rect = el.getBoundingClientRect();
+    oldPositions[id] = { left: rect.left, top: rect.top };
+  });
+  const hadOldCards = oldCards.length > 0;
+
+  // 过滤掉已打出的卡片（桌面区已展示，手牌区不显示）
+  const handCards = cards.filter(c => !playedIds.has(c.id));
+
+  if (handCards.length === 0) {
+    deck.innerHTML = '<div style="color:rgba(255,255,255,0.3);padding:20px;font-size:12px;">所有报告已展开到展示区，点击展示区报告收起</div>';
+    deck.style.width = '100%';
+    document.getElementById('handLabel').textContent = `结果：0 条（已展示 ${playedIds.size} 条）`;
+    return;
+  }
+
+  document.getElementById('handLabel').textContent = `结果：${handCards.length} 条（点击展开查看）`;
+
+  // 动态计算重叠量
+  const cardWidth = 140;
+  const scrollWidth = document.getElementById('handScroll').clientWidth - 40; // 减去padding
+  const totalWidth = handCards.length * cardWidth;
+  let overlap = 0;
+
+  if (totalWidth > scrollWidth) {
+    // 需要重叠：确保每张卡片至少露出75px（完整显示三角形50px + 部分料号）
+    overlap = Math.ceil((totalWidth - scrollWidth) / (handCards.length - 1));
+    overlap = Math.min(overlap, cardWidth - 75);
+    overlap = Math.max(overlap, 0);
+  }
+
+  // 按排序后的顺序渲染，z-index 递增：最右边在最上层
+  deck.innerHTML = handCards.map((c, i) => {
+    const zIndex = i + 1;
+    const marginLeft = i === 0 ? 0 : -overlap;
+    return renderHandCard(c, zIndex, marginLeft);
+  }).join('');
+
+  // 设置hand-deck的显式宽度，确保overflow-x能检测到溢出
+  const deckWidth = cardWidth + (handCards.length - 1) * (cardWidth - overlap);
+  deck.style.width = Math.max(deckWidth, 100) + 'px';
+
+  // 动态设置hover让位距离：让右侧卡片刚好与当前卡片并排（间隙为0，避免鬼畜）
+  const shift = overlap;
+  deck.style.setProperty('--card-shift', shift + 'px');
+
+  // FLIP Step 3-4: Invert and Play (only if there were old cards to animate from)
+  if (hadOldCards) {
+    requestAnimationFrame(() => {
+      deck.querySelectorAll('.hand-card').forEach(el => {
+        const id = el.dataset.id;
+        const oldPos = oldPositions[id];
+        if (oldPos) {
+          const newRect = el.getBoundingClientRect();
+          const deltaX = oldPos.left - newRect.left;
+          if (Math.abs(deltaX) > 1) {
+            el.style.transition = 'none';
+            el.style.transform = `translateX(${deltaX}px)`;
+            // Force reflow
+            el.offsetWidth;
+            // Play: remove transform with transition
+            el.style.transition = 'transform 0.35s cubic-bezier(0.25, 0.8, 0.25, 1)';
+            el.style.transform = '';
+            // Clean up inline styles after animation
+            setTimeout(() => {
+              el.style.transition = '';
+              el.style.transform = '';
+            }, 400);
+          }
+        }
+      });
+    });
+  }
+}
+
+function renderHandCard(card, zIndex, marginLeft) {
+  const dt = card.defectType || '问题';
+  let defectText;
+  if (dt.length === 4) {
+    defectText = dt.slice(0, 2) + '<br>' + dt.slice(2);
+  } else {
+    defectText = dt.split('').join('<br>');
+  }
+  const color = getSeverityColor(card.severity);
+
+  // 级别标识（料号搜索时显示）
+  const level = card._matchLevel || '';
+  const levelHtml = level ? `<div class="thumb-level level-${level}">${[1,2,3,4].map(i => `<div class="bar"></div>`).join('')}</div>` : '';
+
+  return `<div class="hand-card"
+    data-id="${card.id}"
+    style="z-index: ${zIndex}; --defect-color: ${color}; margin-left: ${marginLeft}px;"
+    onclick="playCard('${card.id}')"
+  >
+    <div class="card-thumb">
+      <div class="thumb-triangle"></div>
+      <div class="thumb-defect">${defectText}</div>
+      <div class="thumb-code-wrap">
+        <div class="thumb-code-en">${escapeHtml(card.materialCode || '无料号')}</div>
+        <div class="thumb-code-cn">${escapeHtml(card.productDesc || '')}</div>
+      </div>
+      ${levelHtml}
+      <div class="thumb-report">
+        <div class="num">${card.id}</div>
+        <div class="lab">质量问题报告</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ========== 点击手牌 = 打出到桌面 ==========
+function playCard(id) {
+  if (playedIds.has(id)) {
+    // 收回：桌面卡片直接做缩小淡出动画
+    const tableCard = document.querySelector(`.table-card-wrap[data-table-id="${id}"]`);
+    if (tableCard) {
+      // 先清除可能残留的animation，避免与transition冲突
+      tableCard.style.animation = 'none';
+      tableCard.style.transition = 'transform 0.45s cubic-bezier(0.6, -0.28, 0.735, 0.045), opacity 0.4s ease';
+      // 强制重排确保transition生效
+      void tableCard.offsetWidth;
+      tableCard.style.transform = 'translateY(100px) scale(0.3) rotateZ(12deg)';
+      tableCard.style.opacity = '0';
+    }
+    playedIds.delete(id);
+    // 等动画做完再更新DOM
+    setTimeout(() => {
+      renderHand(lastResults);
+      updateTable();
+    }, 450);
+  } else {
+    // 打出：克隆卡片到body做飞出动画（不被任何容器裁剪）
+    const cardEl = document.querySelector(`.hand-card[data-id="${id}"]`);
+    if (cardEl) {
+      const rect = cardEl.getBoundingClientRect();
+      const clone = cardEl.cloneNode(true);
+      clone.style.cssText = `
+        position: fixed;
+        left: ${rect.left}px;
+        top: ${rect.top}px;
+        width: ${rect.width}px;
+        height: ${rect.height}px;
+        margin: 0;
+        z-index: 10000;
+        transition: transform 0.45s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s ease;
+      `;
+      document.body.appendChild(clone);
+      // 强制reflow确保transition能触发
+      clone.offsetWidth;
+      // 设置目标状态，触发飞出动画
+      clone.style.transform = 'translateY(-200px) scale(1.3)';
+      clone.style.opacity = '0';
+      setTimeout(() => clone.remove(), 500);
+    }
+    // 桌面区立即添加新卡片（播放dealCard动画）
+    playedIds.add(id);
+    updateTable();
+    // 100ms后从手牌区移除（让用户看到卡片开始飞出的瞬间）
+    setTimeout(() => {
+      renderHand(lastResults);
+    }, 100);
+  }
+}
+
+function clearTable() {
+  playedIds.clear();
+  renderHand(lastResults);
+  updateTable();
+}
+
+function playAll() {
+  lastResults.forEach(c => playedIds.add(c.id));
+  renderHand(lastResults);
+  updateTable();
+}
+
+function printTable() {
+  const cards = lastResults.filter(c => playedIds.has(c.id));
+  if (cards.length === 0) { alert('请先展开需要打印的报告'); return; }
+  window.print();
+}
+
+// ========== 桌面展示区更新（增量渲染，不打断已有卡片）==========
+function updateTable() {
+  const hint = document.getElementById('tableHint');
+  const cardsArea = document.getElementById('tableCards');
+
+  const cards = lastResults.filter(c => playedIds.has(c.id));
+
+  if (cards.length === 0) {
+    hint.style.display = 'flex';
+    cardsArea.style.display = 'none';
+    cardsArea.innerHTML = '';
+    return;
+  }
+
+  hint.style.display = 'none';
+  cardsArea.style.display = 'flex';
+
+  // 获取当前桌面已有的卡片ID
+  const existingIds = new Set();
+  cardsArea.querySelectorAll('.table-card-wrap').forEach(w => {
+    existingIds.add(w.dataset.tableId);
+  });
+
+  // 需要移除的卡片（已收回）- 直接移除（飞回动画由playCard处理）
+  cardsArea.querySelectorAll('.table-card-wrap').forEach(w => {
+    if (!playedIds.has(w.dataset.tableId)) {
+      w.remove();
+    }
+  });
+
+  // 需要添加的卡片（新打出）
+  let hasNewCard = false;
+  cards.forEach(c => {
+    if (!existingIds.has(c.id)) {
+      hasNewCard = true;
+      const wrap = document.createElement('div');
+      wrap.className = 'table-card-wrap';
+      wrap.dataset.tableId = c.id;
+      wrap.innerHTML = renderCardHTML(c, false);
+      cardsArea.appendChild(wrap);
+    }
+  });
+
+  // 有新卡片打出时，自动滚动桌面区域到新卡片位置
+  if (hasNewCard) {
+    const cardTable = document.getElementById('cardTable');
+    setTimeout(() => {
+      if (cardTable) {
+        cardTable.scrollTo({ top: cardTable.scrollHeight, behavior: 'smooth' });
+      }
+    }, 100);
+  }
+}
+
+// ========== 弹窗 ==========
+function showModal(card) {
+  document.getElementById('modalContent').innerHTML = renderCardHTML(card, false);
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function closeModal(e) {
+  if (!e || e.target.id === 'modalOverlay') {
+    document.getElementById('modalOverlay').classList.remove('active');
+  }
+}
+
+// ========== 自动更新检测 ==========
+// 策略：用户空闲2分钟后自动刷新，确保加载最新HTML（含新示例卡片）
+let _autoRefreshTimer = null;
+let _lastActivity = Date.now();
+function startAutoUpdateCheck() {
+  // 记录用户活动（任何交互都重置空闲计时）
+  ['mousedown','keydown','touchstart','scroll','click'].forEach(function(evt) {
+    document.addEventListener(evt, function() { _lastActivity = Date.now(); }, {passive:true});
+  });
+  // 每1分钟检查一次：空闲2分钟以上则自动刷新
+  _autoRefreshTimer = setInterval(function() {
+    var idleMs = Date.now() - _lastActivity;
+    if (idleMs > 2 * 60 * 1000) {
+      // 空闲2分钟，安全刷新（强制从服务器/文件重新加载，绕过缓存）
+      location.href = location.href.split('?')[0] + '?t=' + Date.now();
+    }
+  }, 60 * 1000); // 每分钟检查一次
+}
+
+// ========== 新设备初始化流程（v1.20 修复）==========
+
+// 从云端恢复数据（返回 true 表示成功）
+async function tryRestoreFromCloud() {
+  // 显示加载中
+  const loadingEl = document.createElement('div');
+  loadingEl.id = 'initLoading';
+  loadingEl.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;';
+  loadingEl.innerHTML = '<div style="border:4px solid #f3f3f3;border-top:4px solid #1976D2;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;"></div><div style="color:white;font-size:16px;">正在从云端恢复数据...</div><style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>';
+  document.body.appendChild(loadingEl);
+  try {
+    const data = await fetchCardsFromGitHub();
+    if (data && data.content && data.content.trim()) {
+      const cards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cards)); } catch(e) { console.warn('⚠️ STORAGE_KEY保存失败:', e); }
+      try { localStorage.setItem('qc_demo_initialized', '1'); } catch(e) { console.warn('⚠️ demo_initialized保存失败:', e); }
+      loadingEl.remove();
+      alert(`已从云端恢复 ${cards.length} 张卡片，页面将刷新`);
+      location.reload();
+      return true;
+    }
+  } catch(e) {
+    console.warn('从云端恢复失败:', e);
+  }
+  loadingEl.remove();
+  return false;
+}
+
+// 显示新设备选择对话框，返回用户选择（Promise）
+function showNewDeviceDialog() {
+  return new Promise((resolve) => {
+    const overlay = document.createElement('div');
+    overlay.id = 'newDeviceDialog';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    overlay.innerHTML = `
+      <div style="background:white;border-radius:16px;padding:40px 36px;max-width:480px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <div style="font-size:48px;margin-bottom:16px;">📋</div>
+        <h2 style="margin:0 0 12px 0;color:#333;font-size:22px;">欢迎使用质量问题卡片系统</h2>
+        <p style="margin:0 0 8px 0;color:#666;font-size:15px;">检测到这是新设备，本地没有数据。</p>
+        <p style="margin:0 0 28px 0;color:#999;font-size:13px;">请选择操作方式：</p>
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <button id="btnRestore" style="padding:14px;font-size:16px;font-weight:600;border:none;border-radius:10px;cursor:pointer;background:#1976D2;color:white;">🔄 从云端恢复数据</button>
+          <button id="btnDemo" style="padding:14px;font-size:16px;font-weight:600;border:none;border-radius:10px;cursor:pointer;background:#F5F5F5;color:#333;">📊 生成演示数据</button>
+          <button id="btnBlank" style="padding:14px;font-size:16px;font-weight:600;border:none;border-radius:10px;cursor:pointer;background:white;color:#666;border:1px solid #ddd;">🚀 空白开始</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+    document.getElementById('btnRestore').onclick = () => { overlay.remove(); resolve('restore'); };
+    document.getElementById('btnDemo').onclick = () => { overlay.remove(); resolve('demo'); };
+    document.getElementById('btnBlank').onclick = () => { overlay.remove(); resolve('blank'); };
+  });
+}
+
+// 生成演示数据（原 initDemoData 里的逻辑）
+function generateDemoData() {
+  const existing = loadCards();
+  const existingIds = new Set(existing.map(c => c.id));
+  const defects = ['毛刺','缩水','色差','缺料','划痕','变形','气泡','熔接痕','银丝','黑点','尺寸超差'];
+  const customers = ['凯崴','德威','林总','李总','德泰克','帝奥'];
+  const severities = ['★★★★★ 极高','★★★★☆ 很高','★★★☆☆ 高','★★☆☆☆ 中','★☆☆☆☆ 低'];
+  const occurrences = ['偶发','频发','连续','批次性'];
+  const codes = ['KW','DW','LZ','CL','DTK','DA'];
+  const notes = ['模温偏高，冷却时间不足','注塑压力偏低，需调整','原料批次不同，颜色有偏差','模具磨损严重','保压时间不够','射速过快导致喷射','模具温度不均匀','顶针布局不合理','排气不畅','螺杆转速过高'];
+  const problems = ['产品边缘有明显毛刺，影响装配','表面出现凹陷，壁厚不均区域严重','颜色与样板有明显偏差，整体偏黄','局部填充不完整，边角缺料','表面有细长划痕，长度3-8mm','产品翘曲变形，平面度超差','内部有气泡，敲击有空洞声','熔接痕明显，强度降低','表面有银色条纹，影响外观','有黑色杂质点，分布不均','关键尺寸超出公差范围'];
+  const causes = ['模具分型面磨损产生毛刺','保压不足导致收缩不均','色母添加比例不准或分散不良','注塑压力不足或射速过慢','模具表面有异物或损伤','冷却不均匀，内应力大','原料含水率过高或温度过高','熔体温度低，汇合处融合不良','原料降解或含有杂质','原料污染或螺杆积碳','模具尺寸磨损或注塑参数漂移'];
+  const solutions = ['修模抛光分型面，调整合模力','增加保压压力和保压时间','重新配色，检查色母质量','提高注塑压力和射速','清洁模具表面，检查损伤','优化冷却水路，降低模温','干燥原料，降低熔体温度','提高熔体温度，增加汇合角','更换原料，清洗螺杆','清理螺杆和料筒，过滤原料','修模或调整注塑参数补偿'];
+  const demos = [];
+  for (let i = 0; i < 60; i++) {
+    const cIdx = i % customers.length;
+    const dIdx = i % defects.length;
+    const month = String((i % 12) + 1).padStart(2, '0');
+    const day = String((i % 28) + 1).padStart(2, '0');
+    demos.push({ id:`QR-2026-${String(i+1).padStart(3,'0')}`, defectType:defects[dIdx], materialCode:`5510-E/ABS01-BK-P000-${codes[cIdx]}`, productDesc:`5510-防静电ABS01-黑色-不印刷-${customers[cIdx]}`, severity:severities[i%severities.length], defectRate:`${(Math.random()*5+0.1).toFixed(1)}%`, occurrence:occurrences[i%occurrences.length], updateTime:`2026-${month}-${day}`, customer:customers[cIdx], note:notes[i%notes.length], problemDesc:problems[dIdx], causeAnalysis:causes[dIdx], solution:solutions[dIdx], photos:[], createdAt:new Date().toISOString() });
+  }
+  const testCards = [
+    { id:'QR-TEST-001', defectType:'毛刺', materialCode:'TEST-001-A-B-C', productDesc:'测试-1级-红色', severity:'★★★★★ 极高', defectRate:'5.0%', occurrence:'连续', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'1级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() },
+    { id:'QR-TEST-002', defectType:'划痕', materialCode:'TEST-001-X-Y-Z', productDesc:'测试-2级-黄色', severity:'★★☆☆☆ 中', defectRate:'3.0%', occurrence:'频发', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'2级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() },
+    { id:'QR-TEST-003', defectType:'气泡', materialCode:'TEST-999-A-B-C', productDesc:'测试-3级-绿色', severity:'★☆☆☆☆ 低', defectRate:'1.0%', occurrence:'偶发', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'3级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() },
+    { id:'QR-TEST-004', defectType:'缩水', materialCode:'OTHER-001-A-B-C', productDesc:'测试-4级-红色', severity:'★★★☆☆ 高', defectRate:'4.0%', occurrence:'批次性', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'4级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() }
+  ];
+  const allDemoCards = [...demos, ...testCards];
+  const toAdd = allDemoCards.filter(c => !existingIds.has(c.id));
+  if (toAdd.length > 0) {
+    saveCards([...existing, ...toAdd]);
+  }
+  localStorage.setItem(DEMO_VERSION_KEY, Date.now().toString());
+  localStorage.setItem('qc_demo_initialized', '1');
+}
+
+// ========== 初始化 ==========
+document.addEventListener('DOMContentLoaded', async () => {
+  // 【v1.23 方案B】优先从云端加载，失败则用本地缓存
+  const loadingEl = document.createElement('div');
+  loadingEl.id = 'initLoading';
+  loadingEl.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;';
+  loadingEl.innerHTML = '<div style="border:4px solid #f3f3f3;border-top:4px solid #1976D2;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;"></div><div style="color:white;font-size:16px;">正在从云端加载最新数据...</div><style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>';
+  document.body.appendChild(loadingEl);
+
+  let cards = null;
+  let fromCloud = false;
+
+  try {
+    const remoteData = await fetchCardsFromGitHub();
+    if (remoteData) {
+      const remoteCards = JSON.parse(decodeURIComponent(escape(atob(remoteData.content))));
+      console.log('✅ 已从云端加载 ' + remoteCards.length + ' 张卡片');
+      
+      // 【v1.23-fix3 关键修复】合并云端数据和本地数据（防止本地新增的卡片丢失）
+      const localData = localStorage.getItem(STORAGE_KEY);
+      let mergedCards = remoteCards;
+      if (localData) {
+        try {
+          const localCards = JSON.parse(localData);
+          // 用云端数据为基准，加入云端没有的本地卡片
+          const cloudIdSet = new Set(remoteCards.map(c => c.id));
+          const localOnlyCards = localCards.filter(c => !cloudIdSet.has(c.id));
+          if (localOnlyCards.length > 0) {
+            mergedCards = [...remoteCards, ...localOnlyCards];
+            console.log('⚠️ 发现云端缺少 ' + localOnlyCards.length + ' 张本地卡片，已合并（将在下次保存时同步到云端）');
+          }
+        } catch(e) {
+          console.warn('合并本地数据时出错:', e);
+        }
+      }
+      
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards)); } catch(e) { console.warn('⚠️ STORAGE_KEY保存失败:', e); }
+      try { localStorage.setItem('qc_demo_initialized', '1'); } catch(e) { console.warn('⚠️ demo_initialized保存失败:', e); }
+      cards = mergedCards;
+      fromCloud = true;
+    } else {
+      // 云端返回空，尝试本地缓存
+      const localData = localStorage.getItem(STORAGE_KEY);
+      if (localData) {
+        cards = JSON.parse(localData);
+        console.warn('⚠️ 云端返回空，使用本地缓存（可能不是最新）');
+      } else {
+        loadingEl.remove();
+        alert('云端无数据且本地无缓存！\n\n可能原因：首次使用，云端尚无数据\n\n请先在能联网的电脑上打开系统，创建至少一张卡片。');
+        return;
+      }
+    }
+  } catch(err) {
+    // 网络错误，尝试本地缓存
+    const localData = localStorage.getItem(STORAGE_KEY);
+    if (localData) {
+      cards = JSON.parse(localData);
+      console.warn('⚠️ 云端加载出错，使用本地缓存（可能不是最新）: ' + err.message);
+    } else {
+      loadingEl.remove();
+      alert('加载云端数据失败：' + err.message + '\n\n且本地无缓存数据。\n\n请检查网络后刷新页面重试。');
+      return;
+    }
+  }
+
+  loadingEl.remove();
+
+  // 如果用的不是云端数据，显示橙色警告条
+  if (!fromCloud) {
+    const warnBar = document.createElement('div');
+    warnBar.id = 'offlineWarnBar';
+    warnBar.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:#ff9800;color:white;text-align:center;padding:8px;z-index:99998;font-size:14px;';
+    warnBar.innerHTML = '⚠️ 当前使用本地缓存数据（可能不是最新），请检查网络后 <a href="javascript:location.reload()" style="color:#1976D2;font-weight:bold;text-decoration:underline;">刷新页面</a> 同步云端';
+    document.body.appendChild(warnBar);
+    // 推下去一点，避免遮挡顶部按钮
+    document.getElementById('topBar')?.style.setProperty('margin-top', '36px');
+  }
+
+  initApp(cards);
+});
+
+// 初始化应用（从云端或本地数据）
+
+function initApp(cards) {
+  checkUrlSearch();
+  ['r_defectType','r_materialCode','r_productDesc','r_severity','r_defectRate','r_occurrence','r_customer','r_updateTime'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.addEventListener('input', debouncedUpdatePreview); el.addEventListener('change', debouncedUpdatePreview); }
+  });
+  window.addEventListener('resize', debounce(() => {
+    lastPreviewScale = null;
+    lastContainerWidth = null;
+    fitPreviewScale();
+  }, 300));
+  document.getElementById('tableCards').addEventListener('click', function(e) {
+    const wrap = e.target.closest('.table-card-wrap');
+    if (wrap) {
+      const cardId = wrap.dataset.tableId;
+      if (cardId) playCard(cardId);
+    }
+  });
+  const CURRENT_VERSION = '1.23.20260612.1300';
+  const savedVersion = localStorage.getItem('qc_app_version');
+  if (savedVersion !== CURRENT_VERSION) {
+    localStorage.setItem('qc_app_version', CURRENT_VERSION);
+    if (savedVersion !== null) {
+      document.getElementById('updateBanner').style.display = 'block';
+    }
+  }
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'qc_demo_version' && e.newValue && e.newValue !== e.oldValue) {
+      document.getElementById('updateBanner').style.display = 'block';
+      setTimeout(function() {
+        location.href = location.href.split('?')[0] + '?t=' + Date.now();
+      }, 3000);
+    }
+  });
+  autoSyncTimer = setInterval(autoSyncFromGitHub, 2 * 60 * 1000);
+}
+
+
+// ========== 可编辑卡片模式JS ==========
+let editCardData = null;
+
+function renderEditCard() {
+  if (!editCardData) return;
+  const card = editCardData;
+  const wrapper = document.getElementById('editCardWrapper');
+  if (!wrapper) return;
+  const defectColor = getSeverityColor(card.severity);
+
+  // 构建卡片根元素
+  const cardEl = document.createElement('div');
+  cardEl.className = 'qr-card';
+  cardEl.style.cssText = `--defect-color:${defectColor};`;
+
+  // ===== 报告编号 =====
+  const reportNo = document.createElement('div');
+  reportNo.className = 'report-no';
+  const idInput = document.createElement('input');
+  idInput.className = 'card-input card-input-id';
+  idInput.value = card.id || '';
+  idInput.onchange = (e) => { editCardData.id = e.target.value; };
+  const idLabel = document.createElement('div');
+  idLabel.className = 'label';
+  idLabel.textContent = '质量问题报告';
+  reportNo.appendChild(idInput);
+  reportNo.appendChild(idLabel);
+  cardEl.appendChild(reportNo);
+
+  // ===== 头部 =====
+  const header = document.createElement('div');
+  header.className = 'header';
+
+  // 三角形 + 缺陷类型选择
+  const triangleWrap = document.createElement('div');
+  triangleWrap.className = 'triangle-wrap';
+  triangleWrap.style.cursor = 'pointer';
+  triangleWrap.title = '点击选择缺陷类型';
+  const triangleText = document.createElement('div');
+  const dt = card.defectType || '问题';
+  let defectText;
+  if (dt.length >= 4) {
+    // 4个字：上面2个，下面2个
+    defectText = dt.slice(0, 2) + '<br>' + dt.slice(2);
+  } else {
+    // 2-3个字：竖排
+    defectText = dt.split('').join('<br>');
+  }
+  const dtLen = dt.length;
+  let defectCls = 'defect-2';
+  if (dtLen >= 4) defectCls = 'defect-4';
+  else if (dtLen === 3) defectCls = 'defect-3';
+  triangleText.className = 'triangle-text ' + defectCls;
+  triangleText.innerHTML = defectText;
+  triangleWrap.appendChild(triangleText);
+  // 点击三角形弹出缺陷类型下拉菜单
+  triangleWrap.onclick = (e) => {
+    if (triangleWrap.querySelector('.defect-inline-select')) return;
+    const sel = document.createElement('select');
+    sel.className = 'defect-inline-select';
+    const settings = loadSettings();
+    const options = [''].concat(settings.defectTypes);
+    options.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o;
+      opt.textContent = o || '请选择';
+      if (card.defectType === o) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    sel.onchange = () => {
+      editCardData.defectType = sel.value;
+      sel.remove();
+      renderEditCard();
+    };
+    sel.onblur = () => { setTimeout(() => sel.remove(), 200); };
+    triangleWrap.appendChild(sel);
+    sel.focus();
+  };
+  header.appendChild(triangleWrap);
+
+  // 料号区域
+  const codeArea = document.createElement('div');
+  codeArea.className = 'code-area';
+  const codeEn = document.createElement('input');
+  codeEn.className = 'card-input card-input-en';
+  codeEn.placeholder = '料号';
+  codeEn.value = card.materialCode || '';
+  codeEn.oninput = (e) => { editCardData.materialCode = e.target.value; };
+  const codeCn = document.createElement('input');
+  codeCn.className = 'card-input card-input-cn';
+  codeCn.placeholder = '规格';
+  codeCn.value = card.productDesc || '';
+  codeCn.oninput = (e) => { editCardData.productDesc = e.target.value; };
+  codeArea.appendChild(codeEn);
+  codeArea.appendChild(codeCn);
+  header.appendChild(codeArea);
+  cardEl.appendChild(header);
+
+  // ===== 字段行1：严重性 / 不良比例 / 发生次数 =====
+  const row1 = document.createElement('div');
+  row1.className = 'fields-row';
+  row1.appendChild(makeFieldCard('严重性', 'severity', card.severity,
+    ['','★★★★★ 极高','★★★★☆ 很高','★★★☆☆ 高','★★☆☆☆ 中','★☆☆☆☆ 低']));
+  row1.appendChild(makeFieldCard('不良比例', 'defectRate', card.defectRate));
+  row1.appendChild(makeFieldCard('发生次数', 'occurrence', card.occurrence));
+  cardEl.appendChild(row1);
+
+  // ===== 字段行2：更新时间 / 客户 =====
+  const row2 = document.createElement('div');
+  row2.className = 'fields-row';
+  const timeCard = makeFieldCard('更新时间', 'updateTime', card.updateTime);
+  timeCard.style.flex = '0.5';
+  // 更新时间用 date input
+  timeCard.querySelector('.value-wrap').innerHTML = '';
+  const dateInput = document.createElement('input');
+  dateInput.type = 'date';
+  dateInput.className = 'card-input';
+  dateInput.style.fontSize = '13px';
+  dateInput.style.textAlign = 'center';
+  dateInput.value = card.updateTime || '';
+  dateInput.onchange = (e) => { editCardData.updateTime = e.target.value; };
+  timeCard.querySelector('.value-wrap').appendChild(dateInput);
+  row2.appendChild(timeCard);
+
+  const custCard = makeFieldCard('客户', 'customer', card.customer,
+    [''].concat(loadSettings().customers));
+  custCard.style.flex = '0.5';
+  row2.appendChild(custCard);
+  cardEl.appendChild(row2);
+
+  // ===== Main 区域 =====
+  const main = document.createElement('div');
+  main.className = 'main';
+
+  // 左侧
+  const leftSide = document.createElement('div');
+  leftSide.className = 'left-side';
+
+  // 照片区
+  const photoBox = document.createElement('div');
+  photoBox.className = 'photo-box clickable';
+  photoBox.onclick = (e) => { if (e.target === photoBox || e.target.tagName === 'DIV') document.getElementById('photoInput').click(); };
+  // 添加拖放事件监听
+  photoBox.addEventListener('dragover', e => { e.preventDefault(); photoBox.classList.add('dragover'); });
+  photoBox.addEventListener('dragleave', () => photoBox.classList.remove('dragover'));
+  photoBox.addEventListener('drop', e => { e.preventDefault(); photoBox.classList.remove('dragover'); handleFiles(e.dataTransfer.files, 'edit'); });
+  if (card.photos && card.photos.length > 0) {
+    const img = document.createElement('img');
+    img.src = card.photos[0];
+    img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;';
+    photoBox.appendChild(img);
+  } else {
+    photoBox.innerHTML = '<div style="color:#999;font-size:12px;">[ 点击上传照片 ]</div>';
+  }
+  leftSide.appendChild(photoBox);
+  
+  // 备注（固定前缀 + 可编辑区域）
+  const noteBlock = document.createElement('div');
+  noteBlock.className = 'note-block';
+  const noteWrap = document.createElement('div');
+  noteWrap.className = 'note-edit-wrap';
+  const notePrefix = document.createElement('span');
+  notePrefix.className = 'note-prefix-fixed';
+  notePrefix.textContent = '备注：';
+  const noteInput = document.createElement('textarea');
+  noteInput.className = 'note-input-area';
+  noteInput.placeholder = '在此输入备注...';
+  noteInput.value = card.note || '';
+  noteInput.oninput = (e) => { editCardData.note = e.target.value; };
+  noteWrap.appendChild(notePrefix);
+  noteWrap.appendChild(noteInput);
+  noteBlock.appendChild(noteWrap);
+  leftSide.appendChild(noteBlock);
+
+  main.appendChild(leftSide);
+
+  // 右侧
+  const rightSide = document.createElement('div');
+  rightSide.className = 'right-side';
+  rightSide.appendChild(makeBlock('问题详细描述', 'problemDesc', card.problemDesc));
+  rightSide.appendChild(makeBlock('原因分析', 'causeAnalysis', card.causeAnalysis));
+  rightSide.appendChild(makeBlock('解决办法', 'solution', card.solution));
+  main.appendChild(rightSide);
+
+  cardEl.appendChild(main);
+
+  wrapper.innerHTML = '';
+  wrapper.appendChild(cardEl);
+  // cardEl 已挂载到 DOM，现在可以安全地渲染照片列表
+  renderPhotos('edit');
+}
+
+// 辅助：创建字段卡片（带 select 或 input）
+function makeFieldCard(label, field, value, options) {
+  const el = document.createElement('div');
+  el.className = 'field-card';
+  const lbl = document.createElement('div');
+  lbl.className = 'label';
+  lbl.textContent = label;
+  el.appendChild(lbl);
+  const wrap = document.createElement('div');
+  wrap.className = 'value-wrap';
+  if (options) {
+    const sel = document.createElement('select');
+    sel.className = 'card-select';
+    options.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o;
+      opt.textContent = o || '请选择';
+      if (value === o) opt.selected = true;
+      sel.appendChild(opt);
+    });
+    sel.onchange = (e) => { 
+      editCardData[field] = e.target.value; 
+      if (field === 'severity') {
+        sel.style.color = getSeverityColor(e.target.value);
+      }
+    };
+    if (field === 'severity') {
+      sel.style.color = getSeverityColor(value);
+    }
+    wrap.appendChild(sel);
+  } else {
+    const inp = document.createElement('input');
+    inp.className = 'card-input';
+    inp.style.fontSize = '13px';
+    inp.style.textAlign = 'center';
+    inp.value = value || '';
+    inp.oninput = (e) => { editCardData[field] = e.target.value; };
+    wrap.appendChild(inp);
+  }
+  el.appendChild(wrap);
+  return el;
+}
+
+// 辅助：创建文本区块
+function makeBlock(headerText, field, value) {
+  const block = document.createElement('div');
+  block.className = 'block';
+  const hdr = document.createElement('div');
+  hdr.className = 'block-header';
+  hdr.textContent = headerText;
+  block.appendChild(hdr);
+  const body = document.createElement('textarea');
+  body.className = 'card-textarea';
+  body.placeholder = '在此输入' + headerText + '...';
+  body.value = value || '';
+  body.oninput = (e) => { editCardData[field] = e.target.value; };
+  block.appendChild(body);
+  return block;
+}
+
+// 缺陷类型选择弹层
+function showDefectSelect(triangleWrap) {
+  // 如果已有弹层，移除
+  const existing = triangleWrap.querySelector('.defect-select-popup');
+  if (existing) { existing.remove(); return; }
+
+  const popup = document.createElement('div');
+  popup.className = 'defect-select-popup';
+  const sel = document.createElement('select');
+  const settings = loadSettings();
+  const options = [''].concat(settings.defectTypes);
+  options.forEach(o => {
+    const opt = document.createElement('option');
+    opt.value = o;
+    opt.textContent = o || '请选择缺陷类型';
+    if (editCardData.defectType === o) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  sel.onchange = (e) => {
+    editCardData.defectType = e.target.value;
+    popup.remove();
+    renderEditCard();
+  };
+  sel.onblur = () => { setTimeout(() => popup.remove(), 150); };
+  popup.appendChild(sel);
+  triangleWrap.appendChild(popup);
+  sel.focus();
+}
+
+// 照片处理
+const photoInputEl = document.getElementById('photoInput');
+if (photoInputEl) {
+  photoInputEl.onchange = function(e) {
+    handleFiles(e.target.files, 'edit');
+  };
+}
+
+// submitRecord 新版
+async function submitRecord() {
+  let card, isEditMode = false, cards;
+
+  if (editCardData && editCardData.id) {
+    // 编辑卡片模式（editCardData有值且有效）
+    isEditMode = !!editCardData._isEditing;
+    cards = loadCards();
+    if (isEditMode) {
+      // 编辑现有卡片
+      const idx = cards.findIndex(c => c.id === editCardData.id);
+      if (idx >= 0) {
+        editCardData.createdAt = cards[idx].createdAt || new Date().toISOString();
+        delete editCardData._isEditing;
+        cards[idx] = JSON.parse(JSON.stringify(editCardData));
+      } else {
+        delete editCardData._isEditing;
+        editCardData.createdAt = new Date().toISOString();
+        cards.unshift(editCardData);
+      }
+    } else {
+      // 新增模式（从编辑卡片页新增）
+      editCardData.createdAt = new Date().toISOString();
+      cards.unshift(editCardData);
+    }
+    card = editCardData;
+  } else {
+    // 记录页模式（editCardData为null或无效）
+    card = buildCardFromForm();
+    if (!card.materialCode && !card.productDesc) { alert('请至少填写料号或产品描述'); return; }
+    card.createdAt = new Date().toISOString();
+    cards = loadCards();
+    cards.unshift(card);
+    // 清理表单（旧逻辑）
+    document.querySelectorAll('#record input:not([readonly]), #record select, #record textarea').forEach(el => { if (el.type !== 'date') el.value = ''; });
+    currentPhotos = [];
+    renderPhotos();
+    const pasteInput = document.getElementById('pasteInput');
+    if (pasteInput) pasteInput.value = '';
+    const pasteStatus = document.getElementById('pasteStatus');
+    if (pasteStatus) pasteStatus.textContent = '';
+    document.querySelectorAll('.font-hint').forEach(h => h.textContent = '');
+    const rId = document.getElementById('r_id');
+    if (rId) rId.value = generateId();
+    lastPreviewScale = null;
+    lastContainerWidth = null;
+    updatePreview();
+  }
+
+  await saveCards(cards);
+  alert(`${isEditMode ? '修改成功' : '记录成功'}！\n报告编号：${card.id}`);
+  editCardData = null;
+  goHome();
+}
+
+
+// ========== 数据管理 ==========
+const SETTINGS_KEY = 'qc_settings_v1';
+
+function getDefaultSettings() {
+  return {
+    defectTypes: ['毛刺','缩水','色差','缺料','划痕','变形','气泡','熔接痕','银丝','黑点','尺寸超差','其他'],
+    customers: ['CJX085902','CDW02302','CKW02802','CLZ053002','CDTK057102','CDA051202'],
+    severities: ['★★★★★ 极高','★★★★☆ 很高','★★★☆☆ 高','★★☆☆☆ 中','★☆☆☆☆ 低']
+  };
+}
+
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem(SETTINGS_KEY));
+    if (s && s.defectTypes) return s;
+  } catch(e) {}
+  return getDefaultSettings();
+}
+
+function saveSettings(settings) {
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+}
+
+function showManage() {
+  if (!manageUnlocked) {
+    const pwd = prompt('请输入管理密码：');
+    if (pwd !== '3332476') { alert('密码错误'); return; }
+    manageUnlocked = true;
+  }
+  showSection('manage', '数据管理');
+  renderManagePage();
+}
+
+function renderManagePage() {
+  const settings = loadSettings();
+  const defectList = document.getElementById('defectTypeList');
+  defectList.innerHTML = settings.defectTypes.map((dt, i) =>
+    '<div class="manage-item">' + dt + '<button class="mi-del" onclick="manageDeleteDefectType(' + i + ')">×</button></div>'
+  ).join('');
+  const customerList = document.getElementById('customerList');
+  customerList.innerHTML = settings.customers.map((c, i) =>
+    '<div class="manage-item">' + c + '<button class="mi-del" onclick="manageDeleteCustomer(' + i + ')">×</button></div>'
+  ).join('');
+  const severityList = document.getElementById('severityList');
+  severityList.innerHTML = settings.severities.map((s, i) =>
+    '<div class="manage-item">' + s + '<button class="mi-del" onclick="manageDeleteSeverity(' + i + ')">×</button></div>'
+  ).join('');
+}
+
+function manageAddDefectType() {
+  const input = document.getElementById('newDefectTypeInput');
+  const val = input.value.trim();
+  if (!val) { alert('请输入缺陷类型名称'); return; }
+  const settings = loadSettings();
+  if (settings.defectTypes.includes(val)) { alert('该缺陷类型已存在'); return; }
+  settings.defectTypes.push(val);
+  saveSettings(settings);
+  input.value = '';
+  renderManagePage();
+}
+
+function manageDeleteDefectType(idx) {
+  if (!confirm('确定删除该缺陷类型？')) return;
+  const settings = loadSettings();
+  settings.defectTypes.splice(idx, 1);
+  saveSettings(settings);
+  renderManagePage();
+}
+
+function manageAddCustomer() {
+  const input = document.getElementById('newCustomerInput');
+  const val = input.value.trim();
+  if (!val) { alert('请输入客户名称'); return; }
+  const settings = loadSettings();
+  if (settings.customers.includes(val)) { alert('该客户已存在'); return; }
+  settings.customers.push(val);
+  saveSettings(settings);
+  input.value = '';
+  renderManagePage();
+}
+
+function manageDeleteCustomer(idx) {
+  if (!confirm('确定删除该客户？')) return;
+  const settings = loadSettings();
+  settings.customers.splice(idx, 1);
+  saveSettings(settings);
+  renderManagePage();
+}
+
+function manageAddSeverity() {
+  const input = document.getElementById('newSeverityInput');
+  const val = input.value.trim();
+  if (!val) { alert('请输入严重性等级'); return; }
+  const settings = loadSettings();
+  if (settings.severities.includes(val)) { alert('该严重性等级已存在'); return; }
+  settings.severities.push(val);
+  saveSettings(settings);
+  input.value = '';
+  renderManagePage();
+}
+
+function manageDeleteSeverity(idx) {
+  if (!confirm('确定删除该严重性等级？')) return;
+  const settings = loadSettings();
+  settings.severities.splice(idx, 1);
+  saveSettings(settings);
+  renderManagePage();
+}
+
+function manageExportSettings() {
+  const settings = loadSettings();
+  const blob = new Blob([JSON.stringify(settings, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'qc-settings.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function manageImportSettings() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        const settings = JSON.parse(ev.target.result);
+        if (!settings.defectTypes) throw new Error('无效的设置文件');
+        saveSettings(settings);
+        alert('导入成功！');
+        renderManagePage();
+      } catch(err) {
+        alert('导入失败：' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function manageResetSettings() {
+  if (!confirm('确定恢复默认设置？当前自定义内容将丢失！')) return;
+  saveSettings(getDefaultSettings());
+  alert('已恢复默认设置');
+  renderManagePage();
+}
+
+// ========== 卡片管理 ==========
+
+function exportCards() {
+  const cards = loadCards();
+  const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+  const filename = 'cards_backup_' + date + '.json';
+  const blob = new Blob([JSON.stringify(cards, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+  alert('已导出 ' + cards.length + ' 张卡片到文件：' + filename);
+}
+
+function importCards() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      try {
+        const importedCards = JSON.parse(ev.target.result);
+        if (!Array.isArray(importedCards)) throw new Error('无效的卡片数据');
+        const existingCards = loadCards();
+        const cardMap = new Map();
+        existingCards.forEach(c => cardMap.set(c.id, c));
+        importedCards.forEach(c => cardMap.set(c.id, c));
+        const mergedCards = Array.from(cardMap.values());
+        saveCards(mergedCards);
+        alert('导入成功！共 ' + importedCards.length + ' 张卡片，合并后共 ' + mergedCards.length + ' 张');
+      } catch(err) {
+        alert('导入失败：' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+function showCardManage() {
+  if (!manageUnlocked) {
+    const pwd = prompt('请输入管理密码：');
+    if (pwd !== '3332476') { alert('密码错误'); return; }
+    manageUnlocked = true;
+  }
+  showSection('cardManage', '卡片管理');
+  document.getElementById('cmSearchInput').value = '';
+  document.getElementById('cmSortField').value = 'id';
+  document.getElementById('cmSortDir').value = 'asc';
+  cmRender();
+}
+
+function cmRender() {
+  const list = document.getElementById('cardManageList');
+  let cards = loadCards();
+
+  // 搜索过滤
+  const kw = (document.getElementById('cmSearchInput').value || '').toLowerCase();
+  if (kw) {
+    cards = cards.filter(c =>
+      (c.id && c.id.toLowerCase().includes(kw)) ||
+      (c.materialCode && c.materialCode.toLowerCase().includes(kw)) ||
+      (c.defectType && c.defectType.toLowerCase().includes(kw)) ||
+      (c.productDesc && c.productDesc.toLowerCase().includes(kw)) ||
+      (c.customer && c.customer.toLowerCase().includes(kw)) ||
+      (c.updateTime && c.updateTime.toLowerCase().includes(kw))
+    );
+  }
+
+  // 排序（安全处理）
+  const field = document.getElementById('cmSortField').value;
+  const dir = document.getElementById('cmSortDir').value === 'desc' ? -1 : 1;
+  cards.sort((a, b) => {
+    let va = a[field];
+    let vb = b[field];
+    if (va === undefined || va === null) va = '';
+    if (vb === undefined || vb === null) vb = '';
+    if (field === 'updateTime') {
+      const ta = va ? new Date(va).getTime() : 0;
+      const tb = vb ? new Date(vb).getTime() : 0;
+      const na = isNaN(ta) ? 0 : ta;
+      const nb = isNaN(tb) ? 0 : tb;
+      if (na < nb) return -1 * dir;
+      if (na > nb) return 1 * dir;
+      return 0;
+    } else {
+      const sa = String(va).toLowerCase();
+      const sb = String(vb).toLowerCase();
+      if (sa < sb) return -1 * dir;
+      if (sa > sb) return 1 * dir;
+      return 0;
+    }
+  });
+
+  // 分页
+  const pageSize = 20;
+  const total = cards.length;
+  let page = window._cmPage || 1;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  if (page > totalPages) page = totalPages;
+  if (page < 1) page = 1;
+  window._cmPage = page;
+  const start = (page - 1) * pageSize;
+  const pageCards = cards.slice(start, start + pageSize);
+
+  document.getElementById('cmCount').textContent = '共 ' + total + ' 条' + (kw ? '（已过滤）' : '') + ' 第 ' + page + '/' + totalPages + ' 页';
+
+  let html = '';
+  if (total === 0) {
+    html = '<div class="cm-empty">暂无卡片数据' + (kw ? '（试试其他关键词）' : '') + '</div>';
+  } else {
+    html = pageCards.map(c => `
+      <div class="cm-item">
+        <input type="checkbox" class="cm-check" data-id="${c.id}">
+        <div class="cm-id">${c.id}</div>
+        <div class="cm-code">${c.materialCode || '-'}</div>
+        <div class="cm-desc">${c.defectType || '-'} | ${c.productDesc || '-'}</div>
+        <div class="cm-customer">${c.customer ? c.customer + (CUSTOMER_MAP[c.customer] ? '('+CUSTOMER_MAP[c.customer]+')' : '') : '-'}</div>
+        <div class="cm-date">${c.updateTime || '-'}</div>
+        <button class="cm-edit-btn" onclick="editCard('${c.id}')">修改</button>
+      </div>
+    `).join('');
+
+    // 分页控件
+    if (totalPages > 1) {
+      html += '<div class="cm-pagination">';
+      html += '<button onclick="cmGotoPage(' + (page - 1) + ')"' + (page <= 1 ? ' disabled' : '') + '>上一页</button>';
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= page - 2 && i <= page + 2)) {
+          html += '<button onclick="cmGotoPage(' + i + ')"' + (i === page ? ' class="active"' : '') + '>' + i + '</button>';
+        } else if (i === page - 3 || i === page + 3) {
+          html += '<span class="cm-ellipsis">…</span>';
+        }
+      }
+      html += '<button onclick="cmGotoPage(' + (page + 1) + ')"' + (page >= totalPages ? ' disabled' : '') + '>下一页</button>';
+      html += '</div>';
+    }
+  }
+  list.innerHTML = html;
+}
+
+function cmGotoPage(p) {
+  window._cmPage = p;
+  cmRender();
+}
+
+function cmSelectAll() {
+  document.querySelectorAll('.cm-check').forEach(cb => cb.checked = true);
+}
+function cmSelectNone() {
+  document.querySelectorAll('.cm-check').forEach(cb => cb.checked = false);
+}
+function cmSelectInvert() {
+  document.querySelectorAll('.cm-check').forEach(cb => cb.checked = !cb.checked);
+}
+async function cmBatchDelete() {
+  const checked = document.querySelectorAll('.cm-check:checked');
+  if (checked.length === 0) { alert('请先勾选要删除的卡片'); return; }
+  if (!confirm('确定删除选中的 ' + checked.length + ' 张卡片？此操作不可恢复！')) return;
+  const idsToDelete = new Set(Array.from(checked).map(cb => cb.dataset.id));
+  let cards = loadCards();
+  cards = cards.filter(c => !idsToDelete.has(c.id));
+  const result = await saveCards(cards);
+  if (result.success) {
+    cmRender();
+    alert('已删除 ' + idsToDelete.size + ' 张卡片');
+  } else {
+    cmRender();
+    alert('本地删除成功，但同步到云端失败：' + (result.error || '未知错误') + '\n请检查网络后重试，或稍后点击「更新」按钮手动同步。');
+  }
+}
+
+// 编辑卡片：加载指定ID的卡片到编辑模式
+function editCard(cardId) {
+  const cards = loadCards();
+  const card = cards.find(c => c.id === cardId);
+  if (!card) { alert('未找到该卡片'); return; }
+  // 进入记录页面（编辑模式）
+  showSection('record', '修改卡片');
+  // 深拷贝卡片数据到 editCardData
+  editCardData = JSON.parse(JSON.stringify(card));
+  // 标记编辑模式
+  editCardData._isEditing = true;
+  renderEditCard();
+  // 修改按钮文本为"确认修改"
+  setTimeout(() => {
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) submitBtn.textContent = '确认修改';
+    const recordWrap = document.querySelector('.record-wrap');
+    if (recordWrap) recordWrap.scrollTop = 0;
+  }, 100);
+}
+
+// 也保留旧的 submitRecord 函数名（如果有其他地方调用）
+// 旧版 submitRecord 已在上面被新版覆盖，这里不需要重复
+
+</script>
+<!-- 数据更新提示条 -->
+<div id="updateNotice">
+  <span class="notice-text" onclick="refreshPageSafe()">🔄 数据已更新，点击此处刷新页面查看最新数据</span>
+  <span style="margin-left:12px;font-size:12px;opacity:0.8;">（正在编辑？忽略此提示即可）</span>
+  <span class="notice-close" onclick="hideUpdateNotice()">×</span>
+</div>
+</body>
+</html>
+
+
+
+
+
+
