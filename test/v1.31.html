@@ -2083,7 +2083,6 @@ async function autoSyncFromGitHub() {
       console.warn('autoSync: 解析 GitHub 数据失败，视为空数据:', e);
       remoteCards = [];
     }
-    const localCards = loadCards();
     
     // 【v1.25 新方案】以云端为基准，但保留本地新增未上传的卡片
     const remoteIds = new Set(remoteCards.map(c => c.id));
