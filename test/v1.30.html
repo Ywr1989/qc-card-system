@@ -3140,7 +3140,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // 【v1.30 修复】云端优先，不限时等待（用户说等多久都行）
     const remoteData = await fetchCardsFromGitHub();
     if (remoteData && remoteData.content && remoteData.content.trim()) {
-      const remoteCards = JSON.parse(codeURIComponent(escape(atob(remoteData.content))));
+      const remoteCards = JSON.parse(decodeURIComponent(escape(atob(remoteData.content))));
       console.log('✅ 已从云端加载 ' + remoteCards.length + ' 张卡片');
       try { localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards)); } catch(e) {}
       cards = remoteCards;
