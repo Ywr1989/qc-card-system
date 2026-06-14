@@ -1,5 +1,22 @@
 [
   {
+    "id": "QR-2026-061",
+    "defectType": "",
+    "materialCode": "1",
+    "productDesc": "1",
+    "severity": "",
+    "defectRate": "",
+    "occurrence": "",
+    "updateTime": "2026-06-14",
+    "customer": "",
+    "note": "",
+    "problemDesc": "",
+    "causeAnalysis": "",
+    "solution": "",
+    "photos": [],
+    "createdAt": "2026-06-14T15:02:51.105Z"
+  },
+  {
     "id": "QR-TEST-001",
     "defectType": "",
     "materialCode": "TEST-MATERIAL-001",
