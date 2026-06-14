@@ -1683,13 +1683,52 @@ let githubToken = localStorage.getItem('qc_github_token') || HARDCODED_TOKEN;
 
 function loadCards() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { return []; } }
 async function saveCards(cards) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
-  // v1.21: 同时保存到本地备份（万一GitHub上传失败，可从备份恢复）
-  localStorage.setItem(BACKUP_KEY, JSON.stringify(cards));
-  // v1.21: 不立即推送到GitHub，而是安排延迟推送（防抖3秒）
-  scheduleCloudSync();
-  // 立即返回成功（推送在后台进行）
+  // v1.23-fix6: 所有localStorage操作加try-catch，防止配额超限导致整个流程崩溃
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+  } catch(e) {
+    console.warn('⚠️ localStorage保存失败（配额超限）:', e);
+    alert('本地保存失败：存储空间已满。\n\n建议：删除一些旧卡片或清理浏览器缓存后再试。');
+    return { success: false, error: e.message };
+  }
+  // v1.23-fix6: 去掉BACKUP_KEY（和STORAGE_KEY重复，浪费配额）
+  // v1.23-fix5: 云端上传在后台进行，不阻塞UI
+  if (githubToken) {
+    pushToGitHubWithConflictHandling(cards).then(result => {
+      if (result.success) {
+        try {
+          localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(cards));
+        } catch(e) {
+          console.warn('⚠️ LAST_SYNC_KEY保存失败:', e);
+        }
+        console.log('✅ 已同步到云端，共 ' + cards.length + ' 张卡片');
+        // 如果之前有失败提示条，隐藏它
+        const warnBar = document.getElementById('cloudFailWarn');
+        if (warnBar) warnBar.style.display = 'none';
+      } else {
+        console.warn('⚠️ 云端同步失败:', result.error);
+        showCloudFailWarning(result.error);
+      }
+    }).catch(err => {
+      console.warn('⚠️ 云端同步异常:', err);
+      showCloudFailWarning(err.message);
+    });
+  }
   return { success: true };
+}
+
+// 显示云端同步失败的提示条
+function showCloudFailWarning(msg) {
+  let warnBar = document.getElementById('cloudFailWarn');
+  if (!warnBar) {
+    warnBar = document.createElement('div');
+    warnBar.id = 'cloudFailWarn';
+    warnBar.style.cssText = 'position:fixed;top:0;left:0;width:100%;background:#ff9800;color:white;text-align:center;padding:8px;z-index:99998;font-size:14px;cursor:pointer;';
+    warnBar.onclick = () => { syncFromGitHub(); warnBar.style.display = 'none'; };
+    document.body.appendChild(warnBar);
+  }
+  warnBar.innerHTML = '⚠️ 云端同步失败：' + (msg || '未知错误') + '｜<u>点击此处强制从云端更新</u>';
+  warnBar.style.display = 'block';
 }
 
 // 带冲突处理的 GitHub 推送
@@ -1732,8 +1771,8 @@ async function pushToGitHubWithConflictHandling(cards, depth = 0) {
       });
       const mergedCards = Array.from(cardMap.values());
       
-      // 更新本地存储
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards));
+      // 更新本地存储（v1.23-fix6: 加try-catch防止配额超限）
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards)); } catch(e) { console.warn('⚠️ STORAGE_KEY保存失败:', e); }
       // 推送合并后的数据
       return await pushToGitHubWithConflictHandling(mergedCards, depth + 1);
     }
@@ -1757,7 +1796,7 @@ function scheduleCloudSync() {
     try {
       const result = await pushToGitHubWithConflictHandling(cards);
       if (result.success) {
-        localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(cards));
+        try { localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(cards)); } catch(e) { console.warn('⚠️ LAST_SYNC_KEY保存失败:', e); }
         console.log('✅ 自动同步到云端成功，共 ' + cards.length + ' 张卡片');
         showToast('已同步到云端 ✓', 'success');
       } else {
@@ -1829,15 +1868,31 @@ function showToast(message, type = 'info') {
 }
 
 // ========== GitHub API 函数 ==========
+// v1.23-fix7: 添加带超时的 fetch 辅助函数
+function fetchWithTimeout(url, options = {}, timeoutMs = 10000) {
+  return new Promise((resolve, reject) => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      reject(new Error('Request timeout'));
+    }, timeoutMs);
+    fetch(url, { ...options, signal: controller.signal })
+      .then(resolve)
+      .catch(reject)
+      .finally(() => clearTimeout(timeoutId));
+  });
+}
+
 async function fetchCardsFromGitHub() {
   try {
     const headers = {};
     if (githubToken) {
       headers['Authorization'] = `token ${githubToken}`;
     }
-    const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`, {
+    // v1.23-fix7: 使用带超时的 fetch（10秒超时，防止无限加载）
+    const resp = await fetchWithTimeout(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`, {
       headers: headers
-    });
+    }, 10000);
     if (!resp.ok) return null;
     const data = await resp.json();
 
@@ -1850,23 +1905,23 @@ async function fetchCardsFromGitHub() {
     // 先尝试 download_url（快，但可能受 CORS 限制）
     if (data.download_url) {
       try {
-        const rawResp = await fetch(data.download_url);
+        const rawResp = await fetchWithTimeout(data.download_url, {}, 10000);
         if (rawResp.ok) {
           const rawText = await rawResp.text();
           const base64Content = btoa(unescape(encodeURIComponent(rawText)));
           return { content: base64Content, sha: data.sha };
         }
       } catch(e) {
-        console.warn('download_url fetch failed (CORS?), trying blobs API:', e);
+        console.warn('download_url fetch failed (CORS or timeout), trying blobs API:', e);
       }
     }
 
     // Fallback：使用 Git Blobs API（同一域名，无 CORS 问题）
     if (data.sha) {
       try {
-        const blobResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs/${data.sha}`, {
+        const blobResp = await fetchWithTimeout(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs/${data.sha}`, {
           headers: headers
-        });
+        }, 10000);
         if (blobResp.ok) {
           const blobData = await blobResp.json();
           if (blobData.content && blobData.encoding === 'base64') {
@@ -1933,6 +1988,20 @@ async function syncFromGitHub() {
   isSyncing = true;
 
   try {
+    // 先上传本地修改到GitHub（防止本地修改丢失）
+    const localCards = loadCards();
+    if (githubToken) {
+      const uploadResult = await pushToGitHubWithConflictHandling(localCards);
+      if (!uploadResult.success) {
+        if (!confirm('上传本地修改到云端失败：' + (uploadResult.error || '未知错误') + '\n\n是否仍要从云端更新数据？（本地修改可能丢失）')) {
+          isSyncing = false;
+          return;
+        }
+      } else {
+        console.log('✅ 已上传本地修改到云端');
+      }
+    }
+    
     // 从 GitHub 拉取最新数据
     const data = await fetchCardsFromGitHub();
     if (!data) {
@@ -1955,28 +2024,50 @@ async function syncFromGitHub() {
       alert('解析云端数据失败，数据格式异常。\n\n错误：' + e.message + '\n\n请联系管理员处理。');
       return;
     }
+
+    // 更新本地数据（v1.23-fix9: 合并云端和本地，防止本地修改丢失）
     const localCards = loadCards();
+    const remoteIdSet = new Set(remoteCards.map(c => c.id));
+    const remoteCardMap = new Map(remoteCards.map(c => [c.id, c]));
+    let mergedCards = [...remoteCards];
 
-    // 比较本地和远程数据
-    const localStr = JSON.stringify(localCards);
-    const remoteStr = JSON.stringify(remoteCards);
-
-    if (localStr === remoteStr) {
-      alert('已是最新数据，无需更新（共 ' + remoteCards.length + ' 张卡片）');
-      return;
+    for (const localCard of localCards) {
+      if (!remoteIdSet.has(localCard.id)) {
+        // 云端没有此卡片，加入（可能上传失败导致的）
+        mergedCards.push(localCard);
+        console.log('⚠️ 合并本地独有卡片: ' + localCard.id);
+      } else {
+        // 两边都有，比较修改时间，用更新的
+        const remoteCard = remoteCardMap.get(localCard.id);
+        const localTime = new Date(localCard.updateTime || localCard.createdAt || 0).getTime();
+        const remoteTime = new Date(remoteCard.updateTime || remoteCard.createdAt || 0).getTime();
+        if (localTime > remoteTime) {
+          const idx = mergedCards.findIndex(c => c.id === localCard.id);
+          if (idx >= 0) mergedCards[idx] = localCard;
+          console.log('⚠️ 合并本地修改卡片: ' + localCard.id);
+        }
+      }
     }
 
-    // 更新本地数据
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
-    localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards));
+    } catch(e) {
+      console.warn('⚠️ STORAGE_KEY保存失败:', e);
+    }
+    try {
+      localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(mergedCards));
+    } catch(e) {
+      console.warn('⚠️ LAST_SYNC_KEY保存失败:', e);
+    }
 
-    // 成功后提示
-    alert('更新成功！\n\n已从云端同步 ' + remoteCards.length + ' 张卡片');
+    // 成功后提示（v1.23-fix8: 改用toast，不阻塞UI）
+    showToast('✅ 已从云端更新 ' + remoteCards.length + ' 张卡片', 'success');
 
-    // 刷新页面显示（如果在首页或查找页）
+    // 刷新页面显示（如果在查找页）
     if (currentPage === 'search') {
       doSearch(); // 重新渲染搜索结果
     }
+    // 首页无需刷新（首页没有卡片列表）
 
   } catch(e) {
     alert('更新失败：' + e.message + '\n\n请检查网络连接后重试。');
@@ -2029,13 +2120,13 @@ async function autoSyncFromGitHub() {
         mergedCards = [...remoteCards];
         localCards.forEach(c => { if (!remoteIds.has(c.id)) mergedCards.push(c); });
         // 初始化 lastSync
-        localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards));
+        try { localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards)); } catch(e) { console.warn('⚠️ LAST_SYNC_KEY保存失败:', e); }
       }
 
-      // 更新本地数据
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards));
+      // 更新本地数据（v1.23-fix6: 加try-catch防止配额超限）
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards)); } catch(e) { console.warn('⚠️ STORAGE_KEY保存失败:', e); }
       // 同步完成后，更新 lastSync 为当前远程状态
-      localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards));
+      try { localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards)); } catch(e) { console.warn('⚠️ LAST_SYNC_KEY保存失败:', e); }
 
       // 显示"数据已更新"提示条（非阻塞，用户可点击刷新）
       showUpdateNotice();
@@ -2179,99 +2270,6 @@ function renderSeverityStars(severity) {
   empty.forEach(() => { html += '<span style="color:#ccc;">☆</span>'; });
   return html + ' <span style="color:#000;">' + text + '</span>';
 }
-
-// ========== 30张示例数据 ==========
-const APP_VERSION = 'v1.13';
-const DEMO_VERSION_KEY = 'qc_demo_version';
-
-// 示例卡片ID列表（用于快速检测是否有新增卡片需要补录）
-const DEMO_CARD_IDS = [
-  ...Array.from({length: 60}, (_, i) => `QR-2026-${String(i+1).padStart(3,'0')}`),
-  'QR-TEST-001','QR-TEST-002','QR-TEST-003','QR-TEST-004'
-];
-
-function initDemoData() {
-  // 只在首次打开页面时初始化示例卡片，删除后不再自动补录
-  if (localStorage.getItem('qc_demo_initialized') === '1') return;
-  const existing = loadCards();
-  if (existing.length > 0) {
-    // 已有用户数据，标记为已初始化，不再补录
-    localStorage.setItem('qc_demo_initialized', '1');
-    return;
-  }
-  // 【修复 v1.20】新设备（existing.length===0）不再自动生成 demo
-  // 留空，让 DOMContentLoaded 中的 initApp() 处理新设备逻辑
-  return;
-  // 以下为原逻辑（已禁用）：
-  const existingIds = new Set(existing.map(c => c.id));
-
-  const defects = ['毛刺','缩水','色差','缺料','划痕','变形','气泡','熔接痕','银丝','黑点','尺寸超差'];
-  const customers = ['凯崴','德威','林总','李总','德泰克','帝奥'];
-  const severities = ['★★★★★ 极高','★★★★☆ 很高','★★★☆☆ 高','★★☆☆☆ 中','★☆☆☆☆ 低'];
-  const occurrences = ['偶发','频发','连续','批次性'];
-  const codes = ['KW','DW','LZ','CL','DTK','DA'];
-  const notes = [
-    '模温偏高，冷却时间不足','注塑压力偏低，需调整','原料批次不同，颜色有偏差','模具磨损严重','保压时间不够',
-    '射速过快导致喷射','模具温度不均匀','顶针布局不合理','排气不畅','螺杆转速过高'
-  ];
-  const problems = [
-    '产品边缘有明显毛刺，影响装配','表面出现凹陷，壁厚不均区域严重','颜色与样板有明显偏差，整体偏黄',
-    '局部填充不完整，边角缺料','表面有细长划痕，长度3-8mm','产品翘曲变形，平面度超差',
-    '内部有气泡，敲击有空洞声','熔接痕明显，强度降低','表面有银色条纹，影响外观',
-    '有黑色杂质点，分布不均','关键尺寸超出公差范围'
-  ];
-  const causes = [
-    '模具分型面磨损产生毛刺','保压不足导致收缩不均','色母添加比例不准或分散不良','注塑压力不足或射速过慢',
-    '模具表面有异物或损伤','冷却不均匀，内应力大','原料含水率过高或温度过高','熔体温度低，汇合处融合不良',
-    '原料降解或含有杂质','原料污染或螺杆积碳','模具尺寸磨损或注塑参数漂移'
-  ];
-  const solutions = [
-    '修模抛光分型面，调整合模力','增加保压压力和保压时间','重新配色，检查色母质量','提高注塑压力和射速',
-    '清洁模具表面，检查损伤','优化冷却水路，降低模温','干燥原料，降低熔体温度','提高熔体温度，增加汇合角',
-    '更换原料，清洗螺杆','清理螺杆和料筒，过滤原料','修模或调整注塑参数补偿'
-  ];
-
-  const demos = [];
-  for (let i = 0; i < 60; i++) {
-    const cIdx = i % customers.length;
-    const dIdx = i % defects.length;
-    const month = String((i % 12) + 1).padStart(2, '0');
-    const day = String((i % 28) + 1).padStart(2, '0');
-    demos.push({
-      id: `QR-2026-${String(i + 1).padStart(3, '0')}`,
-      defectType: defects[dIdx],
-      materialCode: `5510-E/ABS01-BK-P000-${codes[cIdx]}`,
-      productDesc: `5510-防静电ABS01-黑色-不印刷-${customers[cIdx]}`,
-      severity: severities[i % severities.length],
-      defectRate: `${(Math.random() * 5 + 0.1).toFixed(1)}%`,
-      occurrence: occurrences[i % occurrences.length],
-      updateTime: `2026-${month}-${day}`,
-      customer: customers[cIdx],
-      note: notes[i % notes.length],
-      problemDesc: problems[dIdx],
-      causeAnalysis: causes[dIdx],
-      solution: solutions[dIdx],
-      photos: [],
-      createdAt: new Date().toISOString()
-    });
-  }
-  // 测试卡片：4张同一料号前缀，用于测试1-4级排序
-  const testCards = [
-    { id: 'QR-TEST-001', defectType: '毛刺', materialCode: 'TEST-001-A-B-C', productDesc: '测试-1级-红色', severity: '★★★★★ 极高', defectRate: '5.0%', occurrence: '连续', updateTime: '2026-06-10', customer: '测试客户', note: '测试数据', problemDesc: '1级匹配测试', causeAnalysis: '测试', solution: '测试', photos: [], createdAt: new Date().toISOString() },
-    { id: 'QR-TEST-002', defectType: '划痕', materialCode: 'TEST-001-X-Y-Z', productDesc: '测试-2级-黄色', severity: '★★☆☆☆ 中', defectRate: '3.0%', occurrence: '频发', updateTime: '2026-06-10', customer: '测试客户', note: '测试数据', problemDesc: '2级匹配测试', causeAnalysis: '测试', solution: '测试', photos: [], createdAt: new Date().toISOString() },
-    { id: 'QR-TEST-003', defectType: '气泡', materialCode: 'TEST-999-A-B-C', productDesc: '测试-3级-绿色', severity: '★☆☆☆☆ 低', defectRate: '1.0%', occurrence: '偶发', updateTime: '2026-06-10', customer: '测试客户', note: '测试数据', problemDesc: '3级匹配测试', causeAnalysis: '测试', solution: '测试', photos: [], createdAt: new Date().toISOString() },
-    { id: 'QR-TEST-004', defectType: '缩水', materialCode: 'OTHER-001-A-B-C', productDesc: '测试-4级-红色', severity: '★★★☆☆ 高', defectRate: '4.0%', occurrence: '批次性', updateTime: '2026-06-10', customer: '测试客户', note: '测试数据', problemDesc: '4级匹配测试', causeAnalysis: '测试', solution: '测试', photos: [], createdAt: new Date().toISOString() }
-  ];
-  // 合并逻辑：只补新增的示例卡片（按ID判断），不改已有数据
-  const allDemoCards = [...demos, ...testCards];
-  const toAdd = allDemoCards.filter(c => !existingIds.has(c.id));
-  if (toAdd.length > 0) {
-    saveCards([...existing, ...toAdd]);
-  }
-  localStorage.setItem(DEMO_VERSION_KEY, Date.now().toString());
-  localStorage.setItem('qc_demo_initialized', '1');
-}
-
 // ========== 页面切换 ==========
 let currentPage = 'home';
 
@@ -2436,7 +2434,7 @@ function parsePaste(text) {
 }
 
 function fillForm(r) {
-  if (!editCardData) return;
+  // 新增或编辑模式，editCardData一定有值
   if (r.materialCode) editCardData.materialCode = r.materialCode;
   if (r.customer) editCardData.customer = r.customer;
   if (r.defectType) editCardData.defectType = r.defectType;
@@ -2661,25 +2659,8 @@ function escapeHtml(text) {
 }
 
 // ========== 提交 ==========
-function submitRecord() {
-  const card = buildCardFromForm();
-  if (!card.materialCode && !card.productDesc) { alert('请至少填写料号或产品描述'); return; }
-  card.createdAt = new Date().toISOString();
-  const cards = loadCards();
-  cards.unshift(card);
-  saveCards(cards);
-  alert(`记录成功！\n报告编号：${card.id}`);
-  document.querySelectorAll('#record input:not([readonly]), #record select, #record textarea').forEach(el => { if (el.type !== 'date') el.value = ''; });
-  currentPhotos = [];
-  renderPhotos();
-  document.getElementById('pasteInput').value = '';
-  document.getElementById('pasteStatus').textContent = '';
-  document.querySelectorAll('.font-hint').forEach(h => h.textContent = '');
-  document.getElementById('r_id').value = generateId();
-  lastPreviewScale = null;
-  lastContainerWidth = null;
-  updatePreview();
-}
+// 【v1.23-fix4】submitRecord 已合并新旧逻辑，见下方 async function submitRecord
+// 旧 submitRecord（记录页模式）已合并到新的 submitRecord 中
 
 // ========== 查找 ==========
 // ========== 料号别名分组映射 ==========
@@ -3106,8 +3087,7 @@ async function tryRestoreFromCloud() {
     const data = await fetchCardsFromGitHub();
     if (data && data.content && data.content.trim()) {
       const cards = JSON.parse(decodeURIComponent(escape(atob(data.content))));
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
-      localStorage.setItem('qc_demo_initialized', '1');
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cards)); } catch(e) { console.warn('⚠️ STORAGE_KEY保存失败:', e); }
       loadingEl.remove();
       alert(`已从云端恢复 ${cards.length} 张卡片，页面将刷新`);
       location.reload();
@@ -3134,53 +3114,17 @@ function showNewDeviceDialog() {
         <p style="margin:0 0 28px 0;color:#999;font-size:13px;">请选择操作方式：</p>
         <div style="display:flex;flex-direction:column;gap:12px;">
           <button id="btnRestore" style="padding:14px;font-size:16px;font-weight:600;border:none;border-radius:10px;cursor:pointer;background:#1976D2;color:white;">🔄 从云端恢复数据</button>
-          <button id="btnDemo" style="padding:14px;font-size:16px;font-weight:600;border:none;border-radius:10px;cursor:pointer;background:#F5F5F5;color:#333;">📊 生成演示数据</button>
           <button id="btnBlank" style="padding:14px;font-size:16px;font-weight:600;border:none;border-radius:10px;cursor:pointer;background:white;color:#666;border:1px solid #ddd;">🚀 空白开始</button>
         </div>
       </div>
     `;
     document.body.appendChild(overlay);
     document.getElementById('btnRestore').onclick = () => { overlay.remove(); resolve('restore'); };
-    document.getElementById('btnDemo').onclick = () => { overlay.remove(); resolve('demo'); };
     document.getElementById('btnBlank').onclick = () => { overlay.remove(); resolve('blank'); };
   });
 }
 
-// 生成演示数据（原 initDemoData 里的逻辑）
-function generateDemoData() {
-  const existing = loadCards();
-  const existingIds = new Set(existing.map(c => c.id));
-  const defects = ['毛刺','缩水','色差','缺料','划痕','变形','气泡','熔接痕','银丝','黑点','尺寸超差'];
-  const customers = ['凯崴','德威','林总','李总','德泰克','帝奥'];
-  const severities = ['★★★★★ 极高','★★★★☆ 很高','★★★☆☆ 高','★★☆☆☆ 中','★☆☆☆☆ 低'];
-  const occurrences = ['偶发','频发','连续','批次性'];
-  const codes = ['KW','DW','LZ','CL','DTK','DA'];
-  const notes = ['模温偏高，冷却时间不足','注塑压力偏低，需调整','原料批次不同，颜色有偏差','模具磨损严重','保压时间不够','射速过快导致喷射','模具温度不均匀','顶针布局不合理','排气不畅','螺杆转速过高'];
-  const problems = ['产品边缘有明显毛刺，影响装配','表面出现凹陷，壁厚不均区域严重','颜色与样板有明显偏差，整体偏黄','局部填充不完整，边角缺料','表面有细长划痕，长度3-8mm','产品翘曲变形，平面度超差','内部有气泡，敲击有空洞声','熔接痕明显，强度降低','表面有银色条纹，影响外观','有黑色杂质点，分布不均','关键尺寸超出公差范围'];
-  const causes = ['模具分型面磨损产生毛刺','保压不足导致收缩不均','色母添加比例不准或分散不良','注塑压力不足或射速过慢','模具表面有异物或损伤','冷却不均匀，内应力大','原料含水率过高或温度过高','熔体温度低，汇合处融合不良','原料降解或含有杂质','原料污染或螺杆积碳','模具尺寸磨损或注塑参数漂移'];
-  const solutions = ['修模抛光分型面，调整合模力','增加保压压力和保压时间','重新配色，检查色母质量','提高注塑压力和射速','清洁模具表面，检查损伤','优化冷却水路，降低模温','干燥原料，降低熔体温度','提高熔体温度，增加汇合角','更换原料，清洗螺杆','清理螺杆和料筒，过滤原料','修模或调整注塑参数补偿'];
-  const demos = [];
-  for (let i = 0; i < 60; i++) {
-    const cIdx = i % customers.length;
-    const dIdx = i % defects.length;
-    const month = String((i % 12) + 1).padStart(2, '0');
-    const day = String((i % 28) + 1).padStart(2, '0');
-    demos.push({ id:`QR-2026-${String(i+1).padStart(3,'0')}`, defectType:defects[dIdx], materialCode:`5510-E/ABS01-BK-P000-${codes[cIdx]}`, productDesc:`5510-防静电ABS01-黑色-不印刷-${customers[cIdx]}`, severity:severities[i%severities.length], defectRate:`${(Math.random()*5+0.1).toFixed(1)}%`, occurrence:occurrences[i%occurrences.length], updateTime:`2026-${month}-${day}`, customer:customers[cIdx], note:notes[i%notes.length], problemDesc:problems[dIdx], causeAnalysis:causes[dIdx], solution:solutions[dIdx], photos:[], createdAt:new Date().toISOString() });
-  }
-  const testCards = [
-    { id:'QR-TEST-001', defectType:'毛刺', materialCode:'TEST-001-A-B-C', productDesc:'测试-1级-红色', severity:'★★★★★ 极高', defectRate:'5.0%', occurrence:'连续', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'1级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() },
-    { id:'QR-TEST-002', defectType:'划痕', materialCode:'TEST-001-X-Y-Z', productDesc:'测试-2级-黄色', severity:'★★☆☆☆ 中', defectRate:'3.0%', occurrence:'频发', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'2级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() },
-    { id:'QR-TEST-003', defectType:'气泡', materialCode:'TEST-999-A-B-C', productDesc:'测试-3级-绿色', severity:'★☆☆☆☆ 低', defectRate:'1.0%', occurrence:'偶发', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'3级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() },
-    { id:'QR-TEST-004', defectType:'缩水', materialCode:'OTHER-001-A-B-C', productDesc:'测试-4级-红色', severity:'★★★☆☆ 高', defectRate:'4.0%', occurrence:'批次性', updateTime:'2026-06-10', customer:'测试客户', note:'测试数据', problemDesc:'4级匹配测试', causeAnalysis:'测试', solution:'测试', photos:[], createdAt:new Date().toISOString() }
-  ];
-  const allDemoCards = [...demos, ...testCards];
-  const toAdd = allDemoCards.filter(c => !existingIds.has(c.id));
-  if (toAdd.length > 0) {
-    saveCards([...existing, ...toAdd]);
-  }
-  localStorage.setItem(DEMO_VERSION_KEY, Date.now().toString());
-  localStorage.setItem('qc_demo_initialized', '1');
-}
+
 
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', async () => {
@@ -3199,9 +3143,41 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (remoteData) {
       const remoteCards = JSON.parse(decodeURIComponent(escape(atob(remoteData.content))));
       console.log('✅ 已从云端加载 ' + remoteCards.length + ' 张卡片');
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
-      localStorage.setItem('qc_demo_initialized', '1');
-      cards = remoteCards;
+      
+      // 【v1.23-fix9 关键修复】合并云端数据和本地数据（防止本地新增/修改的卡片丢失）
+      const localData = localStorage.getItem(STORAGE_KEY);
+      let mergedCards = [...remoteCards]; // 先复制云端数据
+      if (localData) {
+        try {
+          const localCards = JSON.parse(localData);
+          const remoteIdSet = new Set(remoteCards.map(c => c.id));
+          const remoteCardMap = new Map(remoteCards.map(c => [c.id, c]));
+          
+          for (const localCard of localCards) {
+            if (!remoteIdSet.has(localCard.id)) {
+              // 云端没有此卡片，加入（本地新增未上传）
+              mergedCards.push(localCard);
+              console.log('⚠️ 合并本地新增卡片: ' + localCard.id);
+            } else {
+              // 两边都有，比较修改时间，用更新的
+              const remoteCard = remoteCardMap.get(localCard.id);
+              const localTime = new Date(localCard.updateTime || localCard.createdAt || 0).getTime();
+              const remoteTime = new Date(remoteCard.updateTime || remoteCard.createdAt || 0).getTime();
+              if (localTime > remoteTime) {
+                // 本地更新，替换云端旧版本
+                const idx = mergedCards.findIndex(c => c.id === localCard.id);
+                if (idx >= 0) mergedCards[idx] = localCard;
+                console.log('⚠️ 合并本地修改卡片: ' + localCard.id);
+              }
+            }
+          }
+        } catch(e) {
+          console.warn('合并本地数据时出错:', e);
+        }
+      }
+      
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(mergedCards)); } catch(e) { console.warn('⚠️ STORAGE_KEY保存失败:', e); }
+      cards = mergedCards;
       fromCloud = true;
     } else {
       // 云端返回空，尝试本地缓存
@@ -3264,7 +3240,7 @@ function initApp(cards) {
       if (cardId) playCard(cardId);
     }
   });
-  const CURRENT_VERSION = '1.23.20260612.1300';
+  const CURRENT_VERSION = '1.24.20260612.1300';
   const savedVersion = localStorage.getItem('qc_app_version');
   if (savedVersion !== CURRENT_VERSION) {
     localStorage.setItem('qc_app_version', CURRENT_VERSION);
@@ -3272,13 +3248,6 @@ function initApp(cards) {
       document.getElementById('updateBanner').style.display = 'block';
     }
   }
-  window.addEventListener('storage', function(e) {
-    if (e.key === 'qc_demo_version' && e.newValue && e.newValue !== e.oldValue) {
-      document.getElementById('updateBanner').style.display = 'block';
-      setTimeout(function() {
-        location.href = location.href.split('?')[0] + '?t=' + Date.now();
-      }, 3000);
-    }
   });
   autoSyncTimer = setInterval(autoSyncFromGitHub, 2 * 60 * 1000);
 }
@@ -3574,38 +3543,60 @@ if (photoInputEl) {
 }
 
 // submitRecord 新版
-function submitRecord() {
-  if (!editCardData) return;
-  if (!editCardData.materialCode && !editCardData.productDesc) { alert('请至少填写料号或产品描述'); return; }
-  
-  const cards = loadCards();
-  
-  if (editCardData._isEditing) {
-    // 编辑模式：找到原卡片并替换
-    const idx = cards.findIndex(c => c.id === editCardData.id);
-    if (idx >= 0) {
-      // 保留原有的 createdAt，更新其他字段
-      editCardData.createdAt = cards[idx].createdAt || new Date().toISOString();
-      // 删除 _isEditing 属性，避免污染数据
-      delete editCardData._isEditing;
-      cards[idx] = JSON.parse(JSON.stringify(editCardData));
+async function submitRecord() {
+  let card, isEditMode = false, cards;
+
+  if (editCardData && editCardData.id) {
+    // 编辑卡片模式（editCardData有值且有效）
+    isEditMode = !!editCardData._isEditing;
+    cards = loadCards();
+    if (isEditMode) {
+      // 编辑现有卡片
+      const idx = cards.findIndex(c => c.id === editCardData.id);
+      if (idx >= 0) {
+        editCardData.createdAt = cards[idx].createdAt || new Date().toISOString();
+        delete editCardData._isEditing;
+        cards[idx] = JSON.parse(JSON.stringify(editCardData));
+      } else {
+        delete editCardData._isEditing;
+        editCardData.createdAt = new Date().toISOString();
+        cards.unshift(editCardData);
+      }
     } else {
-      // 原卡片不存在（可能被删除），作为新增处理
-      delete editCardData._isEditing;
+      // 新增模式（从编辑卡片页新增）
       editCardData.createdAt = new Date().toISOString();
       cards.unshift(editCardData);
     }
+    card = editCardData;
   } else {
-    // 新增模式
-    editCardData.createdAt = new Date().toISOString();
-    cards.unshift(editCardData);
+    // 记录页模式（editCardData为null或无效）
+    card = buildCardFromForm();
+    if (!card.materialCode && !card.productDesc) { alert('请至少填写料号或产品描述'); return; }
+    card.createdAt = new Date().toISOString();
+    cards = loadCards();
+    cards.unshift(card);
+    // 清理表单（旧逻辑）
+    document.querySelectorAll('#record input:not([readonly]), #record select, #record textarea').forEach(el => { if (el.type !== 'date') el.value = ''; });
+    currentPhotos = [];
+    renderPhotos();
+    const pasteInput = document.getElementById('pasteInput');
+    if (pasteInput) pasteInput.value = '';
+    const pasteStatus = document.getElementById('pasteStatus');
+    if (pasteStatus) pasteStatus.textContent = '';
+    document.querySelectorAll('.font-hint').forEach(h => h.textContent = '');
+    const rId = document.getElementById('r_id');
+    if (rId) rId.value = generateId();
+    lastPreviewScale = null;
+    lastContainerWidth = null;
+    updatePreview();
   }
-  
-  saveCards(cards);
-  alert(`${editCardData._isEditing ? '修改成功' : '记录成功'}！\n报告编号：${editCardData.id}`);
+
+  await saveCards(cards);
+  alert(`${isEditMode ? '修改成功' : '记录成功'}！\n报告编号：${card.id}`);
   editCardData = null;
   goHome();
 }
+
 
 // ========== 数据管理 ==========
 const SETTINGS_KEY = 'qc_settings_v1';
