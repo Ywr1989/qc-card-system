@@ -1,22 +1,5 @@
 [
   {
-    "id": "QR-2026-061",
-    "defectType": "",
-    "materialCode": "1",
-    "productDesc": "1",
-    "severity": "",
-    "defectRate": "",
-    "occurrence": "",
-    "updateTime": "2026-06-14",
-    "customer": "",
-    "note": "",
-    "problemDesc": "",
-    "causeAnalysis": "",
-    "solution": "",
-    "photos": [],
-    "createdAt": "2026-06-14T15:02:51.105Z"
-  },
-  {
     "id": "QR-TEST-001",
     "defectType": "",
     "materialCode": "TEST-MATERIAL-001",
@@ -1086,5 +1069,22 @@
     "solution": "测试",
     "photos": [],
     "createdAt": "2026-06-10T13:41:22.943Z"
+  },
+  {
+    "id": "QR-TEST-004",
+    "defectType": "缩水",
+    "materialCode": "OTHER-001-A-B-C",
+    "productDesc": "测试-4级-红色",
+    "severity": "★★★☆☆ 高",
+    "defectRate": "4.0%",
+    "occurrence": "批次性",
+    "updateTime": "2026-06-10",
+    "customer": "测试客户",
+    "note": "测试数据",
+    "problemDesc": "4级匹配测试",
+    "causeAnalysis": "测试",
+    "solution": "测试",
+    "photos": [],
+    "createdAt": "2026-06-10T13:41:57.056Z"
   }
 ]
