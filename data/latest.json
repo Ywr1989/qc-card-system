@@ -621,5 +621,22 @@
     "solution": "",
     "photos": [],
     "createdAt": "2026-06-15T12:31:00.853Z"
+  },
+  {
+    "id": "QR-2026-035",
+    "defectType": "",
+    "materialCode": "新增2026年6月15日20:34:16",
+    "productDesc": "",
+    "severity": "",
+    "defectRate": "",
+    "occurrence": "",
+    "updateTime": "2026-06-15",
+    "customer": "",
+    "note": "",
+    "problemDesc": "",
+    "causeAnalysis": "",
+    "solution": "",
+    "photos": [],
+    "createdAt": "2026-06-15T12:34:18.735Z"
   }
 ]
