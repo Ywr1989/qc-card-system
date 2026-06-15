@@ -1990,7 +1990,7 @@ async function fetchCardsFromGitHub() {
       if (resp.ok) {
         const data = await resp.json();
         jsonSha = data.sha;
-        const content = JSON.parse(atob(data.content.replace(/\s/g, '')));
+        const content = JSON.parse(decodeURIComponent(escape(atob(data.content.replace(/\s/g, '')))));
         slimCards = content;
         jsonOk = true;
         console.log(`[fetch] ✅ GitHub API OK, ${slimCards.length}张卡片, SHA=${jsonSha.substring(0,10)}`);
