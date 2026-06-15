@@ -6,7 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.62</title>
+<title>质量问题卡片系统 v1.63</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -2834,7 +2834,7 @@ function renderCardHTML(card, isPreview) {
     </div>
     <div class="fields-row">
       <div class="field-card" style="flex:0.5;"><div class="label">更新时间</div><div class="value">${card.updateTime || '-'}</div></div>
-      <div class="field-card" style="flex:0.5;"><div class="label">客户</div><div class="value">${card.customer ? card.customer + (CUSTOMER_MAP[card.customer] ? '('+CUSTOMER_MAP[card.customer]+')' : '') : '-'}</div></div>
+      <div class="field-card" style="flex:0.5;"><div class="label">客户</div><div class="value">${card.customer || '-'}</div></div>
     </div>
     <div class="main">
       <div class="left-side"><div class="photo-box">${photosHtml}</div>
@@ -4039,7 +4039,7 @@ function cmRender() {
         <div class="cm-id">${c.id}</div>
         <div class="cm-code">${c.materialCode || '-'}</div>
         <div class="cm-desc">${c.defectType || '-'} | ${c.productDesc || '-'}</div>
-        <div class="cm-customer">${c.customer ? c.customer + (CUSTOMER_MAP[c.customer] ? '('+CUSTOMER_MAP[c.customer]+')' : '') : '-'}</div>
+        <div class="cm-customer">${c.customer || '-'}</div>
         <div class="cm-date">${c.updateTime || '-'}</div>
         <button class="cm-edit-btn" onclick="editCard('${c.id}')" ${isPending?'disabled':''}>${isPending?op.label:'修改'}</button>
       </div>`;
