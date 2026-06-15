@@ -604,24 +604,5 @@
     "solution": "",
     "photos": [],
     "createdAt": "2026-06-15T07:51:26.721Z"
-  },
-  {
-    "id": "QR-2026-034",
-    "defectType": "",
-    "materialCode": "新增的哦",
-    "productDesc": "",
-    "severity": "",
-    "defectRate": "",
-    "occurrence": "",
-    "updateTime": "2026-06-15",
-    "customer": "",
-    "note": "",
-    "problemDesc": "",
-    "causeAnalysis": "",
-    "solution": "",
-    "photos": [
-      "img_QR-2026-034_0.png"
-    ],
-    "createdAt": "2026-06-15T14:28:50.346Z"
   }
 ]
