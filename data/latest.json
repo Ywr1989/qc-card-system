@@ -1,5 +1,22 @@
 [
   {
+    "id": "QR-2026-034",
+    "defectType": "",
+    "materialCode": "22",
+    "productDesc": "22",
+    "severity": "",
+    "defectRate": "",
+    "occurrence": "",
+    "updateTime": "2026-06-15",
+    "customer": "",
+    "note": "",
+    "problemDesc": "",
+    "causeAnalysis": "",
+    "solution": "",
+    "photos": [],
+    "createdAt": "2026-06-15T07:52:21.944Z"
+  },
+  {
     "id": "QR-2026-002",
     "defectType": "熔接痕",
     "materialCode": "8512-ABS-BK-P001-DW",
