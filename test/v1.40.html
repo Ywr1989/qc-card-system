@@ -1800,7 +1800,7 @@ function scheduleCloudSync() {
     try {
       const result = await pushToGitHubWithConflictHandling(cards);
       if (result.success) {
-        try { localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(cards)); } catch(e) { console.warn('⚠️ LAST_SYNC_KEY保存失败:', e); }
+        try { const slimSync = cards.map(c => { const s = {...c}; delete s.photos; return s; }); localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(slimSync)); } catch(e) { console.warn('LAST_SYNC_KEY保存失败:', e); }
         console.log('✅ 自动同步到云端成功，共 ' + cards.length + ' 张卡片');
         showToast('已同步到云端 ✓', 'success');
       } else {
@@ -1918,13 +1918,16 @@ async function pushCardsToGitHub(cards, sha) {
   try {
     // [v1.40] 用 Git Database API 推送大文件（避免 PUT /contents 的1MB限制）
     const jsonStr = JSON.stringify(cards, null, 2);
+    console.log('[push] 数据大小:', (jsonStr.length / 1024 / 1024).toFixed(1) + 'MB, 卡片数:', cards.length);
     // 用 TextEncoder + 分块 base64 编码（避免 btoa 大字符串失败）
     const uint8 = new TextEncoder().encode(jsonStr);
     let binary = '';
     for (let i = 0; i < uint8.length; i++) binary += String.fromCharCode(uint8[i]);
     const content = btoa(binary);
+    console.log('[push] base64编码完成，长度:', (content.length / 1024 / 1024).toFixed(1) + 'MB');
 
     // Step 1: 创建 blob
+    console.log('[push] Step1: 创建blob...');
     const blobResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs`, {
       method: 'POST',
       headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
@@ -1936,40 +1939,49 @@ async function pushCardsToGitHub(cards, sha) {
     }
     const blobData = await blobResp.json();
     const blobSha = blobData.sha;
+    console.log('[push] Step1 OK, blobSha:', blobSha.substring(0, 10));
 
     // Step 2: 获取当前 commit SHA
+    console.log('[push] Step2: 获取当前commit...');
     const refResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/refs/heads/${GITHUB_BRANCH}`, {
       headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' }
     });
     if (!refResp.ok) return { success: false, conflict: false, error: '获取ref失败' };
     const refData = await refResp.json();
     const commitSha = refData.object.sha;
+    console.log('[push] Step2 OK, commitSha:', commitSha.substring(0, 10));
 
     // Step 3: 创建 tree
+    console.log('[push] Step3: 创建tree...');
     const treeResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees`, {
       method: 'POST',
       headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
       body: JSON.stringify({ tree: [{ path: GITHUB_PATH, mode: '100644', type: 'blob', sha: blobSha }], base_tree: commitSha })
     });
-    if (!treeResp.ok) return { success: false, conflict: false, error: '创建tree失败' };
+    if (!treeResp.ok) return { success: false, conflict: false, error: '创建tree失败: ' + treeResp.status };
     const treeData = await treeResp.json();
+    console.log('[push] Step3 OK, treeSha:', treeData.sha.substring(0, 10));
 
     // Step 4: 创建 commit
+    console.log('[push] Step4: 创建commit...');
     const commitResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/commits`, {
       method: 'POST',
       headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
       body: JSON.stringify({ message: 'Sync cards from QC Card System', tree: treeData.sha, parents: [commitSha] })
     });
-    if (!commitResp.ok) return { success: false, conflict: false, error: '创建commit失败' };
+    if (!commitResp.ok) return { success: false, conflict: false, error: '创建commit失败: ' + commitResp.status };
     const commitData = await commitResp.json();
+    console.log('[push] Step4 OK, newCommit:', commitData.sha.substring(0, 10));
 
     // Step 5: 更新 ref
+    console.log('[push] Step5: 更新ref...');
     const updateResp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/refs/heads/${GITHUB_BRANCH}`, {
       method: 'PATCH',
       headers: { 'Authorization': `token ${githubToken}`, 'Content-Type': 'application/json', 'Accept': 'application/vnd.github.v3+json' },
       body: JSON.stringify({ sha: commitData.sha })
     });
-    if (!updateResp.ok) return { success: false, conflict: false, error: '更新ref失败' };
+    if (!updateResp.ok) return { success: false, conflict: false, error: '更新ref失败: ' + updateResp.status };
+    console.log('[push] Step5 OK! 推送成功!');
 
     return { success: true };
   } catch(e) {
@@ -2010,10 +2022,11 @@ async function syncFromGitHub() {
       return;
     }
 
-    // 【v1.34 核心】直接覆盖本地，不合并
+    // 【v1.34 核心】直接覆盖本地，不合并（只存精简版到localStorage）
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(remoteCards));
-      localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(remoteCards));
+      const slimRemote = remoteCards.map(c => { const s = {...c}; delete s.photos; return s; });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(slimRemote));
+      localStorage.setItem(LAST_SYNC_KEY, JSON.stringify(slimRemote));
     } catch(e) { console.warn('本地保存失败:', e); }
 
     showToast('✅ 已从云端加载 ' + remoteCards.length + ' 张卡片（本地多余卡片已清除）', 'success');
@@ -3010,7 +3023,7 @@ async function tryRestoreFromCloud() {
     const data = await fetchCardsFromGitHub();
     if (data && data.cards) {
       const cards = data.cards;
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cards)); } catch(e) { console.warn('⚠️ STORAGE_KEY保存失败:', e); }
+      try { const slimCards = cards.map(c => { const s = {...c}; delete s.photos; return s; }); localStorage.setItem(STORAGE_KEY, JSON.stringify(slimCards)); } catch(e) { console.warn('STORAGE_KEY保存失败:', e); }
       loadingEl.remove();
       alert(`已从云端恢复 ${cards.length} 张卡片，页面将刷新`);
       location.reload();
