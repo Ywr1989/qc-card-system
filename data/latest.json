@@ -1,5 +1,22 @@
 [
   {
+    "id": "QR-2026-034",
+    "defectType": "",
+    "materialCode": "新增3242341234",
+    "productDesc": "",
+    "severity": "",
+    "defectRate": "",
+    "occurrence": "",
+    "updateTime": "2026-06-15",
+    "customer": "",
+    "note": "",
+    "problemDesc": "",
+    "causeAnalysis": "",
+    "solution": "",
+    "photos": [],
+    "createdAt": "2026-06-15T17:01:41.236Z"
+  },
+  {
     "id": "QR-2026-002",
     "defectType": "熔接痕",
     "materialCode": "8512-ABS-BK-P001-DW",
@@ -591,7 +608,7 @@
   {
     "id": "QR-2026-033",
     "defectType": "",
-    "materialCode": "又修改啦2026年6月16日01:01:28",
+    "materialCode": "又修改啦",
     "productDesc": "11",
     "severity": "",
     "defectRate": "",
