@@ -1,5 +1,22 @@
 [
   {
+    "id": "QR-2026-061",
+    "defectType": "",
+    "materialCode": "7777777777",
+    "productDesc": "7777777777777777",
+    "severity": "",
+    "defectRate": "",
+    "occurrence": "",
+    "updateTime": "2026-06-15",
+    "customer": "",
+    "note": "",
+    "problemDesc": "",
+    "causeAnalysis": "",
+    "solution": "",
+    "photos": [],
+    "createdAt": "2026-06-15T01:28:30.156Z"
+  },
+  {
     "id": "QR-2026-033",
     "defectType": "尺寸超差",
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
@@ -1037,17 +1054,17 @@
   {
     "id": "QR-2026-060",
     "defectType": "划痕",
-    "materialCode": "4444444444444444",
-    "productDesc": "4444444444444444",
+    "materialCode": "5510-E/ABS01-BK-P000-DA",
+    "productDesc": "5510-防静电ABS01-黑色-不印刷-帝奥",
     "severity": "★☆☆☆☆ 低",
     "defectRate": "4.7%",
     "occurrence": "批次性",
     "updateTime": "2026-12-04",
     "customer": "帝奥",
     "note": "螺杆转速过高",
-    "problemDesc": "44444444444",
-    "causeAnalysis": "4444444444444444",
-    "solution": "4444444",
+    "problemDesc": "表面有细长划痕，长度3-8mm",
+    "causeAnalysis": "模具表面有异物或损伤",
+    "solution": "清洁模具表面，检查损伤",
     "photos": [],
     "createdAt": "2026-06-10T13:41:00.816Z"
   }
