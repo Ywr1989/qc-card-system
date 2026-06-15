@@ -587,22 +587,5 @@
       "img_QR-2026-002_0.jpg"
     ],
     "createdAt": "2026-06-11T12:20:36.505Z"
-  },
-  {
-    "id": "QR-2026-033",
-    "defectType": "",
-    "materialCode": "修改2026年6月16日02:08:22",
-    "productDesc": "",
-    "severity": "",
-    "defectRate": "",
-    "occurrence": "",
-    "updateTime": "2026-06-15",
-    "customer": "",
-    "note": "",
-    "problemDesc": "",
-    "causeAnalysis": "",
-    "solution": "",
-    "photos": [],
-    "createdAt": "2026-06-15T18:07:52.848Z"
   }
 ]
