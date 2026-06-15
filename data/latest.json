@@ -1,22 +1,5 @@
 [
   {
-    "id": "QR-2026-033",
-    "defectType": "",
-    "materialCode": "11",
-    "productDesc": "11",
-    "severity": "",
-    "defectRate": "",
-    "occurrence": "",
-    "updateTime": "2026-06-15",
-    "customer": "",
-    "note": "",
-    "problemDesc": "",
-    "causeAnalysis": "",
-    "solution": "",
-    "photos": [],
-    "createdAt": "2026-06-15T07:51:26.721Z"
-  },
-  {
     "id": "QR-2026-002",
     "defectType": "熔接痕",
     "materialCode": "8512-ABS-BK-P001-DW",
@@ -604,5 +587,22 @@
       "img_QR-2026-032_0.jpg"
     ],
     "createdAt": "2026-06-11T12:20:36.505Z"
+  },
+  {
+    "id": "QR-2026-033",
+    "defectType": "",
+    "materialCode": "11",
+    "productDesc": "11",
+    "severity": "",
+    "defectRate": "",
+    "occurrence": "",
+    "updateTime": "2026-06-15",
+    "customer": "",
+    "note": "",
+    "problemDesc": "",
+    "causeAnalysis": "",
+    "solution": "",
+    "photos": [],
+    "createdAt": "2026-06-15T07:51:26.721Z"
   }
 ]
