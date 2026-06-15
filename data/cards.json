@@ -1,22 +1,5 @@
 [
   {
-    "id": "QR-2026-061",
-    "defectType": "",
-    "materialCode": "7777777777",
-    "productDesc": "7777777777777777",
-    "severity": "",
-    "defectRate": "",
-    "occurrence": "",
-    "updateTime": "2026-06-15",
-    "customer": "",
-    "note": "",
-    "problemDesc": "",
-    "causeAnalysis": "",
-    "solution": "",
-    "photos": [],
-    "createdAt": "2026-06-15T01:28:30.156Z"
-  },
-  {
     "id": "QR-2026-033",
     "defectType": "尺寸超差",
     "materialCode": "5510-E/ABS01-BK-P000-LZ",
@@ -1067,5 +1050,22 @@
     "solution": "清洁模具表面，检查损伤",
     "photos": [],
     "createdAt": "2026-06-10T13:41:00.816Z"
+  },
+  {
+    "id": "QR-2026-061",
+    "defectType": "",
+    "materialCode": "7777777777",
+    "productDesc": "7777777777777777",
+    "severity": "",
+    "defectRate": "",
+    "occurrence": "",
+    "updateTime": "2026-06-15",
+    "customer": "",
+    "note": "",
+    "problemDesc": "",
+    "causeAnalysis": "",
+    "solution": "",
+    "photos": [],
+    "createdAt": "2026-06-15T01:28:30.156Z"
   }
 ]
