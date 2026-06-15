@@ -1976,7 +1976,7 @@ async function pushCardsToGitHub(cards, sha) {
     console.warn('pushCardsToGitHub error:', e);
     return { success: false, conflict: false, error: e.message };
   }
-}}
+}
 
 // ========== 同步函数（从云端更新数据）==========
 let isSyncing = false;
