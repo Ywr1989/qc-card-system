@@ -571,7 +571,7 @@
   },
   {
     "id": "QR-2026-032",
-    "defectType": "脏污",
+    "defectType": "放错方向",
     "materialCode": "HASP01-E/ABS01-BK-P000-KW",
     "productDesc": "124盒卡扣-防静电ABS01-黑色-不印刷-凯崴",
     "severity": "★☆☆☆☆ 低",
