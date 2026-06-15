@@ -1741,15 +1741,36 @@ async function pushToGitHubWithConflictHandling(cards, depth = 0) {
     console.warn('Max retry depth reached');
     return { success: false, conflict: false, error: 'Max retry depth reached' };
   }
-  
-  const data = await fetchCardsFromGitHub();
-  if (!data) {
-    console.warn('Failed to fetch from GitHub');
-    return { success: false, conflict: false, error: 'Failed to fetch from GitHub' };
+
+  // [v1.40] 自动重试：非冲突失败时自动重试2次（网络不稳定时有用）
+  let lastResult = null;
+  for (let attempt = 0; attempt <= 2; attempt++) {
+    if (attempt > 0) {
+      console.log('[push] 重试第' + attempt + '次...');
+      await new Promise(r => setTimeout(r, 1500 * attempt)); // 递增等待
+    }
+
+    const data = await fetchCardsFromGitHub();
+    if (!data) {
+      console.warn('Failed to fetch from GitHub, attempt=' + attempt);
+      lastResult = { success: false, conflict: false, error: 'Failed to fetch from GitHub' };
+      continue; // 重试
+    }
+    
+    const sha = data.sha;
+    const result = await pushCardsToGitHub(cards, sha);
+    
+    if (result.success) return result;
+    lastResult = result;
+    
+    if (result.conflict) {
+      // 冲突不重试，走合并逻辑
+      break;
+    }
+    // 非冲突失败：继续重试循环
   }
   
-  const sha = data.sha;
-  const result = await pushCardsToGitHub(cards, sha);
+  const result = lastResult;
   
   if (result.success) {
     return result;
@@ -1869,6 +1890,16 @@ function showToast(message, type = 'info') {
       setTimeout(() => toast.remove(), 300);
     }
   }, 3000);
+}
+
+// [v1.40] 全局遮罩：显示/隐藏
+function showGlobalLoading(text) {
+  const el = document.getElementById('globalOverlay');
+  if (el) { document.getElementById('globalOverlayText').textContent = text || '处理中...'; el.style.display = 'flex'; }
+}
+function hideGlobalLoading() {
+  const el = document.getElementById('globalOverlay');
+  if (el) el.style.display = 'none';
 }
 
 // ========== GitHub API 函数 ==========
@@ -3491,14 +3522,16 @@ async function submitRecord() {
     updatePreview();
   }
 
-  // 【v1.34】禁用按钮，显示"保存中..."
+  // [v1.40] 全局遮罩 + 禁用按钮
   const btn = document.getElementById('submitBtn');
   if (btn) { btn.disabled = true; btn._origText = btn.textContent; btn.textContent = '保存中...'; }
+  showGlobalLoading(isEditMode ? '正在修改并同步到云端...' : '正在保存并同步到云端...');
 
   const result = await saveCards(cards);
 
-  // 【v1.34】恢复按钮
+  // 恢复按钮 + 隐藏遮罩
   if (btn) { btn.disabled = false; btn.textContent = btn._origText || (isEditMode ? '确认修改' : '确认记录'); }
+  hideGlobalLoading();
 
   if (result.success && result.synced) {
     alert(`${isEditMode ? '修改' : '记录'}成功！\n报告编号：${card.id}\n\n已同步到云端 ✓`);
@@ -3832,16 +3865,18 @@ async function cmBatchDelete() {
   if (!confirm('确定删除选中的 ' + checked.length + ' 张卡片？此操作不可恢复！')) return;
   const idsToDelete = new Set(Array.from(checked).map(cb => cb.dataset.id));
 
-  // 【v1.34 新增】禁用删除按钮
+  // [v1.40] 禁用按钮 + 全局遮罩
   const delBtn = document.getElementById('cmDeleteBtn');
   if (delBtn) { delBtn.disabled = true; delBtn._origText = delBtn.textContent; delBtn.textContent = '删除中...'; }
+  showGlobalLoading('正在删除并同步到云端...');
 
   let cards = loadCards();
   cards = cards.filter(c => !idsToDelete.has(c.id));
   const result = await saveCards(cards);
 
-  // 【v1.34】恢复按钮
+  // 恢复
   if (delBtn) { delBtn.disabled = false; delBtn.textContent = delBtn._origText || '批量删除选中'; }
+  hideGlobalLoading();
 
   cmRender();
   if (result.success && result.synced) {
@@ -3885,6 +3920,13 @@ function editCard(cardId) {
   <span class="notice-text" onclick="refreshPageSafe()">🔄 数据已更新，点击此处刷新页面查看最新数据</span>
   <span style="margin-left:12px;font-size:12px;opacity:0.8;">（正在编辑？忽略此提示即可）</span>
   <span class="notice-close" onclick="hideUpdateNotice()">×</span>
+</div>
+
+<!-- [v1.40] 全局操作遮罩 -->
+<div id="globalOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.55);z-index:99999;align-items:center;justify-content:center;flex-direction:column;">
+  <div style="border:4px solid #f3f3f3;border-top:4px solid #1976D2;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;"></div>
+  <div style="color:white;font-size:18px;margin-top:16px;font-weight:bold;" id="globalOverlayText">处理中...</div>
+  <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
 </div>
 </body>
 </html>
