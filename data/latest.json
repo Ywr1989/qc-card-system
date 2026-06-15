@@ -1,17 +1,17 @@
 [
   {
     "id": "QR-2026-002",
-    "defectType": "熔接痕",
+    "defectType": "çæ¥ç",
     "materialCode": "8512-ABS-BK-P001-DW",
-    "productDesc": "8512-普通ABS-黑色-印刷001-德威",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "8512-æ®éABS-é»è²-å°å·001-å¾·å¨",
+    "severity": "âââââ å¾é«",
     "defectRate": "10%",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CKW02802",
     "note": "",
-    "problemDesc": "⏳疑似熔接痕",
-    "causeAnalysis": "可能是冷料 原因不确定",
+    "problemDesc": "â³çä¼¼çæ¥ç",
+    "causeAnalysis": "å¯è½æ¯å·æ åå ä¸ç¡®å®",
     "solution": "",
     "photos": [
       "img_QR-2026-002_0.jpg"
@@ -20,18 +20,18 @@
   },
   {
     "id": "QR-2026-003",
-    "defectType": "指纹印",
+    "defectType": "æçº¹å°",
     "materialCode": "5510-E/ABS01-BK-P001-DW",
-    "productDesc": "5510-防静电ABS01-黑色-印刷001-德威",
-    "severity": "★★★☆☆ 高",
+    "productDesc": "5510-é²éçµABS01-é»è²-å°å·001-å¾·å¨",
+    "severity": "âââââ é«",
     "defectRate": "50%",
     "occurrence": "2",
     "updateTime": "2026-06-11",
     "customer": "CDW02302",
     "note": "",
-    "problemDesc": "⏳内部自查出 半成品侧边指纹印",
-    "causeAnalysis": "不戴手套",
-    "solution": "擦拭干净 后期戴手套操作",
+    "problemDesc": "â³åé¨èªæ¥åº åæåä¾§è¾¹æçº¹å°",
+    "causeAnalysis": "ä¸æ´æå¥",
+    "solution": "æ¦æ­å¹²å åææ´æå¥æä½",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -39,17 +39,17 @@
   },
   {
     "id": "QR-2026-004",
-    "defectType": "油污",
+    "defectType": "æ²¹æ±¡",
     "materialCode": "5510-PC-T-P000-5164",
-    "productDesc": "5510-普通PC-透明-不印刷-515164",
-    "severity": "★★★☆☆ 高",
+    "productDesc": "5510-æ®éPC-éæ-ä¸å°å·-515164",
+    "severity": "âââââ é«",
     "defectRate": "70%",
     "occurrence": "3",
     "updateTime": "2026-06-11",
     "customer": "CJX085902",
     "note": "",
-    "problemDesc": "⏳顶针油污",
-    "causeAnalysis": "未定期清洁顶针",
+    "problemDesc": "â³é¡¶éæ²¹æ±¡",
+    "causeAnalysis": "æªå®ææ¸æ´é¡¶é",
     "solution": "",
     "photos": [
       "img_QR-2026-002_0.jpg"
@@ -58,18 +58,18 @@
   },
   {
     "id": "QR-2026-005",
-    "defectType": "静电尘",
+    "defectType": "éçµå°",
     "materialCode": "8512-PC-T-P000-BLK",
-    "productDesc": "8512-普通PC-透明-不印刷-空白",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "8512-æ®éPC-éæ-ä¸å°å·-ç©ºç½",
+    "severity": "âââââ å¾é«",
     "defectRate": "5%",
-    "occurrence": "多次",
+    "occurrence": "å¤æ¬¡",
     "updateTime": "2026-06-11",
     "customer": "CJX085902",
     "note": "",
-    "problemDesc": "⏳无法吹走的灰尘",
-    "causeAnalysis": "放置时未及时套袋或者防尘袋未密封死 ，空气静电多 ",
-    "solution": "及时套防尘袋且密封好",
+    "problemDesc": "â³æ æ³å¹èµ°çç°å°",
+    "causeAnalysis": "æ¾ç½®æ¶æªåæ¶å¥è¢æèé²å°è¢æªå¯å°æ­» ï¼ç©ºæ°éçµå¤ ",
+    "solution": "åæ¶å¥é²å°è¢ä¸å¯å°å¥½",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -77,17 +77,17 @@
   },
   {
     "id": "QR-2026-006",
-    "defectType": "油污",
+    "defectType": "æ²¹æ±¡",
     "materialCode": "5510-PC-WH-P000-5164",
-    "productDesc": "5510-普通PC-白色-不印刷-515164",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "5510-æ®éPC-ç½è²-ä¸å°å·-515164",
+    "severity": "âââââ å¾é«",
     "defectRate": "50%",
     "occurrence": "3",
     "updateTime": "2026-06-11",
     "customer": "CJX085902",
     "note": "",
-    "problemDesc": "⏳白色产品 顶针油污更明显 ",
-    "causeAnalysis": "未定时清洁顶针",
+    "problemDesc": "â³ç½è²äº§å é¡¶éæ²¹æ±¡æ´ææ¾ ",
+    "causeAnalysis": "æªå®æ¶æ¸æ´é¡¶é",
     "solution": "",
     "photos": [
       "img_QR-2026-002_0.jpg"
@@ -96,18 +96,18 @@
   },
   {
     "id": "QR-2026-007",
-    "defectType": "油污",
+    "defectType": "æ²¹æ±¡",
     "materialCode": "1CBX-E/PC02-BK-P000-BLK",
-    "productDesc": "1格盒-防静电PC02-黑色-不印刷-空白",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "1æ ¼ç-é²éçµPC02-é»è²-ä¸å°å·-ç©ºç½",
+    "severity": "âââââ å¾é«",
     "defectRate": "10%",
-    "occurrence": "多次",
+    "occurrence": "å¤æ¬¡",
     "updateTime": "2026-06-11",
     "customer": "CKW02802",
-    "note": "客户清洁后将就用",
-    "problemDesc": "⏳产品表面油污",
-    "causeAnalysis": "取产品的手套 误碰模具 导致手套被污染 拿取产品时 污染了产品",
-    "solution": "定期换手套 且定时检查油污",
+    "note": "å®¢æ·æ¸æ´åå°å°±ç¨",
+    "problemDesc": "â³äº§åè¡¨é¢æ²¹æ±¡",
+    "causeAnalysis": "åäº§åçæå¥ è¯¯ç¢°æ¨¡å· å¯¼è´æå¥è¢«æ±¡æ æ¿åäº§åæ¶ æ±¡æäºäº§å",
+    "solution": "å®ææ¢æå¥ ä¸å®æ¶æ£æ¥æ²¹æ±¡",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -115,18 +115,18 @@
   },
   {
     "id": "QR-2026-008",
-    "defectType": "指纹印",
+    "defectType": "æçº¹å°",
     "materialCode": "5510-E/ABS01-T-P000-DW",
-    "productDesc": "5510-防静电ABS01-透明-不印刷-德威",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "5510-é²éçµABS01-éæ-ä¸å°å·-å¾·å¨",
+    "severity": "âââââ å¾é«",
     "defectRate": "1%",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CDW02302",
     "note": "",
-    "problemDesc": "⏳透明盒表面 指纹印",
-    "causeAnalysis": "手指套太脏 触碰产品 留下指纹印",
-    "solution": "定时更换手指套  且关注手指套是否沾有油污",
+    "problemDesc": "â³éæçè¡¨é¢ æçº¹å°",
+    "causeAnalysis": "ææå¥å¤ªè è§¦ç¢°äº§å çä¸æçº¹å°",
+    "solution": "å®æ¶æ´æ¢ææå¥  ä¸å³æ³¨ææå¥æ¯å¦æ²¾ææ²¹æ±¡",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -134,18 +134,18 @@
   },
   {
     "id": "QR-2026-009",
-    "defectType": "浇口屑",
+    "defectType": "æµå£å±",
     "materialCode": "8512-E/ABS01-T-P000-DW",
-    "productDesc": "8512-防静电ABS01-透明-不印刷-德威",
-    "severity": "★★★☆☆ 高",
+    "productDesc": "8512-é²éçµABS01-éæ-ä¸å°å·-å¾·å¨",
+    "severity": "âââââ é«",
     "defectRate": "5%",
     "occurrence": "2",
     "updateTime": "2026-06-11",
     "customer": "CDW02302",
     "note": "",
-    "problemDesc": "⏳浇口残留的塑料屑",
-    "causeAnalysis": "水口剪剪浇口时未压平  ",
-    "solution": "调整剪水口手法且同时注意是否剪平",
+    "problemDesc": "â³æµå£æ®ççå¡æå±",
+    "causeAnalysis": "æ°´å£åªåªæµå£æ¶æªåå¹³  ",
+    "solution": "è°æ´åªæ°´å£ææ³ä¸åæ¶æ³¨ææ¯å¦åªå¹³",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -153,18 +153,18 @@
   },
   {
     "id": "QR-2026-010",
-    "defectType": "划痕",
+    "defectType": "åç",
     "materialCode": "2CBX-E/PC02-BK-P000-BLK",
-    "productDesc": "2格盒-防静电PC02-黑色-不印刷-空白",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "2æ ¼ç-é²éçµPC02-é»è²-ä¸å°å·-ç©ºç½",
+    "severity": "âââââ å¾é«",
     "defectRate": "5%",
-    "occurrence": "多次",
+    "occurrence": "å¤æ¬¡",
     "updateTime": "2026-06-11",
     "customer": "CKW02802",
     "note": "",
-    "problemDesc": "⏳侧边划痕",
-    "causeAnalysis": "包装方式背对 运输碰撞产生划痕",
-    "solution": "调整包装方式  产品之间加泡沫",
+    "problemDesc": "â³ä¾§è¾¹åç",
+    "causeAnalysis": "åè£æ¹å¼èå¯¹ è¿è¾ç¢°æäº§çåç",
+    "solution": "è°æ´åè£æ¹å¼  äº§åä¹é´å æ³¡æ²«",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -172,18 +172,18 @@
   },
   {
     "id": "QR-2026-011",
-    "defectType": "欠注",
+    "defectType": "æ¬ æ³¨",
     "materialCode": "DAWE-PC10-AC5410-ESD",
-    "productDesc": "2寸全黑PC方盒，长效防静电，长方形扣位，上盖带4个顶柱.磨砂面，DAWE刻字",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "2å¯¸å¨é»PCæ¹çï¼é¿æé²éçµï¼é¿æ¹å½¢æ£ä½ï¼ä¸çå¸¦4ä¸ªé¡¶æ±.ç£¨ç é¢ï¼DAWEå»å­",
+    "severity": "âââââ å¾é«",
     "defectRate": "10%",
-    "occurrence": "多次",
+    "occurrence": "å¤æ¬¡",
     "updateTime": "2026-06-11",
     "customer": "CKW02802",
     "note": "",
-    "problemDesc": "⏳止口处未注满",
-    "causeAnalysis": "压力速度温度不够  且未及时质检出",
-    "solution": "调整工艺",
+    "problemDesc": "â³æ­¢å£å¤æªæ³¨æ»¡",
+    "causeAnalysis": "ååéåº¦æ¸©åº¦ä¸å¤  ä¸æªåæ¶è´¨æ£åº",
+    "solution": "è°æ´å·¥èº",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -191,18 +191,18 @@
   },
   {
     "id": "QR-2026-012",
-    "defectType": "开裂",
+    "defectType": "å¼è£",
     "materialCode": "8512-GPPS-T-P000-DW",
-    "productDesc": "8512-普通GPPS-透明-不印刷-德威",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "8512-æ®éGPPS-éæ-ä¸å°å·-å¾·å¨",
+    "severity": "âââââ å¾é«",
     "defectRate": "5%",
-    "occurrence": "多次",
+    "occurrence": "å¤æ¬¡",
     "updateTime": "2026-06-11",
     "customer": "CDW02302",
     "note": "",
-    "problemDesc": "⏳盒子角开裂",
-    "causeAnalysis": "模具卡  加工时压力太大  ",
-    "solution": "改模 调整工艺",
+    "problemDesc": "â³çå­è§å¼è£",
+    "causeAnalysis": "æ¨¡å·å¡  å å·¥æ¶ååå¤ªå¤§  ",
+    "solution": "æ¹æ¨¡ è°æ´å·¥èº",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -210,18 +210,18 @@
   },
   {
     "id": "QR-2026-013",
-    "defectType": "油污",
+    "defectType": "æ²¹æ±¡",
     "materialCode": "DAWE-PC10-AC5410-ESD",
-    "productDesc": "2寸全黑PC方盒，长效防静电，长方形扣位，上盖带4个顶柱.磨砂面，DAWE刻字",
-    "severity": "★★★☆☆ 高",
+    "productDesc": "2å¯¸å¨é»PCæ¹çï¼é¿æé²éçµï¼é¿æ¹å½¢æ£ä½ï¼ä¸çå¸¦4ä¸ªé¡¶æ±.ç£¨ç é¢ï¼DAWEå»å­",
+    "severity": "âââââ é«",
     "defectRate": "1%",
-    "occurrence": "多次",
+    "occurrence": "å¤æ¬¡",
     "updateTime": "2026-06-11",
     "customer": "CKW02802",
     "note": "",
-    "problemDesc": "⏳外壳油污",
-    "causeAnalysis": "手套被污染  进而污染产品",
-    "solution": "及时换手套",
+    "problemDesc": "â³å¤å£³æ²¹æ±¡",
+    "causeAnalysis": "æå¥è¢«æ±¡æ  è¿èæ±¡æäº§å",
+    "solution": "åæ¶æ¢æå¥",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -229,18 +229,18 @@
   },
   {
     "id": "QR-2026-014",
-    "defectType": "商标异常",
+    "defectType": "åæ å¼å¸¸",
     "materialCode": "5510-E/ABS01-TP-P000-DW",
-    "productDesc": "5510-防静电ABS01-透紫-不印刷-德威",
-    "severity": "★★☆☆☆ 中",
+    "productDesc": "5510-é²éçµABS01-éç´«-ä¸å°å·-å¾·å¨",
+    "severity": "âââââ ä¸­",
     "defectRate": "100%",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CKW02802",
     "note": "",
-    "problemDesc": "⏳商标反了",
-    "causeAnalysis": "装商标镶块时 未检查",
-    "solution": "每次更换商标后 首件认真检查商标",
+    "problemDesc": "â³åæ åäº",
+    "causeAnalysis": "è£åæ é¶åæ¶ æªæ£æ¥",
+    "solution": "æ¯æ¬¡æ´æ¢åæ å é¦ä»¶è®¤çæ£æ¥åæ ",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -248,18 +248,18 @@
   },
   {
     "id": "QR-2026-015",
-    "defectType": "油污",
+    "defectType": "æ²¹æ±¡",
     "materialCode": "8512-GPPS-T-P000-DW",
-    "productDesc": "8512-普通GPPS-透明-不印刷-德威",
-    "severity": "★★★☆☆ 高",
+    "productDesc": "8512-æ®éGPPS-éæ-ä¸å°å·-å¾·å¨",
+    "severity": "âââââ é«",
     "defectRate": "50%",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CDW02302",
     "note": "",
-    "problemDesc": "⏳顶针油污",
-    "causeAnalysis": "未定时清洁顶针",
-    "solution": "定时清洁顶针且随时检查",
+    "problemDesc": "â³é¡¶éæ²¹æ±¡",
+    "causeAnalysis": "æªå®æ¶æ¸æ´é¡¶é",
+    "solution": "å®æ¶æ¸æ´é¡¶éä¸éæ¶æ£æ¥",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -267,18 +267,18 @@
   },
   {
     "id": "QR-2026-016",
-    "defectType": "其它",
+    "defectType": "å¶å®",
     "materialCode": "8512-PC-T-P000-BLK",
-    "productDesc": "8512-普通PC-透明-不印刷-空白",
-    "severity": "★★☆☆☆ 中",
+    "productDesc": "8512-æ®éPC-éæ-ä¸å°å·-ç©ºç½",
+    "severity": "âââââ ä¸­",
     "defectRate": "30%",
-    "occurrence": "多次",
+    "occurrence": "å¤æ¬¡",
     "updateTime": "2026-06-11",
     "customer": "CJX085902",
     "note": "",
-    "problemDesc": "⏳PET折盒不干胶粘接时 两片之间缝隙太大 可能会粘在产品上 留下胶黏剂",
-    "causeAnalysis": "粘折盒时松紧没控制好",
-    "solution": "粘折盒时更紧",
+    "problemDesc": "â³PETæçä¸å¹²è¶ç²æ¥æ¶ ä¸¤çä¹é´ç¼éå¤ªå¤§ å¯è½ä¼ç²å¨äº§åä¸ çä¸è¶é»å",
+    "causeAnalysis": "ç²æçæ¶æ¾ç´§æ²¡æ§å¶å¥½",
+    "solution": "ç²æçæ¶æ´ç´§",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -286,18 +286,18 @@
   },
   {
     "id": "QR-2026-017",
-    "defectType": "翘曲",
+    "defectType": "ç¿æ²",
     "materialCode": "2CBX-E/PC02-BK-P000-BLK",
-    "productDesc": "2格盒-防静电PC02-黑色-不印刷-空白",
-    "severity": "★★★★★ 极高",
+    "productDesc": "2æ ¼ç-é²éçµPC02-é»è²-ä¸å°å·-ç©ºç½",
+    "severity": "âââââ æé«",
     "defectRate": "100%",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CKW02802",
     "note": "",
-    "problemDesc": "⏳2格盒上盖严重翘曲",
-    "causeAnalysis": "生成温度太高 冷却时间不够  未质检",
-    "solution": "改善工艺 定时质检",
+    "problemDesc": "â³2æ ¼çä¸çä¸¥éç¿æ²",
+    "causeAnalysis": "çææ¸©åº¦å¤ªé« å·å´æ¶é´ä¸å¤  æªè´¨æ£",
+    "solution": "æ¹åå·¥èº å®æ¶è´¨æ£",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -305,17 +305,17 @@
   },
   {
     "id": "QR-2026-018",
-    "defectType": "其它",
+    "defectType": "å¶å®",
     "materialCode": "DAWE-PC10-AC5410-ESD",
-    "productDesc": "2寸全黑PC方盒，长效防静电，长方形扣位，上盖带4个顶柱.磨砂面，DAWE刻字",
-    "severity": "★★☆☆☆ 中",
+    "productDesc": "2å¯¸å¨é»PCæ¹çï¼é¿æé²éçµï¼é¿æ¹å½¢æ£ä½ï¼ä¸çå¸¦4ä¸ªé¡¶æ±.ç£¨ç é¢ï¼DAWEå»å­",
+    "severity": "âââââ ä¸­",
     "defectRate": "1%",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CDW02302",
     "note": "",
-    "problemDesc": "铰链处夹着细毛物质 ",
-    "causeAnalysis": "装配时 线手上细毛被带走",
+    "problemDesc": "é°é¾å¤å¤¹çç»æ¯ç©è´¨ ",
+    "causeAnalysis": "è£éæ¶ çº¿æä¸ç»æ¯è¢«å¸¦èµ°",
     "solution": "",
     "photos": [
       "img_QR-2026-002_0.jpg"
@@ -324,18 +324,18 @@
   },
   {
     "id": "QR-2026-019",
-    "defectType": "翘曲",
+    "defectType": "ç¿æ²",
     "materialCode": "8512-PC-BK-P001-BLK",
-    "productDesc": "8512-普通PC-黑色-印刷001-空白",
-    "severity": "★★★★★ 极高",
+    "productDesc": "8512-æ®éPC-é»è²-å°å·001-ç©ºç½",
+    "severity": "âââââ æé«",
     "defectRate": "80%",
     "occurrence": "3",
     "updateTime": "2026-06-11",
     "customer": "CJX085902",
     "note": "",
-    "problemDesc": "非常严重的翘曲  最严重的次品 整个平面超过0.5mm高度落差",
-    "causeAnalysis": "1 未正确质检 导致大量次品生产出并且留出\n2 工艺不合理 包括保压参数 冷却时间\n3 机器故障 射嘴温度不稳定",
-    "solution": "1 明确质检方法并且重新制定直接标准\n2 优化工艺 \n",
+    "problemDesc": "éå¸¸ä¸¥éçç¿æ²  æä¸¥éçæ¬¡å æ´ä¸ªå¹³é¢è¶è¿0.5mmé«åº¦è½å·®",
+    "causeAnalysis": "1 æªæ­£ç¡®è´¨æ£ å¯¼è´å¤§éæ¬¡åçäº§åºå¹¶ä¸çåº\n2 å·¥èºä¸åç åæ¬ä¿ååæ° å·å´æ¶é´\n3 æºå¨æé å°å´æ¸©åº¦ä¸ç¨³å®",
+    "solution": "1 æç¡®è´¨æ£æ¹æ³å¹¶ä¸éæ°å¶å®ç´æ¥æ å\n2 ä¼åå·¥èº \n",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -343,17 +343,17 @@
   },
   {
     "id": "QR-2026-020",
-    "defectType": "移印偏移",
+    "defectType": "ç§»å°åç§»",
     "materialCode": "8512-PC-BK-P001-BLK",
-    "productDesc": "8512-普通PC-黑色-印刷001-空白",
-    "severity": "★★★★★ 极高",
+    "productDesc": "8512-æ®éPC-é»è²-å°å·001-ç©ºç½",
+    "severity": "âââââ æé«",
     "defectRate": "0.1%",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CJX085902",
     "note": "",
-    "problemDesc": "移印图案偏移超过0.5",
-    "causeAnalysis": "推测是印刷速度太快  未在治具里放平就下压印刷 且没有注意图案是否有错",
+    "problemDesc": "ç§»å°å¾æ¡åç§»è¶è¿0.5",
+    "causeAnalysis": "æ¨æµæ¯å°å·éåº¦å¤ªå¿«  æªå¨æ²»å·éæ¾å¹³å°±ä¸åå°å· ä¸æ²¡ææ³¨æå¾æ¡æ¯å¦æé",
     "solution": "",
     "photos": [
       "img_QR-2026-002_0.jpg"
@@ -362,18 +362,18 @@
   },
   {
     "id": "QR-2026-021",
-    "defectType": "移印拉毛",
+    "defectType": "ç§»å°ææ¯",
     "materialCode": "5510-E/ABS01-BK-P001-DW",
-    "productDesc": "5510-防静电ABS01-黑色-印刷001-德威",
+    "productDesc": "5510-é²éçµABS01-é»è²-å°å·001-å¾·å¨",
     "severity": "",
     "defectRate": "100%",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CDW02302",
     "note": "",
-    "problemDesc": "⏳移印线条拉毛 CCD识别异常",
-    "causeAnalysis": "油墨太干",
-    "solution": "稀释油墨",
+    "problemDesc": "â³ç§»å°çº¿æ¡ææ¯ CCDè¯å«å¼å¸¸",
+    "causeAnalysis": "æ²¹å¢¨å¤ªå¹²",
+    "solution": "ç¨éæ²¹å¢¨",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -381,18 +381,18 @@
   },
   {
     "id": "QR-2026-022",
-    "defectType": "欠注",
+    "defectType": "æ¬ æ³¨",
     "materialCode": "5510-PC-BK-P003-BLK",
-    "productDesc": "5510-普通PC-黑色-印刷003-空白",
+    "productDesc": "5510-æ®éPC-é»è²-å°å·003-ç©ºç½",
     "severity": "",
     "defectRate": "1%",
     "occurrence": "2",
     "updateTime": "2026-06-11",
     "customer": "CJX085902",
     "note": "",
-    "problemDesc": "欠注",
-    "causeAnalysis": "工艺参数问题  ",
-    "solution": "优化工艺参数 加强质检",
+    "problemDesc": "æ¬ æ³¨",
+    "causeAnalysis": "å·¥èºåæ°é®é¢  ",
+    "solution": "ä¼åå·¥èºåæ° å å¼ºè´¨æ£",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -400,18 +400,18 @@
   },
   {
     "id": "QR-2026-023",
-    "defectType": "欠注",
+    "defectType": "æ¬ æ³¨",
     "materialCode": "8512-PC-BK-P001-BLK",
-    "productDesc": "8512-普通PC-黑色-印刷001-空白",
-    "severity": "★★★★★ 极高",
+    "productDesc": "8512-æ®éPC-é»è²-å°å·001-ç©ºç½",
+    "severity": "âââââ æé«",
     "defectRate": "0.1%",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CJX085902",
     "note": "",
-    "problemDesc": "欠注",
-    "causeAnalysis": "工艺参数不合理",
-    "solution": "改善工艺  加强相应位置质检",
+    "problemDesc": "æ¬ æ³¨",
+    "causeAnalysis": "å·¥èºåæ°ä¸åç",
+    "solution": "æ¹åå·¥èº  å å¼ºç¸åºä½ç½®è´¨æ£",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -419,17 +419,17 @@
   },
   {
     "id": "QR-2026-024",
-    "defectType": "银丝",
+    "defectType": "é¶ä¸",
     "materialCode": "8512-PC-T-P000-BLK",
-    "productDesc": "8512-普通PC-透明-不印刷-空白",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "8512-æ®éPC-éæ-ä¸å°å·-ç©ºç½",
+    "severity": "âââââ å¾é«",
     "defectRate": "0.001",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "",
     "note": "",
-    "problemDesc": "银丝",
-    "causeAnalysis": "可能是冷料或者材料没烘干",
+    "problemDesc": "é¶ä¸",
+    "causeAnalysis": "å¯è½æ¯å·ææèæææ²¡çå¹²",
     "solution": "",
     "photos": [
       "img_QR-2026-002_0.jpg"
@@ -438,17 +438,17 @@
   },
   {
     "id": "QR-2026-025",
-    "defectType": "翘曲",
+    "defectType": "ç¿æ²",
     "materialCode": "8512-GPPS-T-P000-DW",
-    "productDesc": "8512-普通GPPS-透明-不印刷-德威",
-    "severity": "★★★★★ 极高",
+    "productDesc": "8512-æ®éGPPS-éæ-ä¸å°å·-å¾·å¨",
+    "severity": "âââââ æé«",
     "defectRate": "0.1",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CDW02302",
     "note": "",
-    "problemDesc": "⏳铰链严重翘曲",
-    "causeAnalysis": "模具太卡 工艺不合理",
+    "problemDesc": "â³é°é¾ä¸¥éç¿æ²",
+    "causeAnalysis": "æ¨¡å·å¤ªå¡ å·¥èºä¸åç",
     "solution": "",
     "photos": [
       "img_QR-2026-002_0.jpg"
@@ -457,18 +457,18 @@
   },
   {
     "id": "QR-2026-026",
-    "defectType": "开缝过大",
+    "defectType": "å¼ç¼è¿å¤§",
     "materialCode": "5510-E/ABS01-T-P000-DW",
-    "productDesc": "5510-防静电ABS01-透明-不印刷-德威",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "5510-é²éçµABS01-éæ-ä¸å°å·-å¾·å¨",
+    "severity": "âââââ å¾é«",
     "defectRate": "0.7",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CDW02302",
     "note": "",
-    "problemDesc": "盒子装配后缝隙过大",
-    "causeAnalysis": "1 模具顶针太小  装配位胶位过厚\n2 上下盖  因为注塑工艺不同  产品尺寸差异过大 \n3 模具可能有点卡前模",
-    "solution": "1 针对问题修模具  加强后模抓力\n2 改善工艺 让上下盖尽量尺寸一致",
+    "problemDesc": "çå­è£éåç¼éè¿å¤§",
+    "causeAnalysis": "1 æ¨¡å·é¡¶éå¤ªå°  è£éä½è¶ä½è¿å\n2 ä¸ä¸ç  å ä¸ºæ³¨å¡å·¥èºä¸å  äº§åå°ºå¯¸å·®å¼è¿å¤§ \n3 æ¨¡å·å¯è½æç¹å¡åæ¨¡",
+    "solution": "1 éå¯¹é®é¢ä¿®æ¨¡å·  å å¼ºåæ¨¡æå\n2 æ¹åå·¥èº è®©ä¸ä¸çå°½éå°ºå¯¸ä¸è´",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -476,17 +476,17 @@
   },
   {
     "id": "QR-2026-027",
-    "defectType": "欠注",
+    "defectType": "æ¬ æ³¨",
     "materialCode": "HWD903-E/ABS01-BK-P000-KW",
-    "productDesc": "HWD903-防静电ABS01-黑色-不印刷-凯崴",
-    "severity": "★★★★☆ 很高",
-    "defectRate": "接近1",
-    "occurrence": "多次",
+    "productDesc": "HWD903-é²éçµABS01-é»è²-ä¸å°å·-å¯å´´",
+    "severity": "âââââ å¾é«",
+    "defectRate": "æ¥è¿1",
+    "occurrence": "å¤æ¬¡",
     "updateTime": "2026-06-11",
     "customer": "CKW02802",
     "note": "",
-    "problemDesc": "欠注 多款类似盒子都有此问题",
-    "causeAnalysis": "工艺参数不合理  质检仔细",
+    "problemDesc": "æ¬ æ³¨ å¤æ¬¾ç±»ä¼¼çå­é½ææ­¤é®é¢",
+    "causeAnalysis": "å·¥èºåæ°ä¸åç  è´¨æ£ä»ç»",
     "solution": "",
     "photos": [
       "img_QR-2026-002_0.jpg"
@@ -495,17 +495,17 @@
   },
   {
     "id": "QR-2026-028",
-    "defectType": "包装破损",
+    "defectType": "åè£ç ´æ",
     "materialCode": "5510-E/PC02-BK-P000-5164",
-    "productDesc": "5510-防静电PC02-黑色-不印刷-515164",
-    "severity": "★★☆☆☆ 中",
+    "productDesc": "5510-é²éçµPC02-é»è²-ä¸å°å·-515164",
+    "severity": "âââââ ä¸­",
     "defectRate": "1",
     "occurrence": "2",
     "updateTime": "2026-06-11",
     "customer": "CDA051202",
     "note": "",
-    "problemDesc": "外箱破裂 ",
-    "causeAnalysis": "物流暴力搬运",
+    "problemDesc": "å¤ç®±ç ´è£ ",
+    "causeAnalysis": "ç©æµæ´åæ¬è¿",
     "solution": "",
     "photos": [
       "img_QR-2026-002_0.jpg"
@@ -514,18 +514,18 @@
   },
   {
     "id": "QR-2026-029",
-    "defectType": "划痕",
+    "defectType": "åç",
     "materialCode": "1CBX-E/PC02-BK-P000-BLK",
-    "productDesc": "1格盒-防静电PC02-黑色-不印刷-空白",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "1æ ¼ç-é²éçµPC02-é»è²-ä¸å°å·-ç©ºç½",
+    "severity": "âââââ å¾é«",
     "defectRate": "0.01",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CKW02802",
     "note": "",
-    "problemDesc": "划伤",
-    "causeAnalysis": "包装不合理 导致产品和外箱摩擦刮蹭  导致表面划伤",
-    "solution": "改善包装方式",
+    "problemDesc": "åä¼¤",
+    "causeAnalysis": "åè£ä¸åç å¯¼è´äº§ååå¤ç®±æ©æ¦å®è¹­  å¯¼è´è¡¨é¢åä¼¤",
+    "solution": "æ¹ååè£æ¹å¼",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -533,18 +533,18 @@
   },
   {
     "id": "QR-2026-030",
-    "defectType": "划痕",
+    "defectType": "åç",
     "materialCode": "8512-PC-BK-P001-BLK",
-    "productDesc": "8512-普通PC-黑色-印刷001-空白",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "8512-æ®éPC-é»è²-å°å·001-ç©ºç½",
+    "severity": "âââââ å¾é«",
     "defectRate": "0.1",
     "occurrence": "1",
     "updateTime": "2026-06-11",
     "customer": "CLZ053002",
     "note": "",
-    "problemDesc": "装配好的盒子 划伤很严重",
-    "causeAnalysis": "应该是放入包装盒时 插入方法不正确导致 且未及时检查出问题",
-    "solution": "重新制定包装动作方法",
+    "problemDesc": "è£éå¥½ççå­ åä¼¤å¾ä¸¥é",
+    "causeAnalysis": "åºè¯¥æ¯æ¾å¥åè£çæ¶ æå¥æ¹æ³ä¸æ­£ç¡®å¯¼è´ ä¸æªåæ¶æ£æ¥åºé®é¢",
+    "solution": "éæ°å¶å®åè£å¨ä½æ¹æ³",
     "photos": [
       "img_QR-2026-002_0.jpg"
     ],
@@ -552,17 +552,17 @@
   },
   {
     "id": "QR-2026-031",
-    "defectType": "浇口屑",
+    "defectType": "æµå£å±",
     "materialCode": "8512-ABS-BK-P001-DW",
-    "productDesc": "8512-普通ABS-黑色-印刷001-德威",
-    "severity": "★★★★☆ 很高",
+    "productDesc": "8512-æ®éABS-é»è²-å°å·001-å¾·å¨",
+    "severity": "âââââ å¾é«",
     "defectRate": "0.01",
-    "occurrence": "多次",
+    "occurrence": "å¤æ¬¡",
     "updateTime": "2026-06-11",
     "customer": "CDW02302",
     "note": "",
-    "problemDesc": "⏳浇口有轻易掉下的料屑",
-    "causeAnalysis": "剪浇口时没完全剪断  手法不正确",
+    "problemDesc": "â³æµå£æè½»ææä¸çæå±",
+    "causeAnalysis": "åªæµå£æ¶æ²¡å®å¨åªæ­  ææ³ä¸æ­£ç¡®",
     "solution": "",
     "photos": [
       "img_QR-2026-002_0.jpg"
@@ -571,16 +571,16 @@
   },
   {
     "id": "QR-2026-032",
-    "defectType": "放错方向",
+    "defectType": "æ¾éæ¹å",
     "materialCode": "HASP01-E/ABS01-BK-P000-KW",
-    "productDesc": "124盒卡扣-防静电ABS01-黑色-不印刷-凯崴",
-    "severity": "★☆☆☆☆ 低",
+    "productDesc": "124çå¡æ£-é²éçµABS01-é»è²-ä¸å°å·-å¯å´´",
+    "severity": "âââââ ä½",
     "defectRate": "1",
     "occurrence": "2",
     "updateTime": "2026-06-11",
     "customer": "CKW02802",
     "note": "",
-    "problemDesc": "产品装盒时  方向反了",
+    "problemDesc": "äº§åè£çæ¶  æ¹ååäº",
     "causeAnalysis": "",
     "solution": "",
     "photos": [
@@ -591,7 +591,7 @@
   {
     "id": "QR-2026-033",
     "defectType": "",
-    "materialCode": "修改00007",
+    "materialCode": "ä¿®æ¹00007",
     "productDesc": "11",
     "severity": "",
     "defectRate": "",
@@ -608,7 +608,7 @@
   {
     "id": "QR-2026-034",
     "defectType": "",
-    "materialCode": "新增00888",
+    "materialCode": "æ°å¢00888",
     "productDesc": "",
     "severity": "",
     "defectRate": "",
@@ -625,7 +625,7 @@
   {
     "id": "QR-2026-035",
     "defectType": "",
-    "materialCode": "新增2026年6月15日20:34:16",
+    "materialCode": "æ°å¢2026å¹´6æ15æ¥20:34:16",
     "productDesc": "",
     "severity": "",
     "defectRate": "",
@@ -638,5 +638,22 @@
     "solution": "",
     "photos": [],
     "createdAt": "2026-06-15T12:34:18.735Z"
+  },
+  {
+    "id": "QR-2026-036",
+    "defectType": "",
+    "materialCode": "新增无图片2026年6月15日21:05:54",
+    "productDesc": "",
+    "severity": "",
+    "defectRate": "",
+    "occurrence": "",
+    "updateTime": "2026-06-15",
+    "customer": "",
+    "note": "",
+    "problemDesc": "",
+    "causeAnalysis": "",
+    "solution": "",
+    "photos": [],
+    "createdAt": "2026-06-15T13:05:57.601Z"
   }
 ]
