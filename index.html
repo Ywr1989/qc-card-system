@@ -685,12 +685,6 @@ body {
   color: #333; box-shadow: 0 2px 8px rgba(0,0,0,0.12); min-height: 0; overflow: hidden;
 }
 .qr-card .photo-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
-/* 图片加载中状态 */
-.photo-loading { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; color:#999; font-size:12px; }
-.photo-loading .spin { width:22px; height:22px; border:3px solid #e0e0e0; border-top-color:#3498db; border-radius:50%; animation:spin .8s linear infinite; }
-.photo-loading.fail .spin { display:none; }
-.photo-loading.fail span { color:#e74c3c; cursor:pointer; text-decoration:underline; }
-@keyframes spin { to{transform:rotate(360deg);} }
 .qr-card .note-block { height: 14mm; border: 1px solid #ccc; border-radius: 6px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.12); flex-shrink: 0; }
 .qr-card .note-body { height: 100%; padding: 1.5mm 3mm; font-size: 12px; color: #000; line-height: 1.5; overflow: hidden; word-break: break-all; }
 .qr-card .note-label { font-weight: bold; font-size: 12px; color: #000; }
@@ -2158,47 +2152,14 @@ function loadPhotosInBackground(cards) {
           }
         }
         console.log(`[fetch] ✅ 图片: ${fname}`);
-        // 立即更新DOM：找到所有含此文件名的占位符，替换为真正的图片
-        document.querySelectorAll('.photo-loading').forEach(el => {
-          if (el.dataset.fname === fname) {
-            const img = document.createElement('img');
-            img.src = dataURI;
-            img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;';
-            img.onerror = function() {
-              this.outerHTML = '<span style="color:#e74c3c;cursor:pointer;text-decoration:underline;" onclick="location.reload()">图片显示失败，点击刷新</span>';
-            };
-            el.parentNode.replaceChild(img, el);
-          }
-        });
       } else {
         console.warn(`[fetch] 图片失败(${r.status}): ${fname}`);
-        // 标记对应的占位符为失败
-        document.querySelectorAll('.photo-loading').forEach(el => {
-          if (el.dataset.fname === fname) {
-            el.classList.add('fail');
-            el.querySelector('span').textContent = '图片加载失败，点击刷新';
-            el.style.cursor = 'pointer';
-            el.onclick = () => location.reload();
-          }
-        });
       }
     } catch(e) {
       console.warn(`[fetch] 图片异常: ${fname}`, e.message);
-      document.querySelectorAll('.photo-loading').forEach(el => {
-        if (el.dataset.fname === fname) {
-          el.classList.add('fail');
-          el.querySelector('span').textContent = '图片加载失败，点击刷新';
-          el.style.cursor = 'pointer';
-          el.onclick = () => location.reload();
-        }
-      });
     }
   })).then(() => {
     console.log('[fetch] ✅ 所有图片加载完毕');
-    // 刷新卡片管理页视图
-    const activeId = document.querySelector('.page-section.active')?.id;
-    if (activeId === 'cardManage' && typeof cmRender === 'function') cmRender();
-  });
   });
 }
 
@@ -2858,13 +2819,9 @@ function buildCardFromForm() {
 }
 
 function renderCardHTML(card, isPreview) {
-  const hasPhoto = card.photos && card.photos.length > 0 && card.photos[0];
-  const isDataUri = hasPhoto && card.photos[0].startsWith('data:');
-  const photosHtml = isDataUri
+  const photosHtml = card.photos && card.photos.length > 0
     ? `<img src="${card.photos[0]}" style="max-width:100%;max-height:100%;object-fit:contain;">`
-    : (hasPhoto
-      ? `<div class="photo-loading" data-fname="${card.photos[0]}"><div class="spin"></div><span>图片加载中...</span></div>`
-      : '<div style="color:#999;font-size:12px;">[ 质量问题照片 ]</div>');
+    : '<div style="color:#999;font-size:12px;">[ 质量问题照片 ]</div>';
   const dt = card.defectType || '问题';
   let defectText;
   if (dt.length >= 4) {
