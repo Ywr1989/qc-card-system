@@ -2196,7 +2196,12 @@ async function pushCardsToGitHub(cards) {
         let imgSha = null;
         try {
           const checkR = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/data/photos/${fname}`, { headers: H });
-          if (checkR.ok) imgSha = (await checkR.json()).sha;
+          if (checkR.ok) {
+            // 文件已存在，直接复用文件名，不重复上传
+            uri2file[p] = fname;
+            console.log(`[push] ↩️ ${fname} 已存在，跳过`);
+            continue;
+          }
         } catch(e) {}
 
         const uploadR = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/data/photos/${fname}`, {
@@ -3199,18 +3204,25 @@ var MM = 10; // 1mm=10px，输出约2100×1480px，高清足够发微信
 
 function saveAsImages() {
   var cards = lastResults.filter(function(c) { return playedIds.has(c.id); });
+  console.log('[saveImg] 展开卡片数:', cards.length, 'playedIds:', [...playedIds]);
   if (cards.length === 0) { alert('请先展开需要保存的卡片（和打印报告一样操作）'); return; }
 
   // 选目录（支持批量写入）
   pickDirectory(function(dirHandle) {
+    console.log('[saveImg] 目录句柄:', dirHandle ? '已获取' : 'null(取消)');
     if (!dirHandle) { alert('未选择目录，已取消'); return; }
     var idx = 0;
     function next() {
-      if (idx >= cards.length) { alert('已保存 ' + cards.length + ' 张图片到选定文件夹'); return; }
+      if (idx >= cards.length) { alert('已保存 ' + idx + ' 张图片到选定文件夹'); return; }
       var card = cards[idx];
+      console.log('[saveImg] 绘制第' + (idx+1) + '/' + cards.length + '张:', card.id);
       drawCardToCanvas(card, function(canvas) {
+        console.log('[saveImg] canvas完成:', card.id, canvas.width + 'x' + canvas.height);
         canvas.toBlob(function(blob) {
-          writeFileToDir(dirHandle, card.id + '.png', blob, function() {
+          console.log('[saveImg] blob大小:', blob ? (blob.size/1024).toFixed(1) + 'KB' : 'null');
+          writeFileToDir(dirHandle, card.id + '.png', blob, function(err) {
+            if (err) console.error('[saveImg] 写入失败:', card.id, err);
+            else console.log('[saveImg] ✅ 已保存:', card.id + '.png');
             idx++;
             setTimeout(next, 300);
           });
@@ -3223,6 +3235,7 @@ function saveAsImages() {
 
 // Canvas绑制单张卡片
 function drawCardToCanvas(card, callback) {
+  console.log('[drawCanvas] 开始绘制:', card.id);
   var W = 210 * MM, H = 148 * MM;
   var c = document.createElement('canvas');
   c.width = W; c.height = H;
