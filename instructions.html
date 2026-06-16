@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>质量问题卡片系统 - 使用说明书</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; background: #f5f6fa; color: #2c3e50; line-height: 1.6; }
+  .container { max-width: 920px; margin: 20px auto; background: #fff; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.07); overflow: hidden; }
+
+  /* 头部 */
+  .header { background: linear-gradient(135deg, #1a1a2e, #16213e); color: #fff; padding: 22px 32px 18px; }
+  .header h1 { font-size: 20px; font-weight: 700; }
+  .header p { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 3px; }
+
+  .content { padding: 22px 32px 24px; }
+
+  /* 标题统一 */
+  h2 { font-size: 15px; font-weight: 700; color: #1a1a2e; margin: 16px 0 10px; padding-bottom: 5px; border-bottom: 2px solid #e8edf2; }
+  h3 { font-size: 13px; font-weight: 600; color: #34495e; margin: 10px 0 6px; }
+  p, li { font-size: 13px; }
+  ul, ol { margin: 4px 0 8px 18px; }
+  li { margin: 2px 0; }
+
+  .url-box { background: #f0f4f8; border-radius: 5px; padding: 7px 12px; margin: 6px 0 10px; font-size: 13px; }
+  .url-box a { color: #0066cc; text-decoration: none; }
+
+  /* ===== 核心：Grid两栏布局，4个区块自动对齐 ===== */
+  .grid-2x2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 28px; margin-top: 4px; }
+  .grid-2x2 > div { min-width: 0; }
+
+  table { width: 100%; border-collapse: collapse; margin: 6px 0; font-size: 12.5px; }
+  td { padding: 6px 10px; border: 1px solid #e8ecf0; vertical-align: middle; }
+  tr:nth-child(even) td { background: #fafbfc; }
+
+  /* 信号柱 */
+  .signal-row { display: flex; align-items: center; gap: 12px; margin: 5px 0; }
+  .signal-bars { display: flex; align-items: flex-end; gap: 2.5px; height: 22px; flex-shrink: 0; }
+  .s-bar { width: 5px; border-radius: 2px 2px 0 0; }
+  .sb-h1 { height: 9px; } .sb-h2 { height: 13px; } .sb-h3 { height: 17px; } .sb-h4 { height: 21px; }
+  .s-on { background: #4a5568; }
+  .s-off { background: #d0dae6; }
+  .signal-text { font-size: 12.5px; color: #555; white-space: nowrap; }
+  .signal-note { font-size: 11.5px; color: #999; margin-top: 5px; }
+
+  .color-dot { width: 24px; height: 10px; border-radius: 3px; display: inline-block; vertical-align: middle; margin-right: 5px; }
+  .star-label { white-space: nowrap; }
+
+  .footer { background: #f8f9fa; padding: 10px 32px; text-align: center; font-size: 11px; color: #bbb; border-top: 1px solid #eee; }
+
+  @media print {
+    body { background: #fff; }
+    .container { box-shadow: none; margin: 0; border-radius: 0; }
+    .header { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>📋 质量问题卡片系统 — 使用说明书</h1>
+  </div>
+
+  <div class="content">
+
+    <!-- 一、系统访问 -->
+    <h2>一、系统访问</h2>
+    <div class="url-box"><a href="https://ywr1989.github.io/qc-card-system/" target="_blank">https://ywr1989.github.io/qc-card-system/</a></div>
+    <p style="font-size:13px;">打开首页后点击<strong>「查找卡片」</strong>进入。</p>
+
+    <!-- 二三四五：2×2 Grid 对齐 -->
+    <div class="grid-2x2">
+
+      <!-- 左上：二、查找卡片 -->
+      <div>
+        <h2>二、查找卡片</h2>
+        <table>
+          <tr><td style="width:50px;"><b>料号</b></td><td>HWD70358、PBA33-E/ABS01-BK-P000-KW 等</td></tr>
+          <tr><td><b>客户</b></td><td>CDW02302 等</td></tr>
+          <tr><td style="width:50px;white-space:nowrap;"><b>关键词</b></td><td>缩水、毛边 等</td></tr>
+        </table>
+        <h3>筛选</h3>
+        <p style="font-size:12.5px;">搜索后可按<strong>缺陷类型</strong> / <strong>客户</strong> / <strong>严重性</strong>筛选。</p>
+        <h3>查看报告</h3>
+        <ul style="font-size:12.5px;">
+          <li><strong>点击缩略图</strong> → 展开报告；再点 → 收起</li>
+          <li><strong>全部展开 / 收起</strong> → 批量操作</li>
+        </ul>
+      </div>
+
+      <!-- 右上：三、信号图标 -->
+      <div>
+        <h2>三、信号图标（匹配级别）</h2>
+        <p style="font-size:12.5px;color:#666;">卡片左下角4个竖条，表示匹配程度：</p>
+
+        <div class="signal-row">
+          <div class="signal-bars">
+            <div class="s-bar sb-h1 s-on"></div><div class="s-bar sb-h2 s-on"></div><div class="s-bar sb-h3 s-on"></div><div class="s-bar sb-h4 s-on"></div>
+          </div>
+          <span class="signal-text"><b>Level 1</b> 规格+材料+颜色完全相同</span>
+        </div>
+        <div class="signal-row">
+          <div class="signal-bars">
+            <div class="s-bar sb-h1 s-on"></div><div class="s-bar sb-h2 s-on"></div><div class="s-bar sb-h3 s-on"></div><div class="s-bar sb-h4 s-off"></div>
+          </div>
+          <span class="signal-text"><b>Level 2</b> 规格+材料 或 颜色相同</span>
+        </div>
+        <div class="signal-row">
+          <div class="signal-bars">
+            <div class="s-bar sb-h1 s-on"></div><div class="s-bar sb-h2 s-on"></div><div class="s-bar sb-h3 s-off"></div><div class="s-bar sb-h4 s-off"></div>
+          </div>
+          <span class="signal-text"><b>Level 3</b> 仅规格相同</span>
+        </div>
+        <div class="signal-row">
+          <div class="signal-bars">
+            <div class="s-bar sb-h1 s-on"></div><div class="s-bar sb-h2 s-off"></div><div class="s-bar sb-h3 s-off"></div><div class="s-bar sb-h4 s-off"></div>
+          </div>
+          <span class="signal-text"><b>Level 4</b> 仅关键词匹配</span>
+        </div>
+        <p class="signal-note">💡 从右往左熄灭，亮得越多 = 匹配越高</p>
+      </div>
+
+      <!-- 左下：四、颜色条（原右下） -->
+      <div>
+        <h2>四、颜色条（严重程度）</h2>
+        <table>
+          <tr>
+            <td style="width:36px;"><span class="color-dot" style="background:#8B0000;"></span></td>
+            <td style="width:65px;" class="star-label"><b>5星 极高</b></td>
+            <td>直接导致巨大经济损失</td>
+          </tr>
+          <tr>
+            <td><span class="color-dot" style="background:#DC3545;"></span></td>
+            <td class="star-label"><b>3-4星 高</b></td>
+            <td>干扰客户生产安排、降低效率</td>
+          </tr>
+          <tr>
+            <td><span class="color-dot" style="background:#FFC107;"></span></td>
+            <td class="star-label"><b>2星 中</b></td>
+            <td>暂未造成大影响，但可能恶化</td>
+          </tr>
+          <tr>
+            <td><span class="color-dot" style="background:#28A745;"></span></td>
+            <td class="star-label"><b>1星 低</b></td>
+            <td>对客户影响较小，仍需改善</td>
+          </tr>
+        </table>
+      </div>
+
+      <!-- 右下：五、打印功能（原左下） -->
+      <div>
+        <h2>五、打印功能</h2>
+        <ol style="font-size:12.5px;">
+          <li>展开需要打印的报告</li>
+          <li>点击<strong>「打印报告」</strong></li>
+          <li>在浏览器预览中选择打印机或「另存为PDF」</li>
+        </ol>
+      </div>
+
+    </div><!-- end grid -->
+
+  </div>
+
+  <div class="footer">最后更新：2026-06-16</div>
+</div>
+</body>
+</html>
