@@ -1441,7 +1441,7 @@ body {
       <div class="ac-hint">查看 / 批量删除卡片</div>
     </div>
     <div class="action-card" onclick="showSection('instructions','使用说明')" style="cursor:pointer;">
-      <div class="ac-icon" style="background:linear-gradient(135deg,#e17055,#d63031);box-shadow:0 8px 25px rgba(225,112,85,0.4);">
+      <div class="ac-icon" style="background:linear-gradient(135deg,#74b9ff,#0984e3);box-shadow:0 8px 25px rgba(116,185,255,0.35);">
         <svg width="36" height="36" viewBox="0 0 40 40" fill="none" style="opacity:0.95;">
           <rect x="7" y="5" width="26" height="32" rx="3" stroke="#fff" stroke-width="2.2" fill="none"/>
           <line x1="13" y1="13" x2="27" y2="13" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
@@ -3192,85 +3192,245 @@ function printTable() {
   window.print();
 }
 
-// ========== 保存图片（每张卡片独立PNG）==========
+// ========== 保存图片（Canvas直接绘制，高清原色）==========
+var MM = 10; // 1mm=10px，输出约2100×1480px，高清足够发微信
+
 function saveAsImages() {
-  const cards = lastResults.filter(c => playedIds.has(c.id));
-  if (cards.length === 0) { alert('请先展开需要保存的卡片'); return; }
-  loadHtml2Canvas(function() {
-    const wraps = document.querySelectorAll('.table-card-wrap');
-    const list = [];
-    wraps.forEach(w => {
-      const id = w.getAttribute('data-table-id');
-      if (id && playedIds.has(id)) list.push({el: w, id: id});
-    });
-    if (list.length === 0) { alert('未找到展开的卡片'); return; }
+  var cards = lastResults.filter(function(c) { return playedIds.has(c.id); });
+  if (cards.length === 0) { alert('请先展开需要保存的卡片（和打印报告一样操作）'); return; }
 
-    let idx = 0;
+  // 选目录（支持批量写入）
+  pickDirectory(function(dirHandle) {
+    if (!dirHandle) { alert('未选择目录，已取消'); return; }
+    var idx = 0;
     function next() {
-      if (idx >= list.length) { alert('全部保存完成'); return; }
-      const item = list[idx];
-      // 深度克隆卡片到临时容器
-      const clone = item.el.cloneNode(true);
-      clone.style.cssText = 'width:743px;height:501px;position:absolute;left:-9999px;top:0;background:#fff;border:1px solid #ccc;overflow:hidden;';
-      document.body.appendChild(clone);
-
-      html2canvas(clone, {
-        scale: 3,
-        backgroundColor: '#fff',
-        useCORS: true,
-        allowTaint: false,
-        width: 743,
-        height: 501,
-        logging: false
-      }).then(canvas => {
-        document.body.removeChild(clone);
-        canvas.toBlob(blob => {
-          pickSaveFile(item.id + '.png', blob, function(ok) {
-            if (!ok) { idx++; next(); return; }
+      if (idx >= cards.length) { alert('已保存 ' + cards.length + ' 张图片到选定文件夹'); return; }
+      var card = cards[idx];
+      drawCardToCanvas(card, function(canvas) {
+        canvas.toBlob(function(blob) {
+          writeFileToDir(dirHandle, card.id + '.png', blob, function() {
             idx++;
-            setTimeout(next, 600);
+            setTimeout(next, 300);
           });
         }, 'image/png', 0.95);
-      }).catch(err => {
-        if (clone.parentNode) document.body.removeChild(clone);
-        console.error('[saveImg] 渲染失败:', item.id, err);
-        idx++; setTimeout(next, 600);
       });
     }
-    setTimeout(next, 200);
+    next();
   });
 }
 
-// File System Access API - 让用户选择保存位置
-function pickSaveFile(suggestedName, blob, callback) {
-  try {
-    if ('showSaveFilePicker' in window) {
-      window.showSaveFilePicker({
-        suggestedName: suggestedName,
-        types: [{
-          description: 'PNG图片',
-          accept: {'image/png': ['.png']}
-        }]
-      }).then(handle => handle.createWritable()).then(writable => {
-        writable.write(blob).then(() => writable.close()).then(() => callback(true));
-      }).catch(() => callback(false));
-    } else {
-      // 降级：直接下载
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = suggestedName;
-      a.click(); URL.revokeObjectURL(url); callback(true);
-    }
-  } catch(e) {
-    callback(false);
+// Canvas绑制单张卡片
+function drawCardToCanvas(card, callback) {
+  var W = 210 * MM, H = 148 * MM;
+  var c = document.createElement('canvas');
+  c.width = W; c.height = H;
+  var ctx = c.getContext('2d');
+
+  // 背景
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, W, H);
+
+  // 阴影边框
+  ctx.strokeStyle = '#ddd'; ctx.lineWidth = 1;
+  ctx.strokeRect(1, 1, W-2, H-2);
+
+  var defectColor = getSeverityColor(card.severity) || '#e74c3c';
+  var dt = card.defectType || '问题';
+
+  // === 三角形缺陷标签 ===
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(0, 0); ctx.lineTo(30*MM, 0); ctx.lineTo(0, 30*MM); ctx.closePath();
+  ctx.fillStyle = defectColor; ctx.fill();
+  // 三角形阴影
+  ctx.shadowColor = 'rgba(0,0,0,0.25)'; ctx.shadowOffsetX = 2*MM/10; ctx.shadowOffsetY = 3*MM/10; ctx.shadowBlur = 4*MM/10;
+  ctx.fill();
+  ctx.restore();
+
+  // 缺陷文字（白色竖排）
+  ctx.save();
+  ctx.fillStyle = '#fff'; ctx.font = 'bold ' + (22*MM/3.78) + 'px "Microsoft YaHei",sans-serif';
+  var tParts = dt.length >= 4 ? [dt.slice(0,2), dt.slice(2)] : dt.split('');
+  for (var ti=0; ti<tParts.length; ti++) {
+    ctx.fillText(tParts[ti], 8*MM/3.78, (12 + ti*22)*MM/3.78);
+  }
+  ctx.restore();
+
+  // === 报告编号（右上角）===
+  ctx.fillStyle = '#000'; ctx.font = 'bold ' + (15*MM/3.78) + 'px "Microsoft YaHei",sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText(card.id || 'QR-XXXX-XXX', W - 4*MM/3.78, 10*MM/3.78);
+  ctx.font = (11*MM/3.78) + 'px "Microsoft YaHei",sans-serif';
+  ctx.fillStyle = '#333';
+  ctx.fillText('质量问题报告', W - 4*MM/3.78, 22*MM/3.78);
+  ctx.textAlign = 'left';
+
+  // === 料号区域 ===
+  ctx.fillStyle = '#000'; ctx.font = 'bold ' + (21*MM/3.78) + 'px "Microsoft YaHei",sans-serif';
+  ctx.fillText(card.materialCode || '无料号', 35*MM/3.78, 14*MM/3.78);
+  ctx.font = (15*MM/3.78) + 'px "Microsoft YaHei",sans-serif';
+  ctx.fillText(card.productDesc || '', 35*MM/3.78, 28*MM/3.78);
+
+  var y0 = 32*MM/3.78;
+
+  // === 字段行1：严重性 / 不良比例 / 发生次数 ===
+  drawFieldRow(ctx, [
+    {l:'严重性', v:renderSeverityStars(card.severity)},
+    {l:'不良比例', v:(card.defectRate||'-')},
+    {l:'发生次数', v:(card.occurrence||'-')}
+  ], y0, W);
+
+  // === 字段行2：更新时间 / 客户===
+  y0 += 16*MM/3.78;
+  drawFieldRow(ctx, [
+    {l:'更新时间', v:(card.updateTime||'-')},
+    {l:'客户', v:(card.customer||'-')}
+  ], y0, W);
+
+  // === 主内容区 ===
+  var mainY = y0 + 17*MM/3.78;
+  var mainH = H - mainY - 2*MM/3.78;
+  var leftW = 108*MM/3.78;
+  var gap = 5*MM/3.78;
+
+  // 左侧：照片区
+  var photoH = mainH - 20*MM/3.78; // 减去备注高度
+  roundRect(ctx, 2*MM/3.78, mainY, leftW - gap/2, photoH, 6, '#f0f0f0', '#ccc');
+
+  // 右侧：三个block
+  var rx = leftW + gap;
+  var rw = W - rx - 2*MM/3.78;
+  var bh = (mainH - gap*2) / 3;
+
+  drawBlock(ctx, rx, mainY, rw, bh, '问题详细描述', card.problemDesc || '');
+  drawBlock(ctx, rx, mainY+bh+gap, rw, bh, '原因分析', card.causeAnalysis || '');
+  drawBlock(ctx, rx, mainY+(bh+gap)*2, rw, bh, '解决办法', card.solution || '');
+
+  // 备注块（左侧底部）
+  var noteY = mainY + photoH + 2*MM/3.78;
+  roundRect(ctx, 2*MM/3.78, noteY, leftW - gap/2, 18*MM/3.78, 6, '#fff', '#ccc');
+  ctx.font = (12*MM/3.78) + 'px "Microsoft YaHei",sans-serif';
+  ctx.fillStyle = '#000';
+  if (card.note) {
+    ctx.font = 'bold ' + (12*MM/3.78) + 'px "Microsoft YaHei",sans-serif';
+    ctx.fillText('备注：' + card.note, 4*MM/3.78, noteY + 11*MM/3.78);
+  }
+
+  // 绘制照片（异步加载base64）
+  if (card.photos && card.photos.length > 0 && card.photos[0]) {
+    loadCardPhoto(card.photos[0], function(img) {
+      if (!img) { callback(c); return; }
+      var pw = leftW - gap/2 - 4*MM/3.78;
+      var ph = photoH - 4*MM/3.78;
+      var sw = img.width, sh = img.height;
+      var s = Math.min(pw/sw, ph/sh, 1);
+      var dw = sw*s, dh = sh*s;
+      ctx.drawImage(img, 2*MM/3.78+pw/2-dw/2, mainY+ph/2-dh/2+2*MM/3.78, dw, dh);
+      callback(c);
+    });
+  } else {
+    callback(c);
   }
 }
-function loadHtml2Canvas(cb) {
-  if (window.html2canvas) { cb(); return; }
-  var s = document.createElement('script');
-  s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-  s.onload = cb; s.onerror = function(){ alert('加载截图库失败，请检查网络'); };
-  document.head.appendChild(s);
+
+// 加载卡片照片（base64或URL）
+function loadCardPhoto(src, cb) {
+  var img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = function() { cb(img); };
+  img.onerror = function() { cb(null); };
+  img.src = src;
+}
+
+// 绘制字段行
+function drawFieldRow(ctx, fields, y, totalW) {
+  var pad = 2*MM/3.78;
+  var gap = 3*MM/3.78;
+  var fw = (totalW - pad*2 - gap*(fields.length-1)) / fields.length;
+  for (var i=0; i<fields.length; i++) {
+    var fx = pad + i*(fw+gap);
+    roundRect(ctx, fx, y, fw, 15*MM/3.78, 6, '#fff', '#c8c8c8');
+    ctx.font = 'bold ' + (15*MM/3.78) + 'px "Microsoft YaHei",sans-serif';
+    ctx.fillStyle = '#000';
+    ctx.textAlign = 'center';
+    ctx.fillText(fields[i].l, fx+fw/2, y+9*MM/3.78);
+    ctx.font = (13*MM/3.78) + 'px "Microsoft YaHei",sans-serif';
+    ctx.fillText(fields[i].v, fx+fw/2, y+13*MM/3.78);
+  }
+  ctx.textAlign = 'left';
+}
+
+// 绘制右侧block
+function drawBlock(ctx, x, y, w, h, title, bodyText) {
+  roundRect(ctx, x, y, w, h, 6, '#fff', '#ccc');
+  // header
+  ctx.fillStyle = '#e0e0e0';
+  ctx.fillRect(x+1, y+1, w-2, 12*MM/3.78);
+  ctx.font = 'bold ' + (16*MM/3.78) + 'px "Microsoft YaHei",sans-serif';
+  ctx.fillStyle = '#000';
+  ctx.fillText(title, x+5*MM/3.78, y+10*MM/3.78);
+  // body
+  ctx.font = (12*MM/3.78) + 'px "Microsoft YaHei",sans-serif';
+  ctx.fillStyle = '#000';
+  wrapText(ctx, bodyText, x+5*MM/3.78, y+16*MM/3.78, w-10*MM/3.78, h-18*MM/3.78);
+}
+
+// 圆角矩形
+function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+  r = Math.min(r, w/2, h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r, y); ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y+r, r);
+  ctx.arcTo(x, y, x+w, y, r); ctx.closePath();
+  if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+  if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1; ctx.stroke(); }
+}
+
+// 文字自动换行
+function wrapText(ctx, text, x, y, maxW, maxH) {
+  if (!text) return;
+  var words = text.replace(/\n/g, ' ').split('');
+  var line = '', lineHeight = (14*MM/3.78), cy = y;
+  for (var i=0; i<=words.length; i++) {
+    var test = line + (words[i]||'');
+    if ((i===words.length] || ctx.measureText(test).width > maxW) && line) {
+      if (cy + lineHeight - y > maxH) { ctx.fillText(line.substring(0,line.length-1)+'...', x, cy); return; }
+      ctx.fillText(line, x, cy);
+      cy += lineHeight; line = words[i]||'';
+    } else { line = test; }
+  }
+}
+
+// 选择保存目录（File System Access API）
+function pickDirectory(cb) {
+  if ('showDirectoryPicker' in window) {
+    window.showDirectoryPicker({mode:'readwrite'}).then(cb).catch(function() { cb(null); });
+  } else {
+    // 降级：逐个下载到默认下载目录
+    fallbackDownloadAll(cb);
+  }
+}
+function fallbackDownloadAll(onDone) {
+  var cards = lastResults.filter(function(c){return playedIds.has(c.id);});
+  var idx = 0;
+  function next() {
+    if (idx >= cards.length) { onDone(null); return; }
+    drawCardToCanvas(cards[idx], function(canvas) {
+      canvas.toBlob(function(b){
+        var url = URL.createObjectURL(b);
+        var a = document.createElement('a');
+        a.href=url; a.download=cards[idx].id+'.png'; a.click();
+        URL.revokeObjectURL(url); idx++; setTimeout(next,500);
+      },'image/png');
+    });
+  }
+  next();
+}
+function writeFileToDir(dirHandle, name, blob, cb) {
+  dirHandle.getFile(name,{create:true}).then(f=>f.createWritable()).then(w=>{
+    w.write(blob).then(()=>w.close()).then(cb).catch(cb);
+  }).catch(cb);
 }
 
 // ========== 桌面展示区更新（增量渲染，不打断已有卡片）==========
