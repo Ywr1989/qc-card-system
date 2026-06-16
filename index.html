@@ -6,7 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.63</title>
+<title>质量问题卡片系统 v1.64</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1440,10 +1440,10 @@ body {
       <div class="ac-label">卡片管理</div>
       <div class="ac-hint">查看 / 批量删除卡片</div>
     </div>
-    <div class="action-card" onclick="syncFromGitHub()" style="cursor:pointer;">
-      <div class="ac-icon" style="background:linear-gradient(135deg,#00b4d8,#0077b6);box-shadow:0 8px 25px rgba(0,180,216,0.4);">🔄</div>
-      <div class="ac-label">更新</div>
-      <div class="ac-hint">从云端更新数据</div>
+    <div class="action-card" onclick="window.open('https://ywr1989.github.io/qc-card-system/instructions.html','_blank')" style="cursor:pointer;">
+      <div class="ac-icon" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);box-shadow:0 8px 25px rgba(108,92,231,0.4);">📖</div>
+      <div class="ac-label">使用说明</div>
+      <div class="ac-hint">查看操作指南</div>
     </div>
   </div>
 </div>
@@ -1581,27 +1581,29 @@ body {
     <!-- 系统逻辑说明 -->
     <div class="manage-section" style="background:#1a2a3a;border:1px solid #2a4a6a;margin-top:20px;">
       <div class="manage-section-header">
-        <h3>📋 系统逻辑说明</h3>
-        <span class="manage-section-hint">了解系统背后的搜索、排序和颜色逻辑</span>
+        <h3>📋 使用说明</h3>
+        <span class="manage-section-hint">搜索匹配级别、颜色含义</span>
       </div>
       <div style="padding:15px;color:#ccc;font-size:13px;line-height:1.8;">
-        <p><strong>当前版本：</strong>v1.22</p>
+        <p><strong>当前版本：</strong>v1.64</p>
 
         <p style="margin-top:10px;"><strong>1. 搜索排序规则</strong></p>
         <p>先按搜索匹配级别排序（Level 1 最高），同级内按严重性排序（5星最前）。</p>
-        <p>Level 1 = 规格+材料+颜色相同 | Level 2 = 规格+材料 / 规格+颜色 / 规格+印刷相同 | Level 3 = 仅规格相同</p>
+        <p>Level 1 = 规格+材料+颜色相同 | Level 2 = 规格+材料 或 颜色相同 | Level 3 = 仅规格相同 | Level 4 = 仅关键词匹配</p>
+        <p>💡 信号从右往左熄灭，亮得越多 = 匹配越高</p>
 
-        <p style="margin-top:10px;"><strong>2. 料号分组映射</strong></p>
+        <p style="margin-top:10px;"><strong>2. 颜色条（严重程度）</strong></p>
+        <p><span style="color:#8b0000;">■</span> <b>5星 极高</b> 直接导致巨大经济损失 | <span style="color:#e74c3c;">■</span> <b>3-4星 高</b> 干扰客户生产安排、降低效率 | <span style="color:#f1c40f;">■</span> <b>2星 中</b> 暂未造成大影响，但可能恶化 | <span style="color:#2ecc71;">■</span> <b>1星 低</b> 对客户影响较小，仍需改善</p>
+
+        <p style="margin-top:10px;"><strong>3. 料号分组映射</strong></p>
         <p>以下料号被视为同一规格（搜其中一个，同组都会出现）：</p>
         <p style="font-family:monospace;color:#a0d0ff;">HWD70358 = HWD903 = HWD14288 = LHP9 = LHP1 = LHP4</p>
         <p style="font-family:monospace;color:#a0d0ff;">PBA10 ~ PBA99（所有PBA系列互为同组）</p>
-        <p>示例：搜索 PBA33-E/ABS01-BK-P000-KW，HWD903-E/ABS01-BK-P000-KW 也会出现</p>
-
-        <p style="margin-top:10px;"><strong>3. 颜色逻辑（严重性）</strong></p>
-        <p><span style="color:#8b0000;">■</span> 5星（极高）深红 | <span style="color:#e74c3c;">■</span> 3-4星（高/很高）红 | <span style="color:#f1c40f;">■</span> 2星（中）黄 | <span style="color:#2ecc71;">■</span> 1星（低）绿</p>
 
         <p style="margin-top:10px;"><strong>4. 微缩图信号条</strong></p>
-        <p>左下角4条柱子表示搜索匹配级别：4格全亮 = Level 1（最高），1格亮 = Level 4（最低）。信号从右往左灭。</p>
+        <p>左下角4个竖条表示搜索匹配级别：4格全亮 = Level 1（最高），仅1格亮 = Level 4（最低）。信号从右往左灭。</p>
+
+        <p style="margin-top:10px;"><strong>📖 完整使用说明书</strong> → 点击首页「<b>使用说明</b>」查看</p>
       </div>
     </div>
 
