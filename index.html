@@ -6,7 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.64</title>
+<title>质量问题卡片系统 v1.65</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -1431,17 +1431,26 @@ body {
     <div class="action-card" onclick="showCardManage()" style="cursor:pointer;">
       <div class="ac-icon" style="background:linear-gradient(135deg,#2c3e50,#34495e);box-shadow:0 8px 25px rgba(44,62,80,0.4);display:flex;align-items:center;justify-content:center;">
         <svg width="36" height="36" viewBox="0 0 40 40" fill="none" style="opacity:0.9;">
-          <rect x="6" y="4" width="28" height="32" rx="3" stroke="#fff" stroke-width="2.5" fill="none"/>
-          <line x1="12" y1="12" x2="28" y2="12" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-          <line x1="12" y1="19" x2="28" y2="19" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-          <line x1="12" y1="26" x2="22" y2="26" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <!-- 2x2 grid representing cards -->
+          <rect x="5" y="5" width="13" height="13" rx="2" stroke="#fff" stroke-width="2" fill="none"/>
+          <rect x="22" y="5" width="13" height="13" rx="2" stroke="#fff" stroke-width="2" fill="none"/>
+          <rect x="5" y="22" width="13" height="13" rx="2" stroke="#fff" stroke-width="2" fill="none"/>
+          <rect x="22" y="22" width="13" height="13" rx="2" stroke="#fff" stroke-width="2" fill="none"/>
         </svg>
       </div>
       <div class="ac-label">卡片管理</div>
       <div class="ac-hint">查看 / 批量删除卡片</div>
     </div>
-    <div class="action-card" onclick="window.open('https://ywr1989.github.io/qc-card-system/instructions.html','_blank')" style="cursor:pointer;">
-      <div class="ac-icon" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);box-shadow:0 8px 25px rgba(108,92,231,0.4);">📖</div>
+    <div class="action-card" onclick="showSection('instructions','使用说明')" style="cursor:pointer;">
+      <div class="ac-icon" style="background:linear-gradient(135deg,#74b9ff,#0984e3);box-shadow:0 8px 25px rgba(116,185,255,0.35);">
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none" style="opacity:0.95;">
+          <path d="M8 6 C8 4.5 9 3.5 10.5 3.5 L22 3.5 L32 13.5 L32 34 C32 35.5 31 36.5 29.5 36.5 L10.5 36.5 C9 36.5 8 35.5 8 34 Z" stroke="#fff" stroke-width="2" fill="none"/>
+          <path d="M22 3.5 L22 13.5 L32 13.5" stroke="#fff" stroke-width="2" fill="none"/>
+          <line x1="14" y1="20" x2="26" y2="20" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="26" x2="26" y2="26" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="30" x2="21" y2="30" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="ac-label">使用说明</div>
       <div class="ac-hint">查看操作指南</div>
     </div>
@@ -1521,6 +1530,7 @@ body {
         <button onclick="clearTable()">全部收起</button>
         <button onclick="playAll()">全部展开</button>
         <button onclick="printTable()">打印报告</button>
+        <button onclick="saveAsImages()">保存图片</button>
       </div>
       <div class="hand-scroll" id="handScroll">
         <div class="hand-deck" id="handDeck"></div>
@@ -2186,7 +2196,12 @@ async function pushCardsToGitHub(cards) {
         let imgSha = null;
         try {
           const checkR = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/data/photos/${fname}`, { headers: H });
-          if (checkR.ok) imgSha = (await checkR.json()).sha;
+          if (checkR.ok) {
+            // 文件已存在，直接复用文件名，不重复上传
+            uri2file[p] = fname;
+            console.log(`[push] ↩️ ${fname} 已存在，跳过`);
+            continue;
+          }
         } catch(e) {}
 
         const uploadR = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/data/photos/${fname}`, {
@@ -3184,6 +3199,125 @@ function printTable() {
   window.print();
 }
 
+// ========== 保存图片（截图已渲染的DOM，复用打印CSS的完美效果）==========
+function saveAsImages() {
+  var cards = lastResults.filter(function(c) { return playedIds.has(c.id); });
+  if (cards.length === 0) { alert('请先展开需要保存的卡片（和打印报告一样操作）'); return; }
+
+  // 选保存目录
+  pickSaveDir(function(dirHandle) {
+    if (!dirHandle) return;
+    var idx = 0;
+    function next() {
+      if (idx >= cards.length) {
+        // 清理临时容器
+        var tc = document.getElementById('__saveimg_tmp__');
+        if (tc) tc.remove();
+        alert('已完成！' + cards.length + '张卡片图片已保存到选定文件夹');
+        return;
+      }
+      var cardId = cards[idx].id;
+      var wrap = document.querySelector('.table-card-wrap[data-table-id="' + cardId + '"]');
+      if (!wrap) { console.warn('[saveImg] 未找到DOM:', cardId); idx++; setTimeout(next, 300); return; }
+
+      // 克隆到干净容器中截图（避免页面深色背景、::after伪元素、transform等干扰）
+      var clone = wrap.cloneNode(true);
+      clone.style.cssText = 'position:relative;transform:none!important;animation:none!important;transition:none!important;overflow:visible;';
+      // 隐藏"点击收回"伪元素
+      var style = document.createElement('style');
+      style.textContent = '#__saveimg_tmp__ .table-card-wrap::after{display:none!important;}';
+      var tmp = document.createElement('div');
+      tmp.id = '__saveimg_tmp__';
+      tmp.style.cssText = 'position:absolute;left:-9999px;top:0;background:#fff;padding:0;margin:0;';
+      tmp.appendChild(style);
+      tmp.appendChild(clone);
+      document.body.appendChild(tmp);
+
+      console.log('[saveImg] 截图第' + (idx+1) + '/' + cards.length + '张:', cardId);
+
+      loadHtml2Canvas(function() {
+        html2canvas(tmp, {
+          scale: 2,
+          backgroundColor: '#ffffff',
+          useCORS: true,
+          allowTaint: true,
+          logging: false
+        }).then(function(canvas) {
+          canvas.toBlob(function(blob) {
+            if (!blob) { console.error('[saveImg] blob为null'); idx++; next(); return; }
+            writeFileToDir(dirHandle, cardId + '.png', blob, function(err) {
+              if (err) console.error('[saveImg] 写入失败:', cardId, err);
+              else console.log('[saveImg] ✅', cardId + '.png', (blob.size/1024).toFixed(0) + 'KB');
+              idx++;
+              setTimeout(next, 400);
+            });
+          }, 'image/png', 0.92);
+        }).catch(function(err) {
+          console.error('[saveImg] 截图失败:', cardId, err);
+          idx++; setTimeout(next, 400);
+        });
+      });
+    }
+    next();
+  });
+}
+
+// 动态加载html2canvas
+function loadHtml2Canvas(cb) {
+  if (window.html2canvas) { cb(); return; }
+  var s = document.createElement('script');
+  s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+  s.onload = cb;
+  s.onerror = function() { alert('加载截图库失败，请检查网络连接'); };
+  document.head.appendChild(s);
+}
+
+// 选择保存目录
+function pickSaveDir(cb) {
+  if ('showDirectoryPicker' in window) {
+    window.showDirectoryPicker({ mode: 'readwrite' }).then(cb).catch(function() { cb(null); });
+  } else {
+    // 不支持File System Access API → 降级为逐个下载
+    alert('您的浏览器不支持选择文件夹，将逐个下载到默认下载目录');
+    fallbackDownload();
+    cb(null); // 告诉调用方不需要用dirHandle
+  }
+}
+
+// 降级方案：逐个<a>下载
+function fallbackDownload() {
+  var cards = lastResults.filter(function(c) { return playedIds.has(c.id); });
+  var idx = 0;
+  function next() {
+    if (idx >= cards.length) { alert('下载完成'); return; }
+    var cardId = cards[idx].id;
+    var wrap = document.querySelector('.table-card-wrap[data-table-id="' + cardId + '"]');
+    if (!wrap) { idx++; next(); return; }
+    loadHtml2Canvas(function() {
+      html2canvas(wrap, { scale: 2, backgroundColor: '#fff', useCORS: true, allowTaint: true, logging: false })
+        .then(function(canvas) {
+          canvas.toBlob(function(b) {
+            var url = URL.createObjectURL(b);
+            var a = document.createElement('a');
+            a.href = url; a.download = cardId + '.png';
+            a.click(); URL.revokeObjectURL(url);
+            idx++; setTimeout(next, 500);
+          }, 'image/png');
+        });
+    });
+  }
+  next();
+}
+
+// 写文件到选择的目录
+function writeFileToDir(handle, name, blob, cb) {
+  handle.getFileHandle(name, { create: true })
+    .then(function(f) { return f.createWritable(); })
+    .then(function(w) { return w.write(blob).then(function() { return w.close(); }); })
+    .then(function() { cb(null); })
+    .catch(cb);
+}
+
 // ========== 桌面展示区更新（增量渲染，不打断已有卡片）==========
 function updateTable() {
   const hint = document.getElementById('tableHint');
@@ -4170,6 +4304,13 @@ function editCard(cardId) {
   <div style="border:4px solid #f3f3f3;border-top:4px solid #1976D2;border-radius:50%;width:50px;height:50px;animation:spin 1s linear infinite;"></div>
   <div style="color:white;font-size:18px;margin-top:16px;font-weight:bold;" id="globalOverlayText">处理中...</div>
   <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}</style>
+</div>
+<div id="instructions" class="page-section">
+  <div class="top-nav">
+    <button class="back-btn" onclick="goHome()">← 返回首页</button>
+    <div class="nav-title">使用说明</div>
+  </div>
+  <iframe src="https://ywr1989.github.io/qc-card-system/instructions.html" style="width:100%;height:calc(100vh - 44px);border:none;"></iframe>
 </div>
 </body>
 </html>
