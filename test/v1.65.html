@@ -1440,8 +1440,15 @@ body {
       <div class="ac-label">卡片管理</div>
       <div class="ac-hint">查看 / 批量删除卡片</div>
     </div>
-    <div class="action-card" onclick="showPage('instructions')" style="cursor:pointer;">
-      <div class="ac-icon" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe);box-shadow:0 8px 25px rgba(108,92,231,0.4);">📖</div>
+    <div class="action-card" onclick="showSection('instructions','使用说明')" style="cursor:pointer;">
+      <div class="ac-icon" style="background:linear-gradient(135deg,#e17055,#d63031);box-shadow:0 8px 25px rgba(225,112,85,0.4);">
+        <svg width="36" height="36" viewBox="0 0 40 40" fill="none" style="opacity:0.95;">
+          <rect x="7" y="5" width="26" height="32" rx="3" stroke="#fff" stroke-width="2.2" fill="none"/>
+          <line x1="13" y1="13" x2="27" y2="13" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="13" y1="19" x2="27" y2="19" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="13" y1="25" x2="23" y2="25" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
       <div class="ac-label">使用说明</div>
       <div class="ac-hint">查看操作指南</div>
     </div>
@@ -3188,68 +3195,81 @@ function printTable() {
 // ========== 保存图片（每张卡片独立PNG）==========
 function saveAsImages() {
   const cards = lastResults.filter(c => playedIds.has(c.id));
-  if (cards.length === 0) { alert('请先展开需要保存的图片'); return; }
-  // 动态加载html2canvas
+  if (cards.length === 0) { alert('请先展开需要保存的卡片'); return; }
   loadHtml2Canvas(function() {
     const wraps = document.querySelectorAll('.table-card-wrap');
-    const selectedWraps = [];
+    const list = [];
     wraps.forEach(w => {
       const id = w.getAttribute('data-table-id');
-      if (id && playedIds.has(id)) selectedWraps.push({el: w, id: id});
+      if (id && playedIds.has(id)) list.push({el: w, id: id});
     });
-    if (selectedWraps.length === 0) { alert('未找到展开的卡片'); return; }
-    // 临时设置打印样式
-    selectedWraps.forEach(item => {
-      item.el.style.width = '196mm';
-      item.el.style.height = '132mm';
-      item.el.style.margin = '0 auto 5mm';
-      item.el.style.boxSizing = 'border-box';
-      item.el.style.overflow = 'hidden';
-      item.el.style.border = '1px solid #333';
-    });
+    if (list.length === 0) { alert('未找到展开的卡片'); return; }
+
     let idx = 0;
     function next() {
-      if (idx >= selectedWraps.length) {
-        // 恢复样式
-        selectedWraps.forEach(item => {
-          item.el.style.width = '';
-          item.el.style.height = '';
-          item.el.style.margin = '';
-          item.el.style.boxSizing = '';
-          item.el.style.overflow = '';
-          item.el.style.border = '';
-        });
-        alert('图片已保存，请检查下载文件夹');
-        return;
-      }
-      const item = selectedWraps[idx];
-      html2canvas(item.el, { scale: 2, backgroundColor: '#fff', useCORS: true }).then(canvas => {
+      if (idx >= list.length) { alert('全部保存完成'); return; }
+      const item = list[idx];
+      // 深度克隆卡片到临时容器
+      const clone = item.el.cloneNode(true);
+      clone.style.cssText = 'width:743px;height:501px;position:absolute;left:-9999px;top:0;background:#fff;border:1px solid #ccc;overflow:hidden;';
+      document.body.appendChild(clone);
+
+      html2canvas(clone, {
+        scale: 3,
+        backgroundColor: '#fff',
+        useCORS: true,
+        allowTaint: false,
+        width: 743,
+        height: 501,
+        logging: false
+      }).then(canvas => {
+        document.body.removeChild(clone);
         canvas.toBlob(blob => {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = item.id + '.png';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          idx++;
-          setTimeout(next, 800);
-        }, 'image/png');
+          pickSaveFile(item.id + '.png', blob, function(ok) {
+            if (!ok) { idx++; next(); return; }
+            idx++;
+            setTimeout(next, 600);
+          });
+        }, 'image/png', 0.95);
       }).catch(err => {
-        console.error('渲染失败', item.id, err);
-        idx++;
-        setTimeout(next, 800);
+        if (clone.parentNode) document.body.removeChild(clone);
+        console.error('[saveImg] 渲染失败:', item.id, err);
+        idx++; setTimeout(next, 600);
       });
     }
     setTimeout(next, 200);
   });
 }
+
+// File System Access API - 让用户选择保存位置
+function pickSaveFile(suggestedName, blob, callback) {
+  try {
+    if ('showSaveFilePicker' in window) {
+      window.showSaveFilePicker({
+        suggestedName: suggestedName,
+        types: [{
+          description: 'PNG图片',
+          accept: {'image/png': ['.png']}
+        }]
+      }).then(handle => handle.createWritable()).then(writable => {
+        writable.write(blob).then(() => writable.close()).then(() => callback(true));
+      }).catch(() => callback(false));
+    } else {
+      // 降级：直接下载
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = suggestedName;
+      a.click(); URL.revokeObjectURL(url); callback(true);
+    }
+  } catch(e) {
+    callback(false);
+  }
+}
 function loadHtml2Canvas(cb) {
   if (window.html2canvas) { cb(); return; }
-  const s = document.createElement('script');
+  var s = document.createElement('script');
   s.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-  s.onload = cb;
+  s.onload = cb; s.onerror = function(){ alert('加载截图库失败，请检查网络'); };
   document.head.appendChild(s);
 }
 
