@@ -1443,10 +1443,11 @@ body {
     <div class="action-card" onclick="showSection('instructions','使用说明')" style="cursor:pointer;">
       <div class="ac-icon" style="background:linear-gradient(135deg,#74b9ff,#0984e3);box-shadow:0 8px 25px rgba(116,185,255,0.35);">
         <svg width="36" height="36" viewBox="0 0 40 40" fill="none" style="opacity:0.95;">
-          <rect x="7" y="5" width="26" height="32" rx="3" stroke="#fff" stroke-width="2.2" fill="none"/>
-          <line x1="13" y1="13" x2="27" y2="13" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-          <line x1="13" y1="19" x2="27" y2="19" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-          <line x1="13" y1="25" x2="23" y2="25" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <path d="M8 6 C8 4.5 9 3.5 10.5 3.5 L22 3.5 L32 13.5 L32 34 C32 35.5 31 36.5 29.5 36.5 L10.5 36.5 C9 36.5 8 35.5 8 34 Z" stroke="#fff" stroke-width="2" fill="none"/>
+          <path d="M22 3.5 L22 13.5 L32 13.5" stroke="#fff" stroke-width="2" fill="none"/>
+          <line x1="14" y1="20" x2="26" y2="20" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="26" x2="26" y2="26" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="30" x2="21" y2="30" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </div>
       <div class="ac-label">使用说明</div>
@@ -3394,7 +3395,7 @@ function wrapText(ctx, text, x, y, maxW, maxH) {
   var line = '', lineHeight = (14*MM/3.78), cy = y;
   for (var i=0; i<=words.length; i++) {
     var test = line + (words[i]||'');
-    if ((i===words.length] || ctx.measureText(test).width > maxW) && line) {
+    if ((i===words.length) || ctx.measureText(test).width > maxW) && line) {
       if (cy + lineHeight - y > maxH) { ctx.fillText(line.substring(0,line.length-1)+'...', x, cy); return; }
       ctx.fillText(line, x, cy);
       cy += lineHeight; line = words[i]||'';
@@ -4422,7 +4423,7 @@ function editCard(cardId) {
 </div>
 <div id="instructions" class="page-section">
   <div class="top-nav">
-    <button class="back-btn" onclick="showPage('home')">← 返回首页</button>
+    <button class="back-btn" onclick="goHome()">← 返回首页</button>
     <div class="nav-title">使用说明</div>
   </div>
   <iframe src="https://ywr1989.github.io/qc-card-system/instructions.html" style="width:100%;height:calc(100vh - 44px);border:none;"></iframe>
