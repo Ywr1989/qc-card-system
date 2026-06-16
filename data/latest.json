@@ -606,22 +606,5 @@
       "img_QR-2026-033_0.jpg"
     ],
     "createdAt": "2026-06-16T01:36:46.782Z"
-  },
-  {
-    "id": "QR-2026-034",
-    "defectType": "",
-    "materialCode": "测试5555",
-    "productDesc": "",
-    "severity": "",
-    "defectRate": "",
-    "occurrence": "",
-    "updateTime": "2026-06-16",
-    "customer": "",
-    "note": "",
-    "problemDesc": "",
-    "causeAnalysis": "",
-    "solution": "",
-    "photos": [],
-    "createdAt": "2026-06-16T09:00:52.912Z"
   }
 ]
