@@ -3297,7 +3297,7 @@ function fallbackDownload() {
 
 // 写文件到选择的目录
 function writeFileToDir(handle, name, blob, cb) {
-  handle.getFile(name, { create: true })
+  handle.getFileHandle(name, { create: true })
     .then(function(f) { return f.createWritable(); })
     .then(function(w) { return w.write(blob).then(function() { return w.close(); }); })
     .then(function() { cb(null); })
