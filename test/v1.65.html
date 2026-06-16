@@ -1431,10 +1431,11 @@ body {
     <div class="action-card" onclick="showCardManage()" style="cursor:pointer;">
       <div class="ac-icon" style="background:linear-gradient(135deg,#2c3e50,#34495e);box-shadow:0 8px 25px rgba(44,62,80,0.4);display:flex;align-items:center;justify-content:center;">
         <svg width="36" height="36" viewBox="0 0 40 40" fill="none" style="opacity:0.9;">
-          <rect x="6" y="4" width="28" height="32" rx="3" stroke="#fff" stroke-width="2.5" fill="none"/>
-          <line x1="12" y1="12" x2="28" y2="12" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-          <line x1="12" y1="19" x2="28" y2="19" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
-          <line x1="12" y1="26" x2="22" y2="26" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+          <!-- 2x2 grid representing cards -->
+          <rect x="5" y="5" width="13" height="13" rx="2" stroke="#fff" stroke-width="2" fill="none"/>
+          <rect x="22" y="5" width="13" height="13" rx="2" stroke="#fff" stroke-width="2" fill="none"/>
+          <rect x="5" y="22" width="13" height="13" rx="2" stroke="#fff" stroke-width="2" fill="none"/>
+          <rect x="22" y="22" width="13" height="13" rx="2" stroke="#fff" stroke-width="2" fill="none"/>
         </svg>
       </div>
       <div class="ac-label">卡片管理</div>
@@ -3395,7 +3396,7 @@ function wrapText(ctx, text, x, y, maxW, maxH) {
   var line = '', lineHeight = (14*MM/3.78), cy = y;
   for (var i=0; i<=words.length; i++) {
     var test = line + (words[i]||'');
-    if ((i===words.length) || ctx.measureText(test).width > maxW) && line) {
+    if ((i===words.length || ctx.measureText(test).width > maxW) && line) {
       if (cy + lineHeight - y > maxH) { ctx.fillText(line.substring(0,line.length-1)+'...', x, cy); return; }
       ctx.fillText(line, x, cy);
       cy += lineHeight; line = words[i]||'';
