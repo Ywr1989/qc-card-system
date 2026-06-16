@@ -3206,23 +3206,37 @@ function saveAsImages() {
 
   // 选保存目录
   pickSaveDir(function(dirHandle) {
-    if (!dirHandle) return; // 用户取消了
+    if (!dirHandle) return;
     var idx = 0;
     function next() {
       if (idx >= cards.length) {
+        // 清理临时容器
+        var tc = document.getElementById('__saveimg_tmp__');
+        if (tc) tc.remove();
         alert('已完成！' + cards.length + '张卡片图片已保存到选定文件夹');
         return;
       }
       var cardId = cards[idx].id;
-      // 找到对应的DOM元素（已经完美渲染好了）
       var wrap = document.querySelector('.table-card-wrap[data-table-id="' + cardId + '"]');
-      if (!wrap) {
-        console.warn('[saveImg] 未找到DOM:', cardId); idx++; setTimeout(next, 300); return;
-      }
+      if (!wrap) { console.warn('[saveImg] 未找到DOM:', cardId); idx++; setTimeout(next, 300); return; }
+
+      // 克隆到干净容器中截图（避免页面深色背景、::after伪元素、transform等干扰）
+      var clone = wrap.cloneNode(true);
+      clone.style.cssText = 'position:relative;transform:none!important;animation:none!important;transition:none!important;overflow:visible;';
+      // 隐藏"点击收回"伪元素
+      var style = document.createElement('style');
+      style.textContent = '#__saveimg_tmp__ .table-card-wrap::after{display:none!important;}';
+      var tmp = document.createElement('div');
+      tmp.id = '__saveimg_tmp__';
+      tmp.style.cssText = 'position:absolute;left:-9999px;top:0;background:#fff;padding:0;margin:0;';
+      tmp.appendChild(style);
+      tmp.appendChild(clone);
+      document.body.appendChild(tmp);
+
       console.log('[saveImg] 截图第' + (idx+1) + '/' + cards.length + '张:', cardId);
 
       loadHtml2Canvas(function() {
-        html2canvas(wrap, {
+        html2canvas(tmp, {
           scale: 2,
           backgroundColor: '#ffffff',
           useCORS: true,
