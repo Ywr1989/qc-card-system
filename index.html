@@ -6,7 +6,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>质量问题卡片系统 v1.67</title>
+<title>质量问题卡片系统 v1.68</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
 body {
@@ -2150,61 +2150,61 @@ function loadPhotosInBackground(cards) {
   console.log(`[fetch] 后台加载${fnameSet.size}张图片...`);
   const fnames = [...fnameSet];
 
-  Promise.allSettled(fnames.map(async (fname) => {
-    try {
-      const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/data/photos/${fname}?t=${Date.now()}`;
-      const r = await fetchWithTimeout(url, {}, 8000);
-      if (r.ok) {
-        const blob = await r.blob();
-        const dataURI = await new Promise((res, rej) => {
-          const rd = new FileReader(); rd.onload = () => res(rd.result); rd.onerror = rej;
-          rd.readAsDataURL(blob);
-        });
-        // 替换所有卡片中该文件名为 data URI
-        for (const c of cards) {
-          if (c.photos) for (let i = 0; i < c.photos.length; i++) {
-            if (c.photos[i] === fname) c.photos[i] = dataURI;
+  // [v1.68] 分批加载：每批最多3个并发，避免GitHub限制导致超时
+  const BATCH = 3;
+
+  async function fetchWithRetry(fname, maxRetry) {
+    maxRetry = maxRetry || 2;
+    for (let attempt = 0; attempt <= maxRetry; attempt++) {
+      try {
+        const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/data/photos/${fname}?t=${Date.now()}`;
+        const r = await fetchWithTimeout(url, {}, 20000);
+        if (r.ok) {
+          const blob = await r.blob();
+          const dataURI = await new Promise((res, rej) => {
+            const rd = new FileReader(); rd.onload = () => res(rd.result); rd.onerror = rej;
+            rd.readAsDataURL(blob);
+          });
+          // 替换 photos 数组
+          for (const c of cards) {
+            if (c.photos) for (let i = 0; i < c.photos.length; i++) {
+              if (c.photos[i] === fname) c.photos[i] = dataURI;
+            }
           }
+          console.log(`[fetch] ✅ ${fname}`);
+          // 替换 DOM 中的占位符
+          document.querySelectorAll('.photo-loading').forEach(el => {
+            if (el.dataset.fname === fname) {
+              const img = document.createElement('img');
+              img.src = dataURI;
+              img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;';
+              el.parentNode.replaceChild(img, el);
+            }
+          });
+          return true;
+        } else {
+          throw new Error('HTTP ' + r.status);
         }
-        console.log(`[fetch] ✅ 图片: ${fname}`);
-        // 立即更新DOM：找到所有含此文件名的占位符，替换为真正的图片
-        document.querySelectorAll('.photo-loading').forEach(el => {
-          if (el.dataset.fname === fname) {
-            const img = document.createElement('img');
-            img.src = dataURI;
-            img.style.cssText = 'max-width:100%;max-height:100%;object-fit:contain;';
-            img.onerror = function() {
-              this.outerHTML = '<span style="color:#e74c3c;cursor:pointer;text-decoration:underline;" onclick="location.reload()">图片显示失败，点击刷新</span>';
-            };
-            el.parentNode.replaceChild(img, el);
-          }
-        });
-      } else {
-        console.warn(`[fetch] 图片失败(${r.status}): ${fname}`);
-        // 标记对应的占位符为失败
-        document.querySelectorAll('.photo-loading').forEach(el => {
-          if (el.dataset.fname === fname) {
-            el.classList.add('fail');
-            el.querySelector('span').textContent = '图片加载失败，点击刷新';
-            el.style.cursor = 'pointer';
-            el.onclick = () => location.reload();
-          }
-        });
+      } catch(e) {
+        if (attempt < maxRetry) {
+          console.warn(`[fetch] 重试 ${fname} (${attempt+1}/${maxRetry})...`);
+          await new Promise(r => setTimeout(r, 2000 * (attempt + 1)));
+        } else {
+          console.warn(`[fetch] 最终失败: ${fname}`, e.message);
+          return false;
+        }
       }
-    } catch(e) {
-      console.warn(`[fetch] 图片异常: ${fname}`, e.message);
-      document.querySelectorAll('.photo-loading').forEach(el => {
-        if (el.dataset.fname === fname) {
-          el.classList.add('fail');
-          el.querySelector('span').textContent = '图片加载失败，点击刷新';
-          el.style.cursor = 'pointer';
-          el.onclick = () => location.reload();
-        }
-      });
     }
-  })).then(() => {
-    console.log('[fetch] ✅ 所有图片加载完毕');
-  });
+  }
+
+  // 分批处理：每批3个并发
+  (async () => {
+    for (let i = 0; i < fnames.length; i += BATCH) {
+      const batch = fnames.slice(i, i + BATCH);
+      await Promise.allSettled(batch.map(f => fetchWithRetry(f, 2)));
+    }
+    console.log('[fetch] 所有图片处理完毕');
+  })();
 }
 
 async function pushCardsToGitHub(cards) {
