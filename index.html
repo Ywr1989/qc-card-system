@@ -2719,6 +2719,8 @@ function updateEditPhotoBox() {
 
 function handleFiles(files, mode = 'record') {
   const targetArr = mode === 'edit' ? (editCardData ? editCardData.photos : currentPhotos) : currentPhotos;
+  // [v1.70] 编辑模式下选新图时清空旧图，避免新旧混存导致显示旧图
+  if (mode === 'edit') targetArr.length = 0;
   Array.from(files).forEach(f => {
     if (!f.type.startsWith('image/')) return;
     const r = new FileReader();
