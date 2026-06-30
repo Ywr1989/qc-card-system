@@ -1724,7 +1724,9 @@ const _t1 = 'Z2hwX1RV';
 const _t2 = 'Q2Y3VEJtZkl2UExvQnl';
 const _t3 = 'FRGR6eXg2ZzVRRW9QYjNzVzVjRg==';
 const HARDCODED_TOKEN = atob(_t1 + _t2 + _t3);
-let githubToken = localStorage.getItem('qc_github_token') || HARDCODED_TOKEN;
+// [v1.72] Token优先级：以HTML里的为准，覆盖localStorage里的旧Token
+let githubToken = HARDCODED_TOKEN;
+localStorage.setItem('qc_github_token', HARDCODED_TOKEN);
 
 // [v1.49] 存本地（立刻返回，不推云端）
 function saveLocal(cards) {
