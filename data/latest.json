@@ -606,5 +606,22 @@
       "img_QR-2026-033_0.jpg"
     ],
     "createdAt": "2026-06-16T01:36:46.782Z"
+  },
+  {
+    "id": "QR-2026-034",
+    "defectType": "脏污",
+    "materialCode": "5510-E/PC02-BK-P000-5164",
+    "productDesc": "5510-防静电PC02-黑色-不印刷-515164",
+    "severity": "★☆☆☆☆ 低",
+    "defectRate": "1",
+    "occurrence": "1",
+    "updateTime": "2026-06-30",
+    "customer": "CDA051202",
+    "note": "",
+    "problemDesc": "保鲜膜过于脏",
+    "causeAnalysis": "打包时 保鲜膜污染或者打包后放置时间太长，放置空间太脏。",
+    "solution": "",
+    "photos": [],
+    "createdAt": "2026-06-30T16:09:24.912Z"
   }
 ]
