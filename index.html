@@ -1763,7 +1763,8 @@ async function syncInBackground(cards, opType, targetCardIds, onProgress) {
   if (document.querySelector('.page-section.active')?.id === 'cardManage') cmRender();
   try {
     // 推送入队（防409冲突）
-    pushChain = pushChain.then(async () => { return await pushToGitHubWithConflictHandling(cards); });
+    // [v1.73] 传入targetCardIds，只上传被修改卡片的新图片
+    pushChain = pushChain.then(async () => { return await pushToGitHubWithConflictHandling(cards, targetCardIds); });
     const result = await pushChain;
     if (!result.success) {
       showToast(`云端同步失败：${result.error||'未知错误'}`, 'error');
@@ -1914,7 +1915,7 @@ function showCloudFailWarning(msg) {
 }
 
 // 带冲突处理的 GitHub 推送
-async function pushToGitHubWithConflictHandling(cards, depth = 0) {
+async function pushToGitHubWithConflictHandling(cards, targetCardIds, depth = 0) {
   if (depth > 2) {
     console.warn('Max retry depth reached');
     return { success: false, conflict: false, error: 'Max retry depth reached' };
@@ -1936,7 +1937,7 @@ async function pushToGitHubWithConflictHandling(cards, depth = 0) {
     }
     
     const sha = data.sha;
-    const result = await pushCardsToGitHub(cards);
+    const result = await pushCardsToGitHub(cards, targetCardIds);
     
     if (result.success) return result;
     lastResult = result;
@@ -1962,11 +1963,11 @@ async function pushToGitHubWithConflictHandling(cards, depth = 0) {
     if (!remoteData) return { success: false, conflict: false, error: '冲突处理：拉取远端失败' };
     // 直接用传入的cards（已包含我们的删除/修改/新增）+ 最新SHA 重推
     // 不再调loadCards()，不再做合并
-    const result2 = await pushCardsToGitHub(cards);
+    const result2 = await pushCardsToGitHub(cards, targetCardIds);
     if (result2.success) return result2;
     if (result2.conflict && depth < 2) {
       // 再冲突就递归一次（最多2层）
-      return await pushToGitHubWithConflictHandling(cards, depth + 1);
+      return await pushToGitHubWithConflictHandling(cards, targetCardIds, depth + 1);
     }
     return result2;
   }
@@ -2224,8 +2225,9 @@ function loadPhotosInBackground(cards) {
   })();
 }
 
-async function pushCardsToGitHub(cards) {
+async function pushCardsToGitHub(cards, targetCardIds) {
   // [v1.49] 提取新图片上传到data/photos/ → 推送精简JSON(~18KB)到data/latest.json
+  // [v1.73] targetCardIds: 只处理指定卡片的图片，避免修改1张卡时重传全部33张图
   if (!githubToken) {
     const token = prompt('GitHub Token 已失效，请输入新的 Token（需要 repo 权限）：');
     if (!token) return { success: false, conflict: false, noToken: true };
@@ -2237,7 +2239,10 @@ async function pushCardsToGitHub(cards) {
   try {
     // Step 1: 提取新图片(data URI)，上传到data/photos/
     const uri2file = {}; // dataURI → filename
+    const targetSet = targetCardIds && targetCardIds.length > 0 ? new Set(targetCardIds) : null;
     for (const card of cards) {
+      // [v1.73] 如果指定了targetCardIds，只处理这些卡片的图片
+      if (targetSet && !targetSet.has(card.id)) continue;
       const photos = card.photos || [];
       for (let i = 0; i < photos.length; i++) {
         const p = photos[i];
