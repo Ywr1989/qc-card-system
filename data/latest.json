@@ -621,7 +621,9 @@
     "problemDesc": "保鲜膜过于脏",
     "causeAnalysis": "打包时 保鲜膜污染或者打包后放置时间太长，放置空间太脏。",
     "solution": "",
-    "photos": [],
+    "photos": [
+      "img_QR-2026-034_0.jpg"
+    ],
     "createdAt": "2026-06-30T16:09:24.912Z"
   }
 ]
