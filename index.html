@@ -2253,10 +2253,10 @@ async function pushCardsToGitHub(cards) {
         try {
           const checkR = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/data/photos/${fname}`, { headers: H });
           if (checkR.ok) {
-            // 文件已存在，直接复用文件名，不重复上传
-            uri2file[p] = fname;
-            console.log(`[push] ↩️ ${fname} 已存在，跳过`);
-            continue;
+            // [v1.71] 文件已存在：获取SHA用于更新覆盖，不跳过
+            const checkData = await checkR.json();
+            imgSha = checkData.sha;
+            console.log(`[push] 🔄 ${fname} 已存在，将更新覆盖`);
           }
         } catch(e) {}
 
