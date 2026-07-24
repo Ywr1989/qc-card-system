@@ -10,7 +10,7 @@
 <script>
 // v1.71 自动版本检测：有更新时自动刷新，操作者无需手动清缓存
 (function(){
-  var MY='v1.68-a41ab003'; // 每次部署时更新此值
+  var MY='v1.68-a41ab004'; // 每次部署时更新此值
   fetch('https://cdn.jsdelivr.net/gh/Ywr1989/qc-card-system@main/data/version?_='+Date.now())
     .then(function(r){ return r.text(); })
     .then(function(sv){
@@ -2097,7 +2097,7 @@ async function fetchCardsFromGitHub() {
       // Step 1: 获取文件的blob SHA
       const metaUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${GITHUB_PATH}`;
       const metaResp = await fetchWithTimeout(metaUrl, { headers: H }, 15000);
-      if (!metaResp.ok) { console.warn('[fetch] API元数据失败:', metaResp.status); return null; }
+      if (!metaResp.ok) { throw new Error('API元数据失败: '+metaResp.status); }
       const meta = await metaResp.json();
       blobSha = meta.sha;
       console.log(`[fetch] ✅ blob SHA: ${blobSha}`);
@@ -2105,7 +2105,7 @@ async function fetchCardsFromGitHub() {
       // Step 2: 通过blob API获取文件内容（base64编码，无大小限制）
       const blobUrl = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs/${blobSha}`;
       const blobResp = await fetchWithTimeout(blobUrl, { headers: H }, 20000);
-      if (!blobResp.ok) { console.warn('[fetch] API blob失败:', blobResp.status); return null; }
+      if (!blobResp.ok) { throw new Error('API blob失败: '+blobResp.status); }
       const blobData = await blobResp.json();
       // [v1.62] 修复：用TextDecoder正确解码base64的UTF-8内容（atob不能直接处理中文）
       const binaryStr = atob(blobData.content.replace(/\s/g, ''));
