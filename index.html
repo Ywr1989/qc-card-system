@@ -2106,7 +2106,8 @@ async function fetchCardsFromGitHub() {
     } catch(e) {
       console.warn('[fetch] ❌ API读取异常:', e.message, '→ 降级用raw URL');
       // 降级：用raw URL
-      const jsonUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/${GITHUB_PATH}?_nc=${Date.now()}`;
+      // [v1.69] 改用jsDelivr CDN（国内访问GitHub最稳定）
+      const jsonUrl = `https://cdn.jsdelivr.net/gh/${GITHUB_OWNER}/${GITHUB_REPO}@main/${GITHUB_PATH}`;
       try {
         const resp = await fetchWithTimeout(jsonUrl, {}, 20000);
         if (!resp.ok) { console.warn('[fetch] 降级raw也失败:', resp.status); return null; }
@@ -2119,7 +2120,8 @@ async function fetchCardsFromGitHub() {
     }
   } else {
     // 无token：用raw URL（可能有CDN缓存）
-    const jsonUrl = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/${GITHUB_PATH}?_nc=${Date.now()}`;
+    // [v1.69] 改用jsDelivr CDN（国内访问GitHub最稳定）
+      const jsonUrl = `https://cdn.jsdelivr.net/gh/${GITHUB_OWNER}/${GITHUB_REPO}@main/${GITHUB_PATH}`;
     console.log('[fetch] 拉取精简JSON（无token，用raw）...');
     try {
       const resp = await fetchWithTimeout(jsonUrl, {}, 20000);
@@ -2157,7 +2159,7 @@ function loadPhotosInBackground(cards) {
     maxRetry = maxRetry || 2;
     for (let attempt = 0; attempt <= maxRetry; attempt++) {
       try {
-        const url = `https://raw.githubusercontent.com/${GITHUB_OWNER}/${GITHUB_REPO}/main/data/photos/${fname}?t=${Date.now()}`;
+        const url = `https://cdn.jsdelivr.net/gh/${GITHUB_OWNER}/${GITHUB_REPO}@main/data/photos/${fname}`;
         const r = await fetchWithTimeout(url, {}, 20000);
         if (r.ok) {
           const blob = await r.blob();
