@@ -10,11 +10,14 @@
 <script>
 // v1.71 自动版本检测：有更新时自动刷新，操作者无需手动清缓存
 (function(){
-  var MY='v1.68-a41ab004'; // 每次部署时更新此值
+  var MY='v1.68-a41ab005'; // 每次部署时更新此值
   fetch('https://cdn.jsdelivr.net/gh/Ywr1989/qc-card-system@main/data/version?_='+Date.now())
     .then(function(r){ return r.text(); })
     .then(function(sv){
-      if(sv.trim()!==MY){ location.replace(location.pathname+'?_='+Date.now()); }
+      if(sv.trim()!==MY && !location.search.match(/_=\d+/)){
+        // 防止死循环：URL没有 _=时间戳 时才跳转
+        location.replace(location.pathname+'?_='+Date.now());
+      }
     }).catch(function(){});
 })();
 </script>
