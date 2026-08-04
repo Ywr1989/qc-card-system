@@ -10304,23 +10304,28 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 
   function cameraReady() {
     if (videoReady) return;
-    log('');
     videoReady = true;
     resizeOverlay();
     startScanning();
     updateStatus();
     document.body.classList.add('scanning');
+    var res = video.videoWidth + 'x' + video.videoHeight;
+    statusBar.textContent = '摄像头 ' + res + '  |  扫描中...';
   }
 
   function startCamera() {
     log('请求摄像头...');
     navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment' },
+      video: {
+        facingMode: 'environment',
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      },
       audio: false
     }).then(function(s) {
       stream = s;
       video.srcObject = s;
-      log('已连接，等待画面...');
+      log('已连接(' + video.videoWidth + 'x' + video.videoHeight + ')，等待画面...');
 
       // Try multiple events — onplaying is most reliable on Android
       var attempts = 0;
