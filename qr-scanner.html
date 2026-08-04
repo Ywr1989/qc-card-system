@@ -292,12 +292,11 @@ function main() {
 
   /* ── Camera ── */
   function startCamera() {
+    statusBar.textContent = '正在启动摄像头...';
+
+    // Try constraints with and without ideal resolution (some phones reject ideal)
     var constraints = {
-      video: {
-        facingMode: 'environment',
-        width: { ideal: 1280 },
-        height: { ideal: 720 }
-      },
+      video: { facingMode: 'environment' },
       audio: false
     };
 
@@ -305,24 +304,50 @@ function main() {
       .then(function(s) {
         stream = s;
         video.srcObject = s;
+
+        // Android browsers often refuse autoplay — call play() explicitly
         video.onloadedmetadata = function() {
-          videoReady = true;
-          resizeOverlay();
-          startScanning();
-          updateStatus();
-          document.body.classList.add('scanning');
+          video.play().then(function() {
+            videoReady = true;
+            resizeOverlay();
+            startScanning();
+            updateStatus();
+            document.body.classList.add('scanning');
+          }).catch(function(playErr) {
+            // Play was blocked — show the video anyway and try again with user gesture
+            errorMsg.classList.add('visible');
+            errorText.textContent = '视频播放被阻止。请点击屏幕任意位置后再刷新页面。错误: ' + playErr.name;
+            statusBar.textContent = '播放失败，请刷新重试';
+          });
         };
+
+        // Safety timeout: if onloadedmetadata never fires on some devices
+        setTimeout(function() {
+          if (!videoReady && stream) {
+            video.play().then(function() {
+              videoReady = true;
+              resizeOverlay();
+              startScanning();
+              updateStatus();
+              document.body.classList.add('scanning');
+            }).catch(function() {
+              errorMsg.classList.add('visible');
+              errorText.textContent = '摄像头已连接但无法播放画面。请刷新页面重试。';
+              statusBar.textContent = '画面加载失败';
+            });
+          }
+        }, 3000);
       })
       .catch(function(err) {
         errorMsg.classList.add('visible');
         if (err.name === 'NotAllowedError') {
-          errorText.textContent = '摄像头权限被拒绝。请在浏览器设置中允许访问摄像头后刷新页面。';
+          errorText.textContent = '摄像头权限被拒绝。请在浏览器设置中允许摄像头后刷新。';
         } else if (err.name === 'NotFoundError') {
-          errorText.textContent = '未找到摄像头设备。请确认设备有后置摄像头。';
+          errorText.textContent = '未找到摄像头。请确认手机有后置摄像头。';
         } else if (err.name === 'NotReadableError') {
-          errorText.textContent = '摄像头被其他程序占用。请关闭其他使用摄像头的应用后重试。';
+          errorText.textContent = '摄像头被占用。请关闭其他相机应用后重试。';
         } else {
-          errorText.textContent = '摄像头错误: ' + err.message;
+          errorText.textContent = '摄像头错误: ' + err.name + ' — ' + err.message;
         }
         statusBar.textContent = '摄像头不可用';
       });
@@ -378,7 +403,8 @@ function main() {
   }
 
   function detectQRs() {
-    if (!videoReady || video.readyState < 2) return;
+    if (!videoReady || video.readyState < 1) return;
+    if (!video.videoWidth || !video.videoHeight) return;
 
     var detector = new BarcodeDetector({ formats: ['qr_code'] });
     detector.detect(video).then(function(barcodes) {
