@@ -214,20 +214,14 @@ html, body {
 </div>
 
 <script>
-/* ── Wait for jsQR to load ── */
-(function waitForJsQR(cb, tries) {
-  tries = tries || 0;
-  if (typeof jsQR !== 'undefined') return cb();
-  if (tries > 50) {
+function main() {
+  // Check BarcodeDetector API support
+  if (typeof BarcodeDetector === 'undefined') {
     document.getElementById('errorMsg').classList.add('visible');
-    document.getElementById('errorText').textContent = 'QR解码库加载失败，请检查网络连接后刷新页面。';
-    document.getElementById('statusBar').textContent = '加载失败';
+    document.getElementById('errorText').textContent = '浏览器不支持二维码识别。\n请使用 Chrome 或 Safari 浏览器打开。';
+    document.getElementById('statusBar').textContent = '浏览器不支持';
     return;
   }
-  setTimeout(function() { waitForJsQR(cb, tries + 1); }, 200);
-})(main);
-
-function main() {
   /* ── DOM refs ── */
   var searchInput = document.getElementById('searchInput');
   var modeBtn     = document.getElementById('modeBtn');
@@ -383,26 +377,9 @@ function main() {
     updateStatus();
   }
 
-  // Multi-QR detection: BarcodeDetector API (primary) with jsQR masking fallback
   function detectQRs() {
     if (!videoReady || video.readyState < 2) return;
 
-    var vw = video.videoWidth;
-    var vh = video.videoHeight;
-    if (!vw || !vh) return;
-
-    if (window._barcodeDetectorSupported === undefined) {
-      window._barcodeDetectorSupported = typeof BarcodeDetector !== 'undefined';
-    }
-
-    if (window._barcodeDetectorSupported) {
-      detectWithBarcodeDetector(vw, vh);
-    } else {
-      detectWithJsQRMulti(vw, vh);
-    }
-  }
-
-  function detectWithBarcodeDetector(vw, vh) {
     var detector = new BarcodeDetector({ formats: ['qr_code'] });
     detector.detect(video).then(function(barcodes) {
       if (!scanning) return;
@@ -413,7 +390,6 @@ function main() {
         if (bc.cornerPoints && bc.cornerPoints.length === 4) {
           corners = bc.cornerPoints.map(function(p) { return { x: p.x, y: p.y }; });
         } else {
-          // boundingBox fallback
           var bb = bc.boundingBox;
           corners = [
             { x: bb.x, y: bb.y },
@@ -430,54 +406,10 @@ function main() {
         });
       }
       detectedCodes = newCodes;
-    }).catch(function() {
-      // BarcodeDetector failed, fall back to jsQR
-      window._barcodeDetectorSupported = false;
-      detectWithJsQRMulti(vw, vh);
+    }).catch(function(err) {
+      console.warn('BarcodeDetector error:', err);
+      detectedCodes = [];
     });
-  }
-
-  function detectWithJsQRMulti(vw, vh) {
-    var offCanvas = document.createElement('canvas');
-    offCanvas.width = vw;
-    offCanvas.height = vh;
-    var offCtx = offCanvas.getContext('2d');
-    offCtx.drawImage(video, 0, 0, vw, vh);
-
-    var newCodes = [];
-    var MAX_DETECT = 20;
-    for (var i = 0; i < MAX_DETECT; i++) {
-      var imageData = offCtx.getImageData(0, 0, vw, vh);
-      var code = jsQR(imageData.data, vw, vh, { inversionAttempts: 'dontInvert' });
-      if (!code) break;
-
-      var corners = [
-        code.location.topLeftCorner,
-        code.location.topRightCorner,
-        code.location.bottomRightCorner,
-        code.location.bottomLeftCorner
-      ];
-
-      newCodes.push({
-        data: code.data,
-        corners: corners,
-        color: getQRColor(code.data),
-        id: hashCode(code.data)
-      });
-
-      // Mask detected area to enable next detection
-      var minX = Math.floor(Math.min(corners[0].x, corners[3].x)) - 8;
-      var minY = Math.floor(Math.min(corners[0].y, corners[1].y)) - 8;
-      var maxX = Math.ceil(Math.max(corners[1].x, corners[2].x)) + 8;
-      var maxY = Math.ceil(Math.max(corners[3].y, corners[2].y)) + 8;
-      minX = Math.max(0, minX); minY = Math.max(0, minY);
-      maxX = Math.min(vw, maxX); maxY = Math.min(vh, maxY);
-
-      offCtx.fillStyle = '#000';
-      offCtx.fillRect(minX, minY, maxX - minX, maxY - minY);
-    }
-
-    detectedCodes = newCodes;
   }
 
   function getQRColor(data) {
