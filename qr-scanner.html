@@ -185,6 +185,25 @@ html, body {
 .scanning #statusBar {
   animation: scanPulse 1.5s ease-in-out infinite;
 }
+
+/* ── Start button overlay ── */
+#startOverlay {
+  position: absolute; inset: 0; z-index: 15;
+  background: rgba(0,0,0,0.75);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  color: #fff;
+}
+#startOverlay.hidden { display: none; }
+#startBtn {
+  padding: 16px 48px; font-size: 18px; font-weight: 700;
+  border: none; border-radius: 14px;
+  background: #4a9eff; color: #fff;
+  cursor: pointer; margin-bottom: 12px;
+}
+#startHint { font-size: 13px; color: #aaa; }
+#stepLog { position: absolute; bottom: 60px; left: 0; right: 0; text-align: center; font-size: 12px; color: rgba(255,255,255,0.7); }
+
 </style>
 </head>
 <body>
@@ -208,6 +227,11 @@ html, body {
       <h2>无法启动摄像头</h2>
       <p id="errorText"></p>
     </div>
+    <div id="startOverlay">
+      <button id="startBtn">点击开始扫描</button>
+      <div id="startHint">需要允许摄像头权限</div>
+    </div>
+    <div id="stepLog"></div>
   </div>
 
   <div id="statusBar">正在启动摄像头...</div>
@@ -218,10 +242,21 @@ function main() {
   // Check BarcodeDetector API support
   if (typeof BarcodeDetector === 'undefined') {
     document.getElementById('errorMsg').classList.add('visible');
-    document.getElementById('errorText').textContent = '浏览器不支持二维码识别。\n请使用 Chrome 或 Safari 浏览器打开。';
+    document.getElementById('errorText').textContent = '浏览器不支持二维码识别。\n请使用 Chrome 或 Edge 浏览器打开。';
     document.getElementById('statusBar').textContent = '浏览器不支持';
+    document.getElementById('startOverlay').classList.add('hidden');
     return;
   }
+
+  // Check mediaDevices API
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+    document.getElementById('errorMsg').classList.add('visible');
+    document.getElementById('errorText').textContent = '浏览器不支持摄像头。\n请使用 Chrome 或 Edge 浏览器打开。';
+    document.getElementById('statusBar').textContent = '不支持摄像头';
+    document.getElementById('startOverlay').classList.add('hidden');
+    return;
+  }
+
   /* ── DOM refs ── */
   var searchInput = document.getElementById('searchInput');
   var modeBtn     = document.getElementById('modeBtn');
@@ -235,6 +270,9 @@ function main() {
   var statusBar   = document.getElementById('statusBar');
   var errorMsg    = document.getElementById('errorMsg');
   var errorText   = document.getElementById('errorText');
+  var startOverlay= document.getElementById('startOverlay');
+  var startBtn    = document.getElementById('startBtn');
+  var stepLog     = document.getElementById('stepLog');
 
   /* ── State ── */
   var mode          = 'search';   // 'search' | 'browse'
@@ -291,10 +329,15 @@ function main() {
   }
 
   /* ── Camera ── */
-  function startCamera() {
-    statusBar.textContent = '正在启动摄像头...';
+  function log(msg) {
+    stepLog.textContent = msg;
+    statusBar.textContent = msg;
+    console.log('[QR]', msg);
+  }
 
-    // Try constraints with and without ideal resolution (some phones reject ideal)
+  function startCamera() {
+    log('步骤1: 请求摄像头...');
+
     var constraints = {
       video: { facingMode: 'environment' },
       audio: false
@@ -302,54 +345,60 @@ function main() {
 
     navigator.mediaDevices.getUserMedia(constraints)
       .then(function(s) {
+        log('步骤2: 摄像头已连接，初始化视频...');
         stream = s;
         video.srcObject = s;
 
-        // Android browsers often refuse autoplay — call play() explicitly
         video.onloadedmetadata = function() {
+          log('步骤3: 视频数据就绪，开始播放...');
           video.play().then(function() {
+            log('步骤4: 播放成功，开始扫描...');
             videoReady = true;
             resizeOverlay();
             startScanning();
             updateStatus();
             document.body.classList.add('scanning');
+            stepLog.textContent = '';
           }).catch(function(playErr) {
-            // Play was blocked — show the video anyway and try again with user gesture
+            log('失败: 播放被阻止 - ' + playErr.name);
             errorMsg.classList.add('visible');
-            errorText.textContent = '视频播放被阻止。请点击屏幕任意位置后再刷新页面。错误: ' + playErr.name;
-            statusBar.textContent = '播放失败，请刷新重试';
+            errorText.textContent = '视频播放被阻止。请刷新页面后先点击按钮再试。错误: ' + playErr.name;
           });
         };
 
-        // Safety timeout: if onloadedmetadata never fires on some devices
         setTimeout(function() {
           if (!videoReady && stream) {
+            log('步骤3(超时补救): 强制播放...');
             video.play().then(function() {
+              log('步骤4: 播放成功，开始扫描...');
               videoReady = true;
               resizeOverlay();
               startScanning();
               updateStatus();
               document.body.classList.add('scanning');
+              stepLog.textContent = '';
             }).catch(function() {
+              log('失败: 超时后仍无法播放');
               errorMsg.classList.add('visible');
-              errorText.textContent = '摄像头已连接但无法播放画面。请刷新页面重试。';
-              statusBar.textContent = '画面加载失败';
+              errorText.textContent = '摄像头已连接但无法播放画面。请刷新重试。';
             });
           }
         }, 3000);
       })
       .catch(function(err) {
+        log('失败: ' + err.name);
         errorMsg.classList.add('visible');
         if (err.name === 'NotAllowedError') {
-          errorText.textContent = '摄像头权限被拒绝。请在浏览器设置中允许摄像头后刷新。';
+          errorText.textContent = '摄像头权限被拒绝。解决方法：\n1. 点击浏览器地址栏左侧的锁图标\n2. 找到"摄像头"权限\n3. 设为"允许"\n4. 刷新页面';
         } else if (err.name === 'NotFoundError') {
           errorText.textContent = '未找到摄像头。请确认手机有后置摄像头。';
         } else if (err.name === 'NotReadableError') {
           errorText.textContent = '摄像头被占用。请关闭其他相机应用后重试。';
+        } else if (err.name === 'OverconstrainedError') {
+          errorText.textContent = '摄像头不支持所需模式。请尝试用 Chrome 浏览器打开。错误: ' + err.message;
         } else {
           errorText.textContent = '摄像头错误: ' + err.name + ' — ' + err.message;
         }
-        statusBar.textContent = '摄像头不可用';
       });
   }
 
@@ -740,8 +789,22 @@ function main() {
   });
 
   /* ── Init ── */
+  statusBar.textContent = '点击下方按钮开始';
   updateMode();
-  startCamera();
+
+  // Start camera on button tap (Android requires user gesture)
+  startBtn.addEventListener('click', function() {
+    startOverlay.classList.add('hidden');
+    startCamera();
+  });
+
+  // Also allow tapping anywhere on the start overlay
+  startOverlay.addEventListener('click', function(e) {
+    if (e.target === startOverlay) {
+      startOverlay.classList.add('hidden');
+      startCamera();
+    }
+  });
 }
 </script>
 
