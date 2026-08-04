@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#1a1a2e">
+<title>料号QR扫描</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background: #000;
+  color: #333;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  height: 100dvh;
+}
+
+/* ── Toolbar ── */
+#toolbar {
+  padding: 8px 10px;
+  padding-top: max(8px, env(safe-area-inset-top));
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: rgba(26, 26, 46, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 10;
+}
+
+#searchInput {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  font-size: 15px;
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#searchInput::placeholder { color: rgba(255,255,255,0.4); }
+#searchInput:focus { border-color: #4a9eff; }
+
+#modeBtn, #flashBtn {
+  flex-shrink: 0;
+  padding: 10px 14px;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+#modeBtn {
+  background: #4a9eff;
+  color: #fff;
+}
+#modeBtn.browse {
+  background: #34a853;
+}
+#flashBtn {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 18px;
+  padding: 6px 12px;
+}
+
+/* ── Camera ── */
+#cameraWrap {
+  flex: 1;
+  position: relative;
+  background: #000;
+  overflow: hidden;
+  min-height: 0;
+}
+
+#video {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#overlay {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+/* ── Popup ── */
+#popup {
+  position: absolute;
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+  z-index: 20;
+  pointer-events: auto;
+  max-width: 280px;
+  opacity: 0;
+  transform: scale(0.9);
+  transition: opacity 0.2s, transform 0.2s;
+}
+#popup.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+#popup .label {
+  font-size: 12px;
+  color: #999;
+  margin-bottom: 4px;
+}
+#popup .code {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a2e;
+  word-break: break-all;
+}
+#popup .copyBtn {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background: #4a9eff;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  width: 100%;
+}
+
+/* ── Status bar ── */
+#statusBar {
+  padding: 8px 12px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  background: rgba(255,255,255,0.95);
+  text-align: center;
+  font-size: 12px;
+  color: #888;
+  z-index: 10;
+}
+
+/* ── Error overlay ── */
+#errorMsg {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  color: #fff;
+  z-index: 30;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+#errorMsg.visible { display: flex; }
+#errorMsg h2 { font-size: 20px; margin-bottom: 8px; }
+#errorMsg p { font-size: 14px; color: #aaa; max-width: 300px; line-height: 1.5; }
+
+/* ── Scanline animation (cosmetic) ── */
+@keyframes scanPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.scanning #statusBar {
+  animation: scanPulse 1.5s ease-in-out infinite;
+}
+</style>
+</head>
+<body>
+
+<div id="app">
+  <div id="toolbar">
+    <input type="text" id="searchInput" placeholder="输入要找的料号..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <button id="modeBtn">查找模式</button>
+    <button id="flashBtn" title="手电筒">&#x1F4A1;</button>
+  </div>
+
+  <div id="cameraWrap">
+    <video id="video" autoplay playsinline webkit-playsinline muted></video>
+    <canvas id="overlay"></canvas>
+    <div id="popup">
+      <div class="label">料号</div>
+      <div class="code" id="popupCode"></div>
+      <button class="copyBtn" id="popupCopy">复制料号</button>
+    </div>
+    <div id="errorMsg">
+      <h2>无法启动摄像头</h2>
+      <p id="errorText"></p>
+    </div>
+  </div>
+
+  <div id="statusBar">正在启动摄像头...</div>
+</div>
+
+<script>
+/* ── Wait for jsQR to load ── */
+(function waitForJsQR(cb, tries) {
+  tries = tries || 0;
+  if (typeof jsQR !== 'undefined') return cb();
+  if (tries > 50) {
+    document.getElementById('errorMsg').classList.add('visible');
+    document.getElementById('errorText').textContent = 'QR解码库加载失败，请检查网络连接后刷新页面。';
+    document.getElementById('statusBar').textContent = '加载失败';
+    return;
+  }
+  setTimeout(function() { waitForJsQR(cb, tries + 1); }, 200);
+})(main);
+
+function main() {
+  /* ── DOM refs ── */
+  var searchInput = document.getElementById('searchInput');
+  var modeBtn     = document.getElementById('modeBtn');
+  var flashBtn    = document.getElementById('flashBtn');
+  var video       = document.getElementById('video');
+  var overlay     = document.getElementById('overlay');
+  var overlayCtx  = overlay.getContext('2d');
+  var popup       = document.getElementById('popup');
+  var popupCode   = document.getElementById('popupCode');
+  var popupCopy   = document.getElementById('popupCopy');
+  var statusBar   = document.getElementById('statusBar');
+  var errorMsg    = document.getElementById('errorMsg');
+  var errorText   = document.getElementById('errorText');
+
+  /* ── State ── */
+  var mode          = 'search';   // 'search' | 'browse'
+  var searchQuery   = '';
+  var stream        = null;
+  var scanning      = false;
+  var animId        = null;
+  var lastScanTime  = 0;
+  var SCAN_INTERVAL = 180;        // ms between QR detection attempts
+  var detectedCodes = [];         // { data, corners, color, id }
+  var popupVisible  = false;
+  var flashOn       = false;
+  var videoReady    = false;
+
+  /* ── Coordinate transform for object-fit:cover ── */
+  var tx = { scale: 1, offsetX: 0, offsetY: 0 }; // video → canvas
+
+  function updateTransform() {
+    var cw = video.clientWidth;
+    var ch = video.clientHeight;
+    var vw = video.videoWidth;
+    var vh = video.videoHeight;
+    if (!vw || !vh || !cw || !ch) return;
+
+    var scale = Math.max(cw / vw, ch / vh);
+    tx.scale = scale;
+    tx.offsetX = (cw - vw * scale) / 2;
+    tx.offsetY = (ch - vh * scale) / 2;
+  }
+
+  function videoToCanvas(vx, vy) {
+    return {
+      x: tx.offsetX + vx * tx.scale,
+      y: tx.offsetY + vy * tx.scale
+    };
+  }
+
+  function canvasToVideo(cx, cy) {
+    return {
+      x: (cx - tx.offsetX) / tx.scale,
+      y: (cy - tx.offsetY) / tx.scale
+    };
+  }
+
+  /* ── Resize overlay canvas to match video display ── */
+  function resizeOverlay() {
+    var w = video.clientWidth;
+    var h = video.clientHeight;
+    if (overlay.width !== w || overlay.height !== h) {
+      overlay.width = w;
+      overlay.height = h;
+    }
+    updateTransform();
+  }
+
+  /* ── Camera ── */
+  function startCamera() {
+    var constraints = {
+      video: {
+        facingMode: 'environment',
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      },
+      audio: false
+    };
+
+    navigator.mediaDevices.getUserMedia(constraints)
+      .then(function(s) {
+        stream = s;
+        video.srcObject = s;
+        video.onloadedmetadata = function() {
+          videoReady = true;
+          resizeOverlay();
+          startScanning();
+          updateStatus();
+          document.body.classList.add('scanning');
+        };
+      })
+      .catch(function(err) {
+        errorMsg.classList.add('visible');
+        if (err.name === 'NotAllowedError') {
+          errorText.textContent = '摄像头权限被拒绝。请在浏览器设置中允许访问摄像头后刷新页面。';
+        } else if (err.name === 'NotFoundError') {
+          errorText.textContent = '未找到摄像头设备。请确认设备有后置摄像头。';
+        } else if (err.name === 'NotReadableError') {
+          errorText.textContent = '摄像头被其他程序占用。请关闭其他使用摄像头的应用后重试。';
+        } else {
+          errorText.textContent = '摄像头错误: ' + err.message;
+        }
+        statusBar.textContent = '摄像头不可用';
+      });
+  }
+
+  function stopCamera() {
+    if (stream) {
+      stream.getTracks().forEach(function(t) { t.stop(); });
+      stream = null;
+    }
+    videoReady = false;
+    if (animId) { cancelAnimationFrame(animId); animId = null; }
+    scanning = false;
+    document.body.classList.remove('scanning');
+  }
+
+  /* ── Flashlight ── */
+  function toggleFlash() {
+    if (!stream) return;
+    var track = stream.getVideoTracks()[0];
+    if (!track || typeof track.applyConstraints !== 'function') return;
+
+    flashOn = !flashOn;
+    track.applyConstraints({ advanced: [{ torch: flashOn }] })
+      .catch(function() {
+        flashOn = !flashOn; // revert
+      });
+    flashBtn.textContent = flashOn ? '\uD83D\uDCA1' : '\uD83D\uDCA1';
+    flashBtn.style.background = flashOn ? 'rgba(255,200,50,0.3)' : 'rgba(255,255,255,0.12)';
+  }
+
+  /* ── QR Scanning ── */
+  function startScanning() {
+    scanning = true;
+    lastScanTime = 0;
+    detectedCodes = [];
+    scanLoop(0);
+  }
+
+  function scanLoop(timestamp) {
+    if (!scanning) return;
+    animId = requestAnimationFrame(scanLoop);
+
+    resizeOverlay();
+
+    if (timestamp - lastScanTime >= SCAN_INTERVAL) {
+      lastScanTime = timestamp;
+      detectQRs();
+    }
+
+    drawOverlay();
+    updateStatus();
+  }
+
+  // Multi-QR detection: BarcodeDetector API (primary) with jsQR masking fallback
+  function detectQRs() {
+    if (!videoReady || video.readyState < 2) return;
+
+    var vw = video.videoWidth;
+    var vh = video.videoHeight;
+    if (!vw || !vh) return;
+
+    if (window._barcodeDetectorSupported === undefined) {
+      window._barcodeDetectorSupported = typeof BarcodeDetector !== 'undefined';
+    }
+
+    if (window._barcodeDetectorSupported) {
+      detectWithBarcodeDetector(vw, vh);
+    } else {
+      detectWithJsQRMulti(vw, vh);
+    }
+  }
+
+  function detectWithBarcodeDetector(vw, vh) {
+    var detector = new BarcodeDetector({ formats: ['qr_code'] });
+    detector.detect(video).then(function(barcodes) {
+      if (!scanning) return;
+      var newCodes = [];
+      for (var i = 0; i < barcodes.length; i++) {
+        var bc = barcodes[i];
+        var corners;
+        if (bc.cornerPoints && bc.cornerPoints.length === 4) {
+          corners = bc.cornerPoints.map(function(p) { return { x: p.x, y: p.y }; });
+        } else {
+          // boundingBox fallback
+          var bb = bc.boundingBox;
+          corners = [
+            { x: bb.x, y: bb.y },
+            { x: bb.x + bb.width, y: bb.y },
+            { x: bb.x + bb.width, y: bb.y + bb.height },
+            { x: bb.x, y: bb.y + bb.height }
+          ];
+        }
+        newCodes.push({
+          data: bc.rawValue,
+          corners: corners,
+          color: getQRColor(bc.rawValue),
+          id: hashCode(bc.rawValue)
+        });
+      }
+      detectedCodes = newCodes;
+    }).catch(function() {
+      // BarcodeDetector failed, fall back to jsQR
+      window._barcodeDetectorSupported = false;
+      detectWithJsQRMulti(vw, vh);
+    });
+  }
+
+  function detectWithJsQRMulti(vw, vh) {
+    var offCanvas = document.createElement('canvas');
+    offCanvas.width = vw;
+    offCanvas.height = vh;
+    var offCtx = offCanvas.getContext('2d');
+    offCtx.drawImage(video, 0, 0, vw, vh);
+
+    var newCodes = [];
+    var MAX_DETECT = 20;
+    for (var i = 0; i < MAX_DETECT; i++) {
+      var imageData = offCtx.getImageData(0, 0, vw, vh);
+      var code = jsQR(imageData.data, vw, vh, { inversionAttempts: 'dontInvert' });
+      if (!code) break;
+
+      var corners = [
+        code.location.topLeftCorner,
+        code.location.topRightCorner,
+        code.location.bottomRightCorner,
+        code.location.bottomLeftCorner
+      ];
+
+      newCodes.push({
+        data: code.data,
+        corners: corners,
+        color: getQRColor(code.data),
+        id: hashCode(code.data)
+      });
+
+      // Mask detected area to enable next detection
+      var minX = Math.floor(Math.min(corners[0].x, corners[3].x)) - 8;
+      var minY = Math.floor(Math.min(corners[0].y, corners[1].y)) - 8;
+      var maxX = Math.ceil(Math.max(corners[1].x, corners[2].x)) + 8;
+      var maxY = Math.ceil(Math.max(corners[3].y, corners[2].y)) + 8;
+      minX = Math.max(0, minX); minY = Math.max(0, minY);
+      maxX = Math.min(vw, maxX); maxY = Math.min(vh, maxY);
+
+      offCtx.fillStyle = '#000';
+      offCtx.fillRect(minX, minY, maxX - minX, maxY - minY);
+    }
+
+    detectedCodes = newCodes;
+  }
+
+  function getQRColor(data) {
+    if (mode === 'browse') return 'green';
+    if (!searchQuery) return 'green';
+    return data.toUpperCase().indexOf(searchQuery.toUpperCase()) !== -1 ? 'green' : 'red';
+  }
+
+  function hashCode(s) {
+    var h = 0;
+    for (var i = 0; i < s.length; i++) {
+      h = ((h << 5) - h) + s.charCodeAt(i);
+      h |= 0;
+    }
+    return h;
+  }
+
+  /* ── Drawing ── */
+  var COLORS = {
+    green: { fill: 'rgba(52, 168, 83, 0.22)', stroke: '#34a853' },
+    red:   { fill: 'rgba(234, 67, 53, 0.22)', stroke: '#ea4335' }
+  };
+
+  function drawOverlay() {
+    var ctx = overlayCtx;
+    var w = overlay.width;
+    var h = overlay.height;
+    ctx.clearRect(0, 0, w, h);
+
+    updateTransform();
+
+    for (var i = 0; i < detectedCodes.length; i++) {
+      var dc = detectedCodes[i];
+      var c = COLORS[dc.color];
+
+      // Map corners to canvas coordinates
+      var tc = dc.corners.map(function(p) {
+        return videoToCanvas(p.x, p.y);
+      });
+
+      // Fill quadrilateral
+      ctx.fillStyle = c.fill;
+      ctx.beginPath();
+      ctx.moveTo(tc[0].x, tc[0].y);
+      ctx.lineTo(tc[1].x, tc[1].y);
+      ctx.lineTo(tc[2].x, tc[2].y);
+      ctx.lineTo(tc[3].x, tc[3].y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Border
+      ctx.strokeStyle = c.stroke;
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      // Corner brackets
+      var len = 18;
+      ctx.strokeStyle = c.stroke;
+      ctx.lineWidth = 3.5;
+      ctx.lineCap = 'round';
+
+      drawBracket(ctx, tc[0],  1,  1, len);  // TL
+      drawBracket(ctx, tc[1], -1,  1, len);  // TR
+      drawBracket(ctx, tc[2], -1, -1, len);  // BR
+      drawBracket(ctx, tc[3],  1, -1, len);  // BL
+
+      // Label — centered above the QR
+      var cx = (tc[0].x + tc[1].x + tc[2].x + tc[3].x) / 4;
+      var top = Math.min(tc[0].y, tc[1].y, tc[2].y, tc[3].y);
+      drawLabel(ctx, dc.data, cx, top, c.stroke);
+    }
+  }
+
+  function drawBracket(ctx, pt, dx, dy, len) {
+    ctx.beginPath();
+    ctx.moveTo(pt.x, pt.y + dy * len);
+    ctx.lineTo(pt.x, pt.y);
+    ctx.lineTo(pt.x + dx * len, pt.y);
+    ctx.stroke();
+  }
+
+  function drawLabel(ctx, text, x, y, bgColor) {
+    var displayText = text.length > 22 ? text.substring(0, 20) + '...' : text;
+    var fontSize = 13;
+    ctx.font = '600 ' + fontSize + 'px -apple-system, BlinkMacSystemFont, sans-serif';
+    var metrics = ctx.measureText(displayText);
+    var tw = metrics.width;
+    var pad = 7;
+    var labelY = y - 8;
+
+    // Background pill
+    var rx = x - tw / 2 - pad;
+    var ry = labelY - fontSize - pad;
+    var rw = tw + pad * 2;
+    var rh = fontSize + pad * 2;
+    var radius = 5;
+
+    ctx.fillStyle = bgColor;
+    ctx.beginPath();
+    ctx.moveTo(rx + radius, ry);
+    ctx.lineTo(rx + rw - radius, ry);
+    ctx.quadraticCurveTo(rx + rw, ry, rx + rw, ry + radius);
+    ctx.lineTo(rx + rw, ry + rh - radius);
+    ctx.quadraticCurveTo(rx + rw, ry + rh, rx + rw - radius, ry + rh);
+    ctx.lineTo(rx + radius, ry + rh);
+    ctx.quadraticCurveTo(rx, ry + rh, rx, ry + rh - radius);
+    ctx.lineTo(rx, ry + radius);
+    ctx.quadraticCurveTo(rx, ry, rx + radius, ry);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText(displayText, x, labelY);
+  }
+
+  /* ── Touch/Tap Handler ── */
+  function handleCanvasTap(e) {
+    if (mode !== 'browse') return;
+
+    e.preventDefault();
+    var rect = overlay.getBoundingClientRect();
+    var cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    var cy = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+
+    // Convert to video coordinates
+    var vp = canvasToVideo(cx, cy);
+
+    // Find which QR code was tapped
+    for (var i = detectedCodes.length - 1; i >= 0; i--) {
+      if (pointInQuad(vp, detectedCodes[i].corners)) {
+        showPopup(detectedCodes[i].data, cx, cy);
+        return;
+      }
+    }
+
+    // Tapped outside all QR codes — dismiss popup
+    hidePopup();
+  }
+
+  function pointInQuad(pt, corners) {
+    // Use winding number / cross product method
+    var inside = false;
+    var n = corners.length;
+    for (var i = 0, j = n - 1; i < n; j = i++) {
+      var xi = corners[i].x, yi = corners[i].y;
+      var xj = corners[j].x, yj = corners[j].y;
+      if ((yi > pt.y) !== (yj > pt.y) &&
+          pt.x < (xj - xi) * (pt.y - yi) / (yj - yi) + xi) {
+        inside = !inside;
+      }
+    }
+    return inside;
+  }
+
+  /* ── Popup ── */
+  function showPopup(data, cx, cy) {
+    popupCode.textContent = data;
+
+    // Position near tap, but within viewport
+    var wrap = document.getElementById('cameraWrap');
+    var wrapW = wrap.clientWidth;
+    var wrapH = wrap.clientHeight;
+
+    var popupW = 260;
+    var popupH = 120; // approximate
+
+    var left = cx - popupW / 2;
+    var top = cy - popupH - 20;
+
+    if (left < 10) left = 10;
+    if (left + popupW > wrapW - 10) left = wrapW - popupW - 10;
+    if (top < 10) top = cy + 20;
+    if (top + popupH > wrapH - 10) top = wrapH - popupH - 10;
+
+    popup.style.left = left + 'px';
+    popup.style.top = top + 'px';
+    popup.classList.add('visible');
+    popupVisible = true;
+
+    // Store tapped code data for copy action
+    popup._codeData = data;
+  }
+
+  function hidePopup() {
+    popup.classList.remove('visible');
+    popupVisible = false;
+    popup._codeData = null;
+  }
+
+  // Prevent popup clicks from reaching overlay
+  popup.addEventListener('click', function(e) { e.stopPropagation(); });
+  popup.addEventListener('touchstart', function(e) { e.stopPropagation(); });
+
+  // Copy button
+  popupCopy.addEventListener('click', function(e) {
+    e.stopPropagation();
+    var data = popup._codeData;
+    if (!data) return;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(data).then(function() {
+        popupCopy.textContent = '已复制';
+        setTimeout(function() { popupCopy.textContent = '复制料号'; }, 1500);
+      }).catch(function() {
+        fallbackCopy(data);
+      });
+    } else {
+      fallbackCopy(data);
+    }
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); popupCopy.textContent = '已复制'; }
+    catch(e) { popupCopy.textContent = '复制失败'; }
+    document.body.removeChild(ta);
+    setTimeout(function() { popupCopy.textContent = '复制料号'; }, 1500);
+  }
+
+  // Overlay tap handling
+  overlay.addEventListener('click', function(e) {
+    if (mode === 'browse') {
+      handleCanvasTap(e);
+    } else {
+      hidePopup();
+    }
+  });
+
+  overlay.addEventListener('touchstart', function(e) {
+    if (mode === 'browse') {
+      handleCanvasTap(e);
+    } else {
+      hidePopup();
+    }
+  });
+
+  /* ── Status update ── */
+  function updateStatus() {
+    var n = detectedCodes.length;
+    if (n === 0) {
+      if (mode === 'search') {
+        statusBar.textContent = searchQuery ? '未检测到二维码，请对准货物...' : '未检测到二维码';
+      } else {
+        statusBar.textContent = '未检测到二维码';
+      }
+    } else {
+      if (mode === 'search' && searchQuery) {
+        var matched = detectedCodes.filter(function(d) { return d.color === 'green'; }).length;
+        statusBar.textContent = '检测到 ' + n + ' 个二维码，匹配 ' + matched + ' 个';
+      } else if (mode === 'browse') {
+        statusBar.textContent = '检测到 ' + n + ' 个二维码，点击绿色区域查看料号';
+      } else {
+        statusBar.textContent = '检测到 ' + n + ' 个二维码';
+      }
+    }
+  }
+
+  /* ── Mode toggle ── */
+  function updateMode() {
+    if (mode === 'search') {
+      modeBtn.textContent = '查找模式';
+      modeBtn.classList.remove('browse');
+      searchInput.style.display = '';
+      searchInput.placeholder = '输入要找的料号...';
+      hidePopup();
+    } else {
+      modeBtn.textContent = '浏览模式';
+      modeBtn.classList.add('browse');
+      searchInput.style.display = 'none';
+      searchInput.value = '';
+      searchQuery = '';
+      hidePopup();
+    }
+  }
+
+  modeBtn.addEventListener('click', function() {
+    mode = mode === 'search' ? 'browse' : 'search';
+    updateMode();
+  });
+
+  /* ── Search input ── */
+  searchInput.addEventListener('input', function() {
+    searchQuery = searchInput.value.trim();
+  });
+
+  /* ── Flash button ── */
+  flashBtn.addEventListener('click', toggleFlash);
+
+  /* ── Handle window resize ── */
+  window.addEventListener('resize', resizeOverlay);
+
+  /* ── Handle orientation change on mobile ── */
+  window.addEventListener('orientationchange', function() {
+    setTimeout(resizeOverlay, 300);
+  });
+
+  /* ── Init ── */
+  updateMode();
+  startCamera();
+}
+</script>
+
+</body>
+</html>
