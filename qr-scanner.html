@@ -205,46 +205,82 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     statusBar.textContent = msg;
   }
 
-  function startCamera() {
-    log('请求摄像头权限...');
+  function cameraReady() {
+    if (videoReady) return;
+    log('');
+    videoReady = true;
+    resizeOverlay();
+    startScanning();
+    updateStatus();
+    document.body.classList.add('scanning');
+  }
 
+  function startCamera() {
+    log('请求摄像头...');
     navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'environment' },
       audio: false
     }).then(function(s) {
-      log('摄像头已连接，初始化画面...');
       stream = s;
       video.srcObject = s;
+      log('已连接，等待画面...');
 
-      video.onloadedmetadata = function() {
-        log('画面就绪，启动中...');
+      // Try multiple events — onplaying is most reliable on Android
+      var attempts = 0;
+      function tryReady() {
+        if (videoReady) return;
+        attempts++;
+        log('尝试播放...(' + attempts + ')');
         video.play().then(function() {
-          log('');
-          videoReady = true;
-          resizeOverlay();
-          startScanning();
-          updateStatus();
-          document.body.classList.add('scanning');
-        }).catch(function(playErr) {
-          showError('视频播放被阻止。\n请刷新页面后重试。\n错误: ' + playErr.name);
+          // Wait a tick for video dimensions to populate before marking ready
+          setTimeout(function() {
+            if (!videoReady && video.videoWidth > 0 && video.videoHeight > 0) {
+              cameraReady();
+            } else if (!videoReady) {
+              log('等待画面数据...');
+              setTimeout(function() {
+                if (!videoReady && video.videoWidth > 0) {
+                  cameraReady();
+                }
+              }, 500);
+            }
+          }, 300);
+        }).catch(function(e) {
+          log('播放失败: ' + e.name);
         });
-      };
+      }
 
+      video.onloadedmetadata = function() { log('metadata就绪'); tryReady(); };
+      video.oncanplay = function() { log('canplay'); tryReady(); };
+      video.onplaying = function() { log('playing'); tryReady(); };
+
+      // Safety: if no event fires at all, force after delay
       setTimeout(function() {
         if (!videoReady && stream) {
-          log('等待超时，强制启动...');
+          log('无事件触发，强制启动...');
+          tryReady();
+        }
+      }, 2000);
+
+      // Second safety: if still not ready after longer wait
+      setTimeout(function() {
+        if (!videoReady && stream) {
+          log('超时，最后尝试...');
           video.play().then(function() {
-            log('');
-            videoReady = true;
-            resizeOverlay();
-            startScanning();
-            updateStatus();
-            document.body.classList.add('scanning');
+            // Force ready even without dimensions (they might populate later)
+            if (!videoReady) {
+              videoReady = true;
+              resizeOverlay();
+              startScanning();
+              log('');
+              updateStatus();
+              document.body.classList.add('scanning');
+            }
           }).catch(function() {
-            showError('摄像头已连接但无法播放画面。\n请刷新页面后重试。');
+            showError('无法播放摄像头画面。\n请刷新后重试。');
           });
         }
-      }, 4000);
+      }, 6000);
     }).catch(function(err) {
       if (err.name === 'NotAllowedError') {
         showError('摄像头权限被拒绝。\n\n解决方法：\n1. 打开手机"设置" → "应用" → 找到当前浏览器\n2. 点击"权限" → "相机" → 设为"允许"\n3. 返回浏览器刷新页面');
@@ -296,13 +332,35 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
     updateStatus();
   }
 
+  var detectAttempts = 0;
+  var detectErrors = 0;
+
   function detectQRs() {
     if (!videoReady || video.readyState < 1) return;
-    if (!video.videoWidth || !video.videoHeight) return;
+    var vw = video.videoWidth, vh = video.videoHeight;
+    if (!vw || !vh) {
+      statusBar.textContent = '等待画面数据...(' + (++detectErrors) + ')';
+      return;
+    }
+
+    detectAttempts++;
+
+    // Draw video frame to offscreen canvas first, then create ImageBitmap
+    // This is more reliable than passing video element directly to BarcodeDetector
+    var offCanvas = document.createElement('canvas');
+    offCanvas.width = vw;
+    offCanvas.height = vh;
+    var offCtx = offCanvas.getContext('2d');
+    offCtx.drawImage(video, 0, 0, vw, vh);
 
     try {
-      var detector = new BarcodeDetector({ formats: ['qr_code'] });
-      detector.detect(video).then(function(barcodes) {
+      createImageBitmap(offCanvas).then(function(bitmap) {
+        var detector = new BarcodeDetector({ formats: ['qr_code'] });
+        return detector.detect(bitmap).then(function(barcodes) {
+          bitmap.close();
+          return barcodes;
+        });
+      }).then(function(barcodes) {
         if (!scanning) return;
         var newCodes = [];
         for (var i = 0; i < barcodes.length; i++) {
@@ -317,12 +375,18 @@ html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFo
           newCodes.push({ data: bc.rawValue, corners: corners, color: getQRColor(bc.rawValue), id: hashCode(bc.rawValue) });
         }
         detectedCodes = newCodes;
+        detectErrors = 0;
+        if (detectAttempts < 3) {
+          statusBar.textContent = '检测中...(' + detectAttempts + ')';
+        }
       }).catch(function(err) {
-        console.warn('Detect error:', err);
+        detectErrors++;
+        statusBar.textContent = '检测错误(' + detectErrors + '): ' + err.name;
         detectedCodes = [];
       });
     } catch(e) {
-      console.warn('BarcodeDetector failed:', e);
+      detectErrors++;
+      statusBar.textContent = '检测失败(' + detectErrors + '): ' + (e.name || 'unknown');
       detectedCodes = [];
     }
   }
