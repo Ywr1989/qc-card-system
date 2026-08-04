@@ -8,207 +8,103 @@
 <meta name="theme-color" content="#1a1a2e">
 <title>料号QR扫描</title>
 <style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#000;color:#333;-webkit-tap-highlight-color:transparent}
 
-html, body {
-  height: 100%;
-  overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background: #000;
-  color: #333;
-  -webkit-tap-highlight-color: transparent;
-  -webkit-user-select: none;
-  user-select: none;
+/* ── Start screen ── */
+#startScreen {
+  position:fixed;inset:0;z-index:100;
+  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  color:#fff;text-align:center;padding:24px;
 }
+#startScreen.hidden{display:none}
+#startScreen h1{font-size:24px;margin-bottom:8px}
+#startScreen p{font-size:14px;color:#aaa;margin-bottom:32px;max-width:280px;line-height:1.6}
+#startScreen button{
+  padding:18px 56px;font-size:20px;font-weight:700;
+  border:none;border-radius:14px;background:#4a9eff;color:#fff;
+  cursor:pointer;box-shadow:0 4px 20px rgba(74,158,255,0.4)
+}
+#startScreen button:active{background:#3a8eef;transform:scale(0.97)}
+#startScreen .note{font-size:12px;color:#666;margin-top:20px}
 
-#app {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  height: 100dvh;
-}
+/* ── Main app ── */
+#app{display:flex;flex-direction:column;height:100%;height:100dvh}
+#app.hidden{display:none}
 
-/* ── Toolbar ── */
-#toolbar {
-  padding: 8px 10px;
-  padding-top: max(8px, env(safe-area-inset-top));
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  background: rgba(26, 26, 46, 0.92);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  z-index: 10;
+#toolbar{
+  padding:8px 10px;padding-top:max(8px,env(safe-area-inset-top));
+  display:flex;gap:8px;align-items:center;
+  background:rgba(26,26,46,0.92);z-index:10
 }
+#searchInput{
+  flex:1;min-width:0;padding:10px 12px;
+  border:1.5px solid rgba(255,255,255,0.15);border-radius:10px;
+  font-size:15px;background:rgba(255,255,255,0.08);color:#fff;outline:none
+}
+#searchInput::placeholder{color:rgba(255,255,255,0.4)}
+#searchInput:focus{border-color:#4a9eff}
 
-#searchInput {
-  flex: 1;
-  min-width: 0;
-  padding: 10px 12px;
-  border: 1.5px solid rgba(255,255,255,0.15);
-  border-radius: 10px;
-  font-size: 15px;
-  background: rgba(255,255,255,0.08);
-  color: #fff;
-  outline: none;
-  transition: border-color 0.2s;
+#modeBtn,#flashBtn{
+  flex-shrink:0;padding:10px 14px;border:none;border-radius:10px;
+  font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap
 }
-#searchInput::placeholder { color: rgba(255,255,255,0.4); }
-#searchInput:focus { border-color: #4a9eff; }
+#modeBtn{background:#4a9eff;color:#fff}
+#modeBtn.browse{background:#34a853}
+#flashBtn{background:rgba(255,255,255,0.12);color:#fff;font-size:18px;padding:6px 12px}
 
-#modeBtn, #flashBtn {
-  flex-shrink: 0;
-  padding: 10px 14px;
-  border: none;
-  border-radius: 10px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  white-space: nowrap;
+#cameraWrap{flex:1;position:relative;background:#000;overflow:hidden;min-height:0}
+#video{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+#overlay{position:absolute;top:0;left:0;width:100%;height:100%}
+
+#popup{
+  position:absolute;background:#fff;border-radius:14px;padding:16px 20px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.35);z-index:20;max-width:280px;
+  opacity:0;transform:scale(0.9);transition:opacity 0.2s,transform 0.2s;pointer-events:none
 }
-#modeBtn {
-  background: #4a9eff;
-  color: #fff;
-}
-#modeBtn.browse {
-  background: #34a853;
-}
-#flashBtn {
-  background: rgba(255,255,255,0.12);
-  color: #fff;
-  font-size: 18px;
-  padding: 6px 12px;
+#popup.visible{opacity:1;transform:scale(1);pointer-events:auto}
+#popup .label{font-size:12px;color:#999;margin-bottom:4px}
+#popup .code{font-size:18px;font-weight:700;color:#1a1a2e;word-break:break-all}
+#popup .copyBtn{margin-top:10px;padding:8px 16px;border:none;border-radius:8px;background:#4a9eff;color:#fff;font-size:14px;font-weight:600;cursor:pointer;width:100%}
+
+#statusBar{
+  padding:8px 12px;padding-bottom:max(8px,env(safe-area-inset-bottom));
+  background:rgba(255,255,255,0.95);text-align:center;font-size:12px;color:#888;z-index:10
 }
 
-/* ── Camera ── */
-#cameraWrap {
-  flex: 1;
-  position: relative;
-  background: #000;
-  overflow: hidden;
-  min-height: 0;
-}
+@keyframes scanPulse{0%,100%{opacity:0.6}50%{opacity:1}}
+.scanning #statusBar{animation:scanPulse 1.5s ease-in-out infinite}
 
-#video {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+/* ── Error screen ── */
+#errorScreen{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.9);color:#fff;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}
+#errorScreen.visible{display:flex}
+#errorScreen h2{font-size:20px;margin-bottom:8px;color:#ea4335}
+#errorScreen p{font-size:14px;color:#aaa;max-width:300px;line-height:1.6;margin-bottom:20px;white-space:pre-line}
+#errorScreen button{padding:12px 32px;border:none;border-radius:10px;background:#4a9eff;color:#fff;font-size:16px;font-weight:600;cursor:pointer}
 
-#overlay {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-/* ── Popup ── */
-#popup {
-  position: absolute;
-  background: #fff;
-  border-radius: 14px;
-  padding: 16px 20px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.35);
-  z-index: 20;
-  pointer-events: auto;
-  max-width: 280px;
-  opacity: 0;
-  transform: scale(0.9);
-  transition: opacity 0.2s, transform 0.2s;
-}
-#popup.visible {
-  opacity: 1;
-  transform: scale(1);
-}
-#popup .label {
-  font-size: 12px;
-  color: #999;
-  margin-bottom: 4px;
-}
-#popup .code {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1a1a2e;
-  word-break: break-all;
-}
-#popup .copyBtn {
-  margin-top: 10px;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 8px;
-  background: #4a9eff;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-}
-
-/* ── Status bar ── */
-#statusBar {
-  padding: 8px 12px;
-  padding-bottom: max(8px, env(safe-area-inset-bottom));
-  background: rgba(255,255,255,0.95);
-  text-align: center;
-  font-size: 12px;
-  color: #888;
-  z-index: 10;
-}
-
-/* ── Error overlay ── */
-#errorMsg {
-  display: none;
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.85);
-  color: #fff;
-  z-index: 30;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 24px;
-}
-#errorMsg.visible { display: flex; }
-#errorMsg h2 { font-size: 20px; margin-bottom: 8px; }
-#errorMsg p { font-size: 14px; color: #aaa; max-width: 300px; line-height: 1.5; }
-
-/* ── Scanline animation (cosmetic) ── */
-@keyframes scanPulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-.scanning #statusBar {
-  animation: scanPulse 1.5s ease-in-out infinite;
-}
-
-/* ── Start button overlay ── */
-#startOverlay {
-  position: absolute; inset: 0; z-index: 15;
-  background: rgba(0,0,0,0.75);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  color: #fff;
-}
-#startOverlay.hidden { display: none; }
-#startBtn {
-  padding: 16px 48px; font-size: 18px; font-weight: 700;
-  border: none; border-radius: 14px;
-  background: #4a9eff; color: #fff;
-  cursor: pointer; margin-bottom: 12px;
-}
-#startHint { font-size: 13px; color: #aaa; }
-#stepLog { position: absolute; bottom: 60px; left: 0; right: 0; text-align: center; font-size: 12px; color: rgba(255,255,255,0.7); }
-
+#stepMsg{position:absolute;bottom:60px;left:0;right:0;text-align:center;font-size:13px;color:rgba(255,255,255,0.8);z-index:5}
 </style>
 </head>
 <body>
 
-<div id="app">
+<!-- Start screen -->
+<div id="startScreen">
+  <h1>料号二维码扫描器</h1>
+  <p>用手机摄像头扫描产品外箱上的料号二维码，快速找到目标货物。</p>
+  <button id="startBtn">开始扫描</button>
+  <div class="note">需要允许摄像头权限</div>
+</div>
+
+<!-- Error screen -->
+<div id="errorScreen">
+  <h2>启动失败</h2>
+  <p id="errorText"></p>
+  <button id="errorRetry">重试</button>
+</div>
+
+<!-- Main app (hidden at start) -->
+<div id="app" class="hidden">
   <div id="toolbar">
     <input type="text" id="searchInput" placeholder="输入要找的料号..." autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     <button id="modeBtn">查找模式</button>
@@ -223,41 +119,26 @@ html, body {
       <div class="code" id="popupCode"></div>
       <button class="copyBtn" id="popupCopy">复制料号</button>
     </div>
-    <div id="errorMsg">
-      <h2>无法启动摄像头</h2>
-      <p id="errorText"></p>
-    </div>
-    <div id="startOverlay">
-      <button id="startBtn">点击开始扫描</button>
-      <div id="startHint">需要允许摄像头权限</div>
-    </div>
-    <div id="stepLog"></div>
+    <div id="stepMsg"></div>
   </div>
 
-  <div id="statusBar">正在启动摄像头...</div>
+  <div id="statusBar">准备就绪</div>
 </div>
 
 <script>
-function main() {
-  // Check BarcodeDetector API support
+(function(){
   if (typeof BarcodeDetector === 'undefined') {
-    document.getElementById('errorMsg').classList.add('visible');
-    document.getElementById('errorText').textContent = '浏览器不支持二维码识别。\n请使用 Chrome 或 Edge 浏览器打开。';
-    document.getElementById('statusBar').textContent = '浏览器不支持';
-    document.getElementById('startOverlay').classList.add('hidden');
+    showError('当前浏览器不支持二维码识别。\n请使用 Chrome 或 Edge 浏览器打开。');
     return;
   }
 
-  // Check mediaDevices API
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-    document.getElementById('errorMsg').classList.add('visible');
-    document.getElementById('errorText').textContent = '浏览器不支持摄像头。\n请使用 Chrome 或 Edge 浏览器打开。';
-    document.getElementById('statusBar').textContent = '不支持摄像头';
-    document.getElementById('startOverlay').classList.add('hidden');
-    return;
-  }
-
-  /* ── DOM refs ── */
+  /* ── DOM ── */
+  var startScreen = document.getElementById('startScreen');
+  var startBtn    = document.getElementById('startBtn');
+  var errorScreen = document.getElementById('errorScreen');
+  var errorText   = document.getElementById('errorText');
+  var errorRetry  = document.getElementById('errorRetry');
+  var app         = document.getElementById('app');
   var searchInput = document.getElementById('searchInput');
   var modeBtn     = document.getElementById('modeBtn');
   var flashBtn    = document.getElementById('flashBtn');
@@ -268,187 +149,149 @@ function main() {
   var popupCode   = document.getElementById('popupCode');
   var popupCopy   = document.getElementById('popupCopy');
   var statusBar   = document.getElementById('statusBar');
-  var errorMsg    = document.getElementById('errorMsg');
-  var errorText   = document.getElementById('errorText');
-  var startOverlay= document.getElementById('startOverlay');
-  var startBtn    = document.getElementById('startBtn');
-  var stepLog     = document.getElementById('stepLog');
+  var stepMsg     = document.getElementById('stepMsg');
 
   /* ── State ── */
-  var mode          = 'search';   // 'search' | 'browse'
-  var searchQuery   = '';
-  var stream        = null;
-  var scanning      = false;
-  var animId        = null;
-  var lastScanTime  = 0;
-  var SCAN_INTERVAL = 180;        // ms between QR detection attempts
-  var detectedCodes = [];         // { data, corners, color, id }
-  var popupVisible  = false;
-  var flashOn       = false;
-  var videoReady    = false;
+  var mode = 'search';
+  var searchQuery = '';
+  var stream = null;
+  var scanning = false;
+  var animId = null;
+  var lastScanTime = 0;
+  var SCAN_INTERVAL = 180;
+  var detectedCodes = [];
+  var popupVisible = false;
+  var flashOn = false;
+  var videoReady = false;
 
-  /* ── Coordinate transform for object-fit:cover ── */
-  var tx = { scale: 1, offsetX: 0, offsetY: 0 }; // video → canvas
+  /* ── Coordinate transform ── */
+  var tx = { scale: 1, offsetX: 0, offsetY: 0 };
 
   function updateTransform() {
-    var cw = video.clientWidth;
-    var ch = video.clientHeight;
-    var vw = video.videoWidth;
-    var vh = video.videoHeight;
+    var cw = video.clientWidth, ch = video.clientHeight;
+    var vw = video.videoWidth, vh = video.videoHeight;
     if (!vw || !vh || !cw || !ch) return;
-
     var scale = Math.max(cw / vw, ch / vh);
     tx.scale = scale;
     tx.offsetX = (cw - vw * scale) / 2;
     tx.offsetY = (ch - vh * scale) / 2;
   }
 
-  function videoToCanvas(vx, vy) {
-    return {
-      x: tx.offsetX + vx * tx.scale,
-      y: tx.offsetY + vy * tx.scale
-    };
-  }
+  function videoToCanvas(vx, vy) { return { x: tx.offsetX + vx * tx.scale, y: tx.offsetY + vy * tx.scale }; }
+  function canvasToVideo(cx, cy) { return { x: (cx - tx.offsetX) / tx.scale, y: (cy - tx.offsetY) / tx.scale }; }
 
-  function canvasToVideo(cx, cy) {
-    return {
-      x: (cx - tx.offsetX) / tx.scale,
-      y: (cy - tx.offsetY) / tx.scale
-    };
-  }
-
-  /* ── Resize overlay canvas to match video display ── */
   function resizeOverlay() {
-    var w = video.clientWidth;
-    var h = video.clientHeight;
-    if (overlay.width !== w || overlay.height !== h) {
-      overlay.width = w;
-      overlay.height = h;
-    }
+    var w = video.clientWidth, h = video.clientHeight;
+    if (overlay.width !== w || overlay.height !== h) { overlay.width = w; overlay.height = h; }
     updateTransform();
   }
 
+  /* ── Error screen ── */
+  function showError(msg) {
+    errorText.textContent = msg;
+    errorScreen.classList.add('visible');
+    startScreen.classList.add('hidden');
+    app.classList.add('hidden');
+  }
+
+  errorRetry.addEventListener('click', function() {
+    errorScreen.classList.remove('visible');
+    startScreen.classList.remove('hidden');
+  });
+
   /* ── Camera ── */
   function log(msg) {
-    stepLog.textContent = msg;
+    stepMsg.textContent = msg;
     statusBar.textContent = msg;
-    console.log('[QR]', msg);
   }
 
   function startCamera() {
-    log('步骤1: 请求摄像头...');
+    log('请求摄像头权限...');
 
-    var constraints = {
+    navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'environment' },
       audio: false
-    };
+    }).then(function(s) {
+      log('摄像头已连接，初始化画面...');
+      stream = s;
+      video.srcObject = s;
 
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(function(s) {
-        log('步骤2: 摄像头已连接，初始化视频...');
-        stream = s;
-        video.srcObject = s;
+      video.onloadedmetadata = function() {
+        log('画面就绪，启动中...');
+        video.play().then(function() {
+          log('');
+          videoReady = true;
+          resizeOverlay();
+          startScanning();
+          updateStatus();
+          document.body.classList.add('scanning');
+        }).catch(function(playErr) {
+          showError('视频播放被阻止。\n请刷新页面后重试。\n错误: ' + playErr.name);
+        });
+      };
 
-        video.onloadedmetadata = function() {
-          log('步骤3: 视频数据就绪，开始播放...');
+      setTimeout(function() {
+        if (!videoReady && stream) {
+          log('等待超时，强制启动...');
           video.play().then(function() {
-            log('步骤4: 播放成功，开始扫描...');
+            log('');
             videoReady = true;
             resizeOverlay();
             startScanning();
             updateStatus();
             document.body.classList.add('scanning');
-            stepLog.textContent = '';
-          }).catch(function(playErr) {
-            log('失败: 播放被阻止 - ' + playErr.name);
-            errorMsg.classList.add('visible');
-            errorText.textContent = '视频播放被阻止。请刷新页面后先点击按钮再试。错误: ' + playErr.name;
+          }).catch(function() {
+            showError('摄像头已连接但无法播放画面。\n请刷新页面后重试。');
           });
-        };
-
-        setTimeout(function() {
-          if (!videoReady && stream) {
-            log('步骤3(超时补救): 强制播放...');
-            video.play().then(function() {
-              log('步骤4: 播放成功，开始扫描...');
-              videoReady = true;
-              resizeOverlay();
-              startScanning();
-              updateStatus();
-              document.body.classList.add('scanning');
-              stepLog.textContent = '';
-            }).catch(function() {
-              log('失败: 超时后仍无法播放');
-              errorMsg.classList.add('visible');
-              errorText.textContent = '摄像头已连接但无法播放画面。请刷新重试。';
-            });
-          }
-        }, 3000);
-      })
-      .catch(function(err) {
-        log('失败: ' + err.name);
-        errorMsg.classList.add('visible');
-        if (err.name === 'NotAllowedError') {
-          errorText.textContent = '摄像头权限被拒绝。解决方法：\n1. 点击浏览器地址栏左侧的锁图标\n2. 找到"摄像头"权限\n3. 设为"允许"\n4. 刷新页面';
-        } else if (err.name === 'NotFoundError') {
-          errorText.textContent = '未找到摄像头。请确认手机有后置摄像头。';
-        } else if (err.name === 'NotReadableError') {
-          errorText.textContent = '摄像头被占用。请关闭其他相机应用后重试。';
-        } else if (err.name === 'OverconstrainedError') {
-          errorText.textContent = '摄像头不支持所需模式。请尝试用 Chrome 浏览器打开。错误: ' + err.message;
-        } else {
-          errorText.textContent = '摄像头错误: ' + err.name + ' — ' + err.message;
         }
-      });
+      }, 4000);
+    }).catch(function(err) {
+      if (err.name === 'NotAllowedError') {
+        showError('摄像头权限被拒绝。\n\n解决方法：\n1. 打开手机"设置" → "应用" → 找到当前浏览器\n2. 点击"权限" → "相机" → 设为"允许"\n3. 返回浏览器刷新页面');
+      } else if (err.name === 'NotFoundError') {
+        showError('未找到摄像头。\n请确认手机有后置摄像头。');
+      } else if (err.name === 'NotReadableError') {
+        showError('摄像头被占用。\n请关闭其他相机应用后重试。');
+      } else {
+        showError('摄像头错误: ' + err.name + '\n' + err.message);
+      }
+    });
   }
 
-  function stopCamera() {
-    if (stream) {
-      stream.getTracks().forEach(function(t) { t.stop(); });
-      stream = null;
-    }
-    videoReady = false;
-    overlay.style.pointerEvents = 'none';
-    if (animId) { cancelAnimationFrame(animId); animId = null; }
-    scanning = false;
-    document.body.classList.remove('scanning');
-  }
+  /* ── Start button ── */
+  startBtn.addEventListener('click', function() {
+    startScreen.classList.add('hidden');
+    app.classList.remove('hidden');
+    startCamera();
+  });
 
-  /* ── Flashlight ── */
+  /* ── Flash ── */
   function toggleFlash() {
     if (!stream) return;
     var track = stream.getVideoTracks()[0];
     if (!track || typeof track.applyConstraints !== 'function') return;
-
     flashOn = !flashOn;
-    track.applyConstraints({ advanced: [{ torch: flashOn }] })
-      .catch(function() {
-        flashOn = !flashOn; // revert
-      });
-    flashBtn.textContent = flashOn ? '\uD83D\uDCA1' : '\uD83D\uDCA1';
+    track.applyConstraints({ advanced: [{ torch: flashOn }] }).catch(function() { flashOn = !flashOn; });
     flashBtn.style.background = flashOn ? 'rgba(255,200,50,0.3)' : 'rgba(255,255,255,0.12)';
   }
+  flashBtn.addEventListener('click', toggleFlash);
 
-  /* ── QR Scanning ── */
+  /* ── Scanning ── */
   function startScanning() {
     scanning = true;
     lastScanTime = 0;
     detectedCodes = [];
-    overlay.style.pointerEvents = 'auto';
     scanLoop(0);
   }
 
   function scanLoop(timestamp) {
     if (!scanning) return;
     animId = requestAnimationFrame(scanLoop);
-
     resizeOverlay();
-
     if (timestamp - lastScanTime >= SCAN_INTERVAL) {
       lastScanTime = timestamp;
       detectQRs();
     }
-
     drawOverlay();
     updateStatus();
   }
@@ -457,36 +300,31 @@ function main() {
     if (!videoReady || video.readyState < 1) return;
     if (!video.videoWidth || !video.videoHeight) return;
 
-    var detector = new BarcodeDetector({ formats: ['qr_code'] });
-    detector.detect(video).then(function(barcodes) {
-      if (!scanning) return;
-      var newCodes = [];
-      for (var i = 0; i < barcodes.length; i++) {
-        var bc = barcodes[i];
-        var corners;
-        if (bc.cornerPoints && bc.cornerPoints.length === 4) {
-          corners = bc.cornerPoints.map(function(p) { return { x: p.x, y: p.y }; });
-        } else {
-          var bb = bc.boundingBox;
-          corners = [
-            { x: bb.x, y: bb.y },
-            { x: bb.x + bb.width, y: bb.y },
-            { x: bb.x + bb.width, y: bb.y + bb.height },
-            { x: bb.x, y: bb.y + bb.height }
-          ];
+    try {
+      var detector = new BarcodeDetector({ formats: ['qr_code'] });
+      detector.detect(video).then(function(barcodes) {
+        if (!scanning) return;
+        var newCodes = [];
+        for (var i = 0; i < barcodes.length; i++) {
+          var bc = barcodes[i];
+          var corners;
+          if (bc.cornerPoints && bc.cornerPoints.length === 4) {
+            corners = bc.cornerPoints.map(function(p) { return { x: p.x, y: p.y }; });
+          } else {
+            var bb = bc.boundingBox;
+            corners = [{ x: bb.x, y: bb.y },{ x: bb.x+bb.width, y: bb.y },{ x: bb.x+bb.width, y: bb.y+bb.height },{ x: bb.x, y: bb.y+bb.height }];
+          }
+          newCodes.push({ data: bc.rawValue, corners: corners, color: getQRColor(bc.rawValue), id: hashCode(bc.rawValue) });
         }
-        newCodes.push({
-          data: bc.rawValue,
-          corners: corners,
-          color: getQRColor(bc.rawValue),
-          id: hashCode(bc.rawValue)
-        });
-      }
-      detectedCodes = newCodes;
-    }).catch(function(err) {
-      console.warn('BarcodeDetector error:', err);
+        detectedCodes = newCodes;
+      }).catch(function(err) {
+        console.warn('Detect error:', err);
+        detectedCodes = [];
+      });
+    } catch(e) {
+      console.warn('BarcodeDetector failed:', e);
       detectedCodes = [];
-    });
+    }
   }
 
   function getQRColor(data) {
@@ -497,37 +335,24 @@ function main() {
 
   function hashCode(s) {
     var h = 0;
-    for (var i = 0; i < s.length; i++) {
-      h = ((h << 5) - h) + s.charCodeAt(i);
-      h |= 0;
-    }
+    for (var i = 0; i < s.length; i++) { h = ((h << 5) - h) + s.charCodeAt(i); h |= 0; }
     return h;
   }
 
   /* ── Drawing ── */
   var COLORS = {
-    green: { fill: 'rgba(52, 168, 83, 0.22)', stroke: '#34a853' },
-    red:   { fill: 'rgba(234, 67, 53, 0.22)', stroke: '#ea4335' }
+    green: { fill: 'rgba(52,168,83,0.22)', stroke: '#34a853' },
+    red:   { fill: 'rgba(234,67,53,0.22)', stroke: '#ea4335' }
   };
 
   function drawOverlay() {
-    var ctx = overlayCtx;
-    var w = overlay.width;
-    var h = overlay.height;
+    var ctx = overlayCtx, w = overlay.width, h = overlay.height;
     ctx.clearRect(0, 0, w, h);
-
     updateTransform();
-
     for (var i = 0; i < detectedCodes.length; i++) {
-      var dc = detectedCodes[i];
-      var c = COLORS[dc.color];
+      var dc = detectedCodes[i], c = COLORS[dc.color];
+      var tc = dc.corners.map(function(p) { return videoToCanvas(p.x, p.y); });
 
-      // Map corners to canvas coordinates
-      var tc = dc.corners.map(function(p) {
-        return videoToCanvas(p.x, p.y);
-      });
-
-      // Fill quadrilateral
       ctx.fillStyle = c.fill;
       ctx.beginPath();
       ctx.moveTo(tc[0].x, tc[0].y);
@@ -537,24 +362,16 @@ function main() {
       ctx.closePath();
       ctx.fill();
 
-      // Border
-      ctx.strokeStyle = c.stroke;
-      ctx.lineWidth = 2.5;
-      ctx.stroke();
+      ctx.strokeStyle = c.stroke; ctx.lineWidth = 2.5; ctx.stroke();
 
-      // Corner brackets
       var len = 18;
-      ctx.strokeStyle = c.stroke;
-      ctx.lineWidth = 3.5;
-      ctx.lineCap = 'round';
+      ctx.strokeStyle = c.stroke; ctx.lineWidth = 3.5; ctx.lineCap = 'round';
+      drawBracket(ctx, tc[0],  1,  1, len);
+      drawBracket(ctx, tc[1], -1,  1, len);
+      drawBracket(ctx, tc[2], -1, -1, len);
+      drawBracket(ctx, tc[3],  1, -1, len);
 
-      drawBracket(ctx, tc[0],  1,  1, len);  // TL
-      drawBracket(ctx, tc[1], -1,  1, len);  // TR
-      drawBracket(ctx, tc[2], -1, -1, len);  // BR
-      drawBracket(ctx, tc[3],  1, -1, len);  // BL
-
-      // Label — centered above the QR
-      var cx = (tc[0].x + tc[1].x + tc[2].x + tc[3].x) / 4;
+      var cx = (tc[0].x+tc[1].x+tc[2].x+tc[3].x)/4;
       var top = Math.min(tc[0].y, tc[1].y, tc[2].y, tc[3].y);
       drawLabel(ctx, dc.data, cx, top, c.stroke);
     }
@@ -562,253 +379,135 @@ function main() {
 
   function drawBracket(ctx, pt, dx, dy, len) {
     ctx.beginPath();
-    ctx.moveTo(pt.x, pt.y + dy * len);
+    ctx.moveTo(pt.x, pt.y + dy*len);
     ctx.lineTo(pt.x, pt.y);
-    ctx.lineTo(pt.x + dx * len, pt.y);
+    ctx.lineTo(pt.x + dx*len, pt.y);
     ctx.stroke();
   }
 
   function drawLabel(ctx, text, x, y, bgColor) {
-    var displayText = text.length > 22 ? text.substring(0, 20) + '...' : text;
-    var fontSize = 13;
-    ctx.font = '600 ' + fontSize + 'px -apple-system, BlinkMacSystemFont, sans-serif';
-    var metrics = ctx.measureText(displayText);
-    var tw = metrics.width;
-    var pad = 7;
-    var labelY = y - 8;
-
-    // Background pill
-    var rx = x - tw / 2 - pad;
-    var ry = labelY - fontSize - pad;
-    var rw = tw + pad * 2;
-    var rh = fontSize + pad * 2;
-    var radius = 5;
-
+    var dt = text.length > 22 ? text.substring(0,20)+'...' : text;
+    var fs = 13;
+    ctx.font = '600 '+fs+'px -apple-system,BlinkMacSystemFont,sans-serif';
+    var tw = ctx.measureText(dt).width, pad = 7, ly = y - 8;
+    var rx = x - tw/2 - pad, ry = ly - fs - pad;
+    var rw = tw + pad*2, rh = fs + pad*2, r = 5;
     ctx.fillStyle = bgColor;
     ctx.beginPath();
-    ctx.moveTo(rx + radius, ry);
-    ctx.lineTo(rx + rw - radius, ry);
-    ctx.quadraticCurveTo(rx + rw, ry, rx + rw, ry + radius);
-    ctx.lineTo(rx + rw, ry + rh - radius);
-    ctx.quadraticCurveTo(rx + rw, ry + rh, rx + rw - radius, ry + rh);
-    ctx.lineTo(rx + radius, ry + rh);
-    ctx.quadraticCurveTo(rx, ry + rh, rx, ry + rh - radius);
-    ctx.lineTo(rx, ry + radius);
-    ctx.quadraticCurveTo(rx, ry, rx + radius, ry);
+    ctx.moveTo(rx+r, ry); ctx.lineTo(rx+rw-r, ry);
+    ctx.quadraticCurveTo(rx+rw, ry, rx+rw, ry+r);
+    ctx.lineTo(rx+rw, ry+rh-r);
+    ctx.quadraticCurveTo(rx+rw, ry+rh, rx+rw-r, ry+rh);
+    ctx.lineTo(rx+r, ry+rh);
+    ctx.quadraticCurveTo(rx, ry+rh, rx, ry+rh-r);
+    ctx.lineTo(rx, ry+r);
+    ctx.quadraticCurveTo(rx, ry, rx+r, ry);
     ctx.closePath();
     ctx.fill();
-
-    ctx.fillStyle = '#fff';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'bottom';
-    ctx.fillText(displayText, x, labelY);
+    ctx.fillStyle = '#fff'; ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText(dt, x, ly);
   }
 
-  /* ── Touch/Tap Handler ── */
-  function handleCanvasTap(e) {
-    if (mode !== 'browse') return;
-
-    e.preventDefault();
+  /* ── Tap handling ── */
+  overlay.addEventListener('click', function(e) {
+    if (mode !== 'browse') { hidePopup(); return; }
     var rect = overlay.getBoundingClientRect();
-    var cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
-    var cy = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
-
-    // Convert to video coordinates
+    var cx = e.clientX - rect.left, cy = e.clientY - rect.top;
     var vp = canvasToVideo(cx, cy);
-
-    // Find which QR code was tapped
-    for (var i = detectedCodes.length - 1; i >= 0; i--) {
+    for (var i = detectedCodes.length-1; i >= 0; i--) {
       if (pointInQuad(vp, detectedCodes[i].corners)) {
         showPopup(detectedCodes[i].data, cx, cy);
         return;
       }
     }
-
-    // Tapped outside all QR codes — dismiss popup
     hidePopup();
-  }
+  });
 
   function pointInQuad(pt, corners) {
-    // Use winding number / cross product method
-    var inside = false;
-    var n = corners.length;
-    for (var i = 0, j = n - 1; i < n; j = i++) {
-      var xi = corners[i].x, yi = corners[i].y;
-      var xj = corners[j].x, yj = corners[j].y;
-      if ((yi > pt.y) !== (yj > pt.y) &&
-          pt.x < (xj - xi) * (pt.y - yi) / (yj - yi) + xi) {
-        inside = !inside;
-      }
+    var inside = false, n = corners.length;
+    for (var i=0, j=n-1; i<n; j=i++) {
+      var xi=corners[i].x, yi=corners[i].y, xj=corners[j].x, yj=corners[j].y;
+      if ((yi>pt.y)!==(yj>pt.y) && pt.x<(xj-xi)*(pt.y-yi)/(yj-yi)+xi) inside=!inside;
     }
     return inside;
   }
 
-  /* ── Popup ── */
   function showPopup(data, cx, cy) {
     popupCode.textContent = data;
-
-    // Position near tap, but within viewport
     var wrap = document.getElementById('cameraWrap');
-    var wrapW = wrap.clientWidth;
-    var wrapH = wrap.clientHeight;
-
-    var popupW = 260;
-    var popupH = 120; // approximate
-
-    var left = cx - popupW / 2;
-    var top = cy - popupH - 20;
-
-    if (left < 10) left = 10;
-    if (left + popupW > wrapW - 10) left = wrapW - popupW - 10;
-    if (top < 10) top = cy + 20;
-    if (top + popupH > wrapH - 10) top = wrapH - popupH - 10;
-
-    popup.style.left = left + 'px';
-    popup.style.top = top + 'px';
-    popup.classList.add('visible');
-    popupVisible = true;
-
-    // Store tapped code data for copy action
+    var ww=wrap.clientWidth, wh=wrap.clientHeight;
+    var pw=260, ph=120;
+    var left=cx-pw/2, top=cy-ph-20;
+    if (left<10) left=10; if (left+pw>ww-10) left=ww-pw-10;
+    if (top<10) top=cy+20; if (top+ph>wh-10) top=wh-ph-10;
+    popup.style.left=left+'px'; popup.style.top=top+'px';
+    popup.classList.add('visible'); popupVisible=true;
     popup._codeData = data;
   }
 
   function hidePopup() {
-    popup.classList.remove('visible');
-    popupVisible = false;
-    popup._codeData = null;
+    popup.classList.remove('visible'); popupVisible=false; popup._codeData=null;
   }
 
-  // Prevent popup clicks from reaching overlay
   popup.addEventListener('click', function(e) { e.stopPropagation(); });
-  popup.addEventListener('touchstart', function(e) { e.stopPropagation(); });
-
-  // Copy button
   popupCopy.addEventListener('click', function(e) {
     e.stopPropagation();
     var data = popup._codeData;
     if (!data) return;
-
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(data).then(function() {
-        popupCopy.textContent = '已复制';
-        setTimeout(function() { popupCopy.textContent = '复制料号'; }, 1500);
-      }).catch(function() {
-        fallbackCopy(data);
-      });
-    } else {
-      fallbackCopy(data);
-    }
+        popupCopy.textContent='已复制'; setTimeout(function(){popupCopy.textContent='复制料号'},1500);
+      }).catch(function() { fallbackCopy(data); });
+    } else { fallbackCopy(data); }
   });
-
   function fallbackCopy(text) {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.left = '-9999px';
-    document.body.appendChild(ta);
-    ta.select();
-    try { document.execCommand('copy'); popupCopy.textContent = '已复制'; }
-    catch(e) { popupCopy.textContent = '复制失败'; }
+    var ta=document.createElement('textarea');
+    ta.value=text; ta.style.cssText='position:fixed;left:-9999px';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); popupCopy.textContent='已复制'; }
+    catch(e) { popupCopy.textContent='复制失败'; }
     document.body.removeChild(ta);
-    setTimeout(function() { popupCopy.textContent = '复制料号'; }, 1500);
+    setTimeout(function(){popupCopy.textContent='复制料号'},1500);
   }
 
-  // Overlay tap handling
-  overlay.addEventListener('click', function(e) {
-    if (mode === 'browse') {
-      handleCanvasTap(e);
-    } else {
-      hidePopup();
-    }
-  });
-
-  overlay.addEventListener('touchstart', function(e) {
-    if (mode === 'browse') {
-      handleCanvasTap(e);
-    } else {
-      hidePopup();
-    }
-  });
-
-  /* ── Status update ── */
+  /* ── Status ── */
   function updateStatus() {
     var n = detectedCodes.length;
-    if (n === 0) {
-      if (mode === 'search') {
-        statusBar.textContent = searchQuery ? '未检测到二维码，请对准货物...' : '未检测到二维码';
-      } else {
-        statusBar.textContent = '未检测到二维码';
-      }
+    if (n===0) {
+      statusBar.textContent = (mode==='search'&&searchQuery) ? '未检测到二维码，对准货物...' : '未检测到二维码';
     } else {
-      if (mode === 'search' && searchQuery) {
-        var matched = detectedCodes.filter(function(d) { return d.color === 'green'; }).length;
-        statusBar.textContent = '检测到 ' + n + ' 个二维码，匹配 ' + matched + ' 个';
-      } else if (mode === 'browse') {
-        statusBar.textContent = '检测到 ' + n + ' 个二维码，点击绿色区域查看料号';
+      if (mode==='search' && searchQuery) {
+        var m = detectedCodes.filter(function(d){return d.color==='green'}).length;
+        statusBar.textContent = '检测到 '+n+' 个，匹配 '+m+' 个';
+      } else if (mode==='browse') {
+        statusBar.textContent = '检测到 '+n+' 个，点击绿色区域查看料号';
       } else {
-        statusBar.textContent = '检测到 ' + n + ' 个二维码';
+        statusBar.textContent = '检测到 '+n+' 个二维码';
       }
     }
   }
 
-  /* ── Mode toggle ── */
-  function updateMode() {
-    if (mode === 'search') {
-      modeBtn.textContent = '查找模式';
-      modeBtn.classList.remove('browse');
-      searchInput.style.display = '';
-      searchInput.placeholder = '输入要找的料号...';
-      hidePopup();
+  /* ── Mode ── */
+  function updateModeUI() {
+    if (mode==='search') {
+      modeBtn.textContent='查找模式'; modeBtn.classList.remove('browse');
+      searchInput.style.display=''; hidePopup();
     } else {
-      modeBtn.textContent = '浏览模式';
-      modeBtn.classList.add('browse');
-      searchInput.style.display = 'none';
-      searchInput.value = '';
-      searchQuery = '';
-      hidePopup();
+      modeBtn.textContent='浏览模式'; modeBtn.classList.add('browse');
+      searchInput.style.display='none'; searchInput.value=''; searchQuery=''; hidePopup();
     }
   }
-
   modeBtn.addEventListener('click', function() {
-    mode = mode === 'search' ? 'browse' : 'search';
-    updateMode();
+    mode = mode==='search' ? 'browse' : 'search';
+    updateModeUI();
   });
+  searchInput.addEventListener('input', function() { searchQuery = searchInput.value.trim(); });
 
-  /* ── Search input ── */
-  searchInput.addEventListener('input', function() {
-    searchQuery = searchInput.value.trim();
-  });
-
-  /* ── Flash button ── */
-  flashBtn.addEventListener('click', toggleFlash);
-
-  /* ── Handle window resize ── */
   window.addEventListener('resize', resizeOverlay);
+  window.addEventListener('orientationchange', function() { setTimeout(resizeOverlay, 300); });
 
-  /* ── Handle orientation change on mobile ── */
-  window.addEventListener('orientationchange', function() {
-    setTimeout(resizeOverlay, 300);
-  });
-
-  /* ── Init ── */
-  statusBar.textContent = '点击下方按钮开始';
-  updateMode();
-
-  // Start camera on button tap (Android requires user gesture)
-  startBtn.addEventListener('click', function() {
-    startOverlay.classList.add('hidden');
-    startCamera();
-  });
-
-  // Also allow tapping anywhere on the start overlay
-  startOverlay.addEventListener('click', function(e) {
-    if (e.target === startOverlay) {
-      startOverlay.classList.add('hidden');
-      startCamera();
-    }
-  });
-}
+  updateModeUI();
+})();
 </script>
-
 </body>
 </html>
