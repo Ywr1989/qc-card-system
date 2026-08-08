@@ -2,123 +2,138 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>CDW02302/德威 - 未交付数量</title>
-<style>
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { margin: 0; font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; background: #f5f6f8; color: #222; }
-  .header { background: #2b5797; color: #fff; padding: 18px 16px 14px; }
-  .header .name { font-size: 20px; font-weight: 700; }
-  .header .sub { font-size: 12px; opacity: .85; margin-top: 4px; }
-  .hint { background: #fff8e1; border-bottom: 1px solid #ffca28; color: #8a6d00; font-size: 12px; padding: 8px 16px; text-align: center; }
-  .wrap { padding: 12px; overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; background: #fff; font-size: 13px; min-width: 560px; }
-  th { background: #2b5797; color: #fff; padding: 9px 6px; text-align: center; font-weight: 600; white-space: nowrap; }
-  td { border: 1px solid #ddd; padding: 8px 6px; vertical-align: middle; }
-  td.pn { font-weight: 600; }
-  td.spec { color: #444; }
-  td.center { text-align: center; }
-  td.right { text-align: right; font-variant-numeric: tabular-nums; }
-  .qty-pos { color: #d32f2f; font-weight: 700; }
-  .qty-zero { color: #999; }
-  .st-normal { color: #4caf50; font-weight: 700; }
-  .st-abnormal { color: #f44336; font-weight: 700; }
-  .legend { font-size: 12px; color: #666; padding: 10px 16px; line-height: 1.7; }
-  .legend b { color: #d32f2f; }
-  .legend i { color: #999; font-style: normal; }
-  .footer { text-align: center; font-size: 11px; color: #999; padding: 14px 16px 24px; }
-</style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>未交付数量报表 - 德威 2026/8/8 10:53:52</title>
 </head>
-<body>
-  <div class="header">
-    <div class="name">{{TITLE}}</div>
-    <div class="sub">未交付数量 · 数据截至 2026/8/8 10:34:47</div>
+<body style="-webkit-text-size-adjust:100%;margin:0;padding:16px;background-color:#f5f5f5;font-family:'Microsoft YaHei',Arial,sans-serif;font-size:14px;color:#333;">
+
+<div style="max-width:680px;margin:0 auto;">
+
+  <!-- 标题栏 -->
+  <div style="background-color:#2b5797;color:#fff;padding:18px 20px;border-radius:8px 8px 0 0;">
+    <div style="font-size:20px;font-weight:700;letter-spacing:1px;">未交付数量报表</div>
+    <div style="font-size:13px;margin-top:6px;opacity:0.85;">CDW02302/德威 | 数据截至 2026/8/8 10:53:52</div>
   </div>
-  <div class="hint">左右滑动查看完整表格</div>
-  <div class="wrap">
-    <table>
-      <thead>
-        <tr>
-          <th>品名品号</th>
-          <th>规格</th>
-          <th>单位</th>
-          <th>印刷颜色</th>
-          <th>未交付数量</th>
-          <th>数据状态</th>
-        </tr>
-      </thead>
-      <tbody>
-<tr>
-    <td class="pn">DAWE-AS-TC5410-B001-ESD-01</td>
-    <td class="spec">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</td>
-    <td class="center">个</td>
-    <td class="center"></td>
-    <td class="right qty-pos">1000</td>
-    <td class="center st-normal">正常</td>
+
+  <!-- 主卡片 -->
+  <div style="background:#fff;border-radius:0 0 8px 8px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+
+    <!-- 滑动提示 -->
+    <div style="background:#fff8e1;border-bottom:2px solid #ffca28;padding:10px 14px;margin-bottom:14px;border-radius:4px;">
+      <span style="color:#e65100;font-size:14px;font-weight:600;">如表格显示不全，请左右滑动查看 →</span>
+    </div>
+
+    <!-- 表格容器 -->
+    <div style="overflow-x:auto;">
+      <table style="width:100%;min-width:560px;border-collapse:collapse;font-size:13px;">
+        <thead>
+          <tr style="background-color:#2b5797;color:#fff;">
+            <th style="padding:10px 8px;text-align:center;border-right:1px solid #4a6fa5;border-bottom:1px solid #4a6fa5;width:22%;word-break:break-all;">品名品号</th>
+            <th style="padding:10px 8px;text-align:center;border-right:1px solid #4a6fa5;border-bottom:1px solid #4a6fa5;width:26%;word-break:break-all;">规格</th>
+            <th style="padding:10px 8px;text-align:center;border-right:1px solid #4a6fa5;border-bottom:1px solid #4a6fa5;width:8%;white-space:nowrap;">单位</th>
+            <th style="padding:10px 8px;text-align:center;border-right:1px solid #4a6fa5;border-bottom:1px solid #4a6fa5;width:14%;white-space:nowrap;">印刷颜色</th>
+            <th style="padding:10px 8px;text-align:center;border-right:1px solid #4a6fa5;border-bottom:1px solid #4a6fa5;width:12%;white-space:nowrap;">数量</th>
+            <th style="padding:10px 8px;text-align:center;border-bottom:1px solid #4a6fa5;width:10%;white-space:nowrap;">数据状态</th>
+          </tr>
+        </thead>
+        <tbody>
+<tr style="background:#fff;">
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">DAWE-AS-TC5410-B001-ESD-01</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;">个</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;white-space:nowrap;"></td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:right;font-weight:600;white-space:nowrap;color:#d32f2f;">1000</td>
+    <td style="padding:9px 8px;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;color:#4caf50;font-weight:600;">正常</td>
   </tr>
-<tr>
-    <td class="pn">DAWE-AS-TC5410-B100-ESD-01</td>
-    <td class="spec">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
-    <td class="center">个</td>
-    <td class="center"></td>
-    <td class="right qty-pos">4100</td>
-    <td class="center st-normal">正常</td>
+<tr style="background:#fafafa;">
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">DAWE-AS-TC5410-B100-ESD-01</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;">个</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;white-space:nowrap;"></td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:right;font-weight:600;white-space:nowrap;color:#d32f2f;">4100</td>
+    <td style="padding:9px 8px;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;color:#4caf50;font-weight:600;">正常</td>
   </tr>
-<tr>
-    <td class="pn">DAWE-AS-TC8512-B100-ESD</td>
-    <td class="spec">8512半透明ABS方能扣应鱼10*10表格(细线暗油墨)上盖透明ABS,下盖ABS,均为防静电材质</td>
-    <td class="center">个</td>
-    <td class="center"></td>
-    <td class="right qty-zero">0</td>
-    <td class="center st-normal">正常</td>
+<tr style="background:#fff;">
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">DAWE-AS-TC8512-B100-ESD</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">8512半透明ABS方能扣应鱼10*10表格(细线暗油墨)上盖透明ABS,下盖ABS,均为防静电材质</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;">个</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;white-space:nowrap;"></td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:right;font-weight:600;white-space:nowrap;color:#999;">0</td>
+    <td style="padding:9px 8px;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;color:#4caf50;font-weight:600;">正常</td>
   </tr>
-<tr>
-    <td class="pn">DAWE-PC10-AC5410-ESD</td>
-    <td class="spec">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
-    <td class="center">个</td>
-    <td class="center"></td>
-    <td class="right qty-pos">1500</td>
-    <td class="center st-normal">正常</td>
+<tr style="background:#fafafa;">
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">DAWE-PC10-AC5410-ESD</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;">个</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;white-space:nowrap;"></td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:right;font-weight:600;white-space:nowrap;color:#d32f2f;">1500</td>
+    <td style="padding:9px 8px;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;color:#4caf50;font-weight:600;">正常</td>
   </tr>
-<tr>
-    <td class="pn">DAWE-PC11-AC5410-B100-ESD</td>
-    <td class="spec">2寸全黑PC方盒,长效防静电,长方形扣位,磨砂面,10*10表格,DAWE刻字</td>
-    <td class="center">个</td>
-    <td class="center"></td>
-    <td class="right qty-zero">0</td>
-    <td class="center st-normal">正常</td>
+<tr style="background:#fff;">
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">DAWE-PC11-AC5410-B100-ESD</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">2寸全黑PC方盒,长效防静电,长方形扣位,磨砂面,10*10表格,DAWE刻字</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;">个</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;white-space:nowrap;"></td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:right;font-weight:600;white-space:nowrap;color:#999;">0</td>
+    <td style="padding:9px 8px;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;color:#4caf50;font-weight:600;">正常</td>
   </tr>
-<tr>
-    <td class="pn">DAWE-PS-TC8512-B001</td>
-    <td class="spec">8512半��明PS方盒,三角形扣位,无表格,不防静电</td>
-    <td class="center">个</td>
-    <td class="center"></td>
-    <td class="right qty-zero">0</td>
-    <td class="center st-normal">正常</td>
+<tr style="background:#fafafa;">
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">DAWE-PS-TC8512-B001</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">8512半��明PS方盒,三角形扣位,无表格,不防静电</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;">个</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;white-space:nowrap;"></td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:right;font-weight:600;white-space:nowrap;color:#999;">0</td>
+    <td style="padding:9px 8px;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;color:#4caf50;font-weight:600;">正常</td>
   </tr>
-<tr>
-    <td class="pn">DAWE-PS-TC8512-B100-00</td>
-    <td class="spec">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</td>
-    <td class="center">个</td>
-    <td class="center"></td>
-    <td class="right qty-pos">460</td>
-    <td class="center st-normal">正常</td>
+<tr style="background:#fff;">
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">DAWE-PS-TC8512-B100-00</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;">个</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;white-space:nowrap;"></td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:right;font-weight:600;white-space:nowrap;color:#d32f2f;">460</td>
+    <td style="padding:9px 8px;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;color:#4caf50;font-weight:600;">正常</td>
   </tr>
-<tr>
-    <td class="pn">MO-PC10-AC5410-ESD</td>
-    <td class="spec">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,MOSEMI刻字</td>
-    <td class="center">个</td>
-    <td class="center"></td>
-    <td class="right qty-zero">0</td>
-    <td class="center st-normal">正常</td>
+<tr style="background:#fafafa;">
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">MO-PC10-AC5410-ESD</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,MOSEMI刻字</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;">个</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;white-space:nowrap;"></td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:right;font-weight:600;white-space:nowrap;color:#999;">0</td>
+    <td style="padding:9px 8px;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;color:#4caf50;font-weight:600;">正常</td>
   </tr>
-      </tbody>
-    </table>
+<tr style="background:#fff;">
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;font-weight:600;">总计</td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;word-break:break-all;"></td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;"></td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;white-space:nowrap;"></td>
+    <td style="padding:9px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd;text-align:right;font-weight:600;white-space:nowrap;color:#d32f2f;">7060</td>
+    <td style="padding:9px 8px;border-bottom:1px solid #ddd;text-align:center;white-space:nowrap;"></td>
+  </tr>
+</tbody>
+      </table>
+    </div>
+
+    <!-- 图例说明 -->
+    <div style="margin-top:16px;padding:12px 14px;background:#f9f9f9;border-radius:6px;border:1px solid #eee;">
+      <div style="font-size:12px;font-weight:600;color:#555;margin-bottom:8px;">图例说明</div>
+      <div style="font-size:12px;line-height:2;">
+        <div><span style="color:#d32f2f;font-size:16px;">●</span> <span style="color:#333;">数量正数（红色）= 还欠客户，需交付</span></div>
+        <div><span style="color:#999;font-size:16px;">●</span> <span style="color:#333;">数量负数或零（灰色）= 多发或已交付完毕</span></div>
+      </div>
+    </div>
+
+    <!-- 退订按钮 -->
+    <div style="margin-top:20px;text-align:center;">
+      <a href="mailto:641402414@qq.com?subject=%E9%80%80%E8%AE%A2%E6%9C%AA%E4%BA%A4%E4%BB%98%E6%95%B0%E9%87%8F%E6%97%A5%E6%8A%A5&body=%E6%88%91%E4%B8%8D%E5%86%8D%E6%83%B3%E6%94%B6%E5%88%B0%E6%9C%AA%E4%BA%A4%E4%BB%98%E6%95%B0%E9%87%8F%E6%97%A5%E6%8A%A5" style="display:inline-block;background:#d32f2f;color:#fff;text-decoration:none;padding:10px 40px;border-radius:6px;font-size:14px;font-weight:600;">不再接收此报表</a>
+    </div>
+
   </div>
-  <div class="legend">
-    数量说明：<b>红色</b>=仍有未交付；<i>灰色</i>=已交付完毕。<br>
-    数据状态：绿色=正常，红色=异常。
+
+  <!-- 底部时间戳 -->
+  <div style="text-align:center;margin-top:10px;font-size:11px;color:#aaa;">
+    数据生成时间：2026/8/8 10:53:52 | 数据来源：腾讯文档·订单统计
   </div>
-  <div class="footer">本页由丰康塑料厂提供 · 数据定期更新</div>
+
+</div>
 </body>
 </html>
