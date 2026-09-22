@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>李总 订单与交付查询 · 丰康塑料厂</title>
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<style>
+:root{--blue:#2b5797;--blued:#1f3b6e;--ink:#1c2530;--muted:#6b7684;--line:#e3e8ef;--bg:#eef2f7;--red:#d92d20;--green:#12805c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+.hero{background:linear-gradient(135deg,#17325e,#2b5797 55%,#3f7ac0);color:#fff;padding:24px 18px 22px}
+.hero h1{margin:0;font-size:23px;letter-spacing:1px;font-weight:700}
+.hero .code{font-size:12px;opacity:.72;margin-top:3px;letter-spacing:1.5px}
+.hero .meta{margin-top:14px;font-size:12px;opacity:.92;display:flex;gap:16px;flex-wrap:wrap}
+nav.anchor{position:sticky;top:0;z-index:9;display:flex;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 2px 10px rgba(20,40,80,.07)}
+nav.anchor a{flex:1;text-align:center;padding:13px 4px;font-size:14px;color:#3a4a60;text-decoration:none;font-weight:600;border-bottom:3px solid transparent}
+nav.anchor a:active{background:#f6f9ff;color:var(--blue)}
+main{padding:14px 12px 44px;max-width:780px;margin:0 auto}
+section{margin-bottom:26px;scroll-margin-top:58px}
+h2.sec{font-size:17.5px;margin:0 0 3px;display:flex;align-items:center;gap:8px;font-weight:700}
+h2.sec .no{display:inline-flex;width:23px;height:23px;border-radius:7px;background:var(--blue);color:#fff;font-size:13px;align-items:center;justify-content:center;flex:0 0 auto}
+.sub{font-size:12px;color:var(--muted);margin:0 0 12px;padding-left:31px}
+.kpis{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}
+.kpi{flex:1 1 calc(50% - 4px);min-width:0;background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+.kpi.k3{flex:1 1 calc(33.33% - 6px)}
+.kpi .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--blued);line-height:1.25}
+.kpi .l{font-size:11px;color:var(--muted);margin-top:2px}
+.kpi.warnk{border-color:#f5c2bd;background:#fff7f6}
+.kpi.warnk .v{color:var(--red)}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 2px rgba(20,40,80,.04)}
+.card>.hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:11px 13px;background:#f6faff;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.card>.hd .d{font-size:15px;font-weight:700}
+.card>.hd .tag{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bill{display:inline-block;font-size:11.5px;color:#2b5797;background:#e8f0fc;border-radius:5px;padding:1px 6px;margin-left:6px;font-weight:700;letter-spacing:.3px;word-break:break-all}
+.desc{font-size:12.5px;color:#48566a;padding:9px 13px;background:#fcfdff;border-bottom:1px solid #eef2f7;white-space:pre-wrap;word-break:break-word}
+/* 近期发货：窄表格（4 列，固定布局防溢出） */
+table.fixed{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13.5px}
+table.fixed th{background:#f4f7fb;color:#4a5666;font-weight:600;font-size:11.5px;text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.fixed td{padding:8px;border-bottom:1px solid #eef2f7;vertical-align:top;word-break:break-word}
+table.fixed tr:last-child td{border-bottom:none}
+td.pn{font-weight:600;font-size:12.5px;word-break:break-all}
+td .spec{display:block;color:var(--muted);font-size:11.5px;margin-top:2px;font-weight:400;line-height:1.45}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+td.c{text-align:center;font-size:12.5px;word-break:break-word}
+/* 列表行（未交付 / 订单记录） */
+.rows{padding:2px 0}
+.row{padding:11px 13px;border-bottom:1px solid #eef2f7}
+.row:last-child{border-bottom:none}
+.row.neg{background:#fff6f5}
+.row .l1{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.row .pnx{font-size:13px;font-weight:700;word-break:break-all;flex:1 1 auto;min-width:0}
+.row .val{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;flex:0 0 auto}
+.row .spx{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.5;word-break:break-word}
+.row .mtx{font-size:11.5px;color:#5b6675;margin-top:5px;font-variant-numeric:tabular-nums}
+.row .mtx b{color:#2b3a4d;font-weight:600}
+.red{color:var(--red)}.green{color:var(--green)}.zero{color:#9aa4b2}
+.badge{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 5px;border-radius:4px;background:#fdecea;color:var(--red);white-space:nowrap;vertical-align:middle;margin-left:4px}
+.badge.ok{background:#e7f6f0;color:var(--green)}
+.badge.gray{background:#eef1f5;color:#5b6675}
+.warn{background:#fffbf0;border:1px solid #ffe0a3;border-left:4px solid #e8a020;border-radius:9px;padding:11px 13px;font-size:12.5px;color:#7a5200;margin:0 0 12px;line-height:1.65}
+.warn b{color:#8a4b00}
+.empty{padding:28px 12px;text-align:center;color:#9aa4b2;font-size:13.5px;background:#fff;border:1px dashed var(--line);border-radius:12px}
+.note{font-size:11.5px;color:var(--muted);margin:9px 2px 0;line-height:1.75}
+footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;line-height:1.8}
+</style>
+</head><body>
+<div class="hero">
+  <h1>李总</h1>
+  <div class="code">CLZ053002</div>
+  <div class="meta"><span>订单与交付查询</span><span>数据更新：2026/9/22 23:01:04</span></div>
+</div>
+<nav class="anchor">
+  <a href="#delivery">近期发货</a>
+  <a href="#undelivered">未交付</a>
+  <a href="#orders">订单记录</a>
+</nav>
+<main>
+  <section id="delivery">
+    <h2 class="sec"><span class="no">1</span>近期发货记录</h2>
+    <div class="sub">最近 10 天已发出的货</div>
+    <div class="kpis"><div class="kpi k3"><div class="v">2</div><div class="l">送货单（张）</div></div><div class="kpi k3"><div class="v">6</div><div class="l">发货品项</div></div><div class="kpi k3"><div class="v">8,476</div><div class="l">合计数量（片）</div></div></div>
+    <div class="card">
+        <div class="hd">
+          <div class="d">2026/9/21<span class="bill">K7-20260921-018</span></div>
+          <div class="tag">2 项 · 合计 4,458 片</div>
+        </div>
+        <table class="fixed"><colgroup><col><col style="width:22%"><col style="width:19%"><col style="width:13%"></colgroup>
+        <thead><tr><th>品名品号 / 规格</th><th style="text-align:center">印刷颜色</th><th style="text-align:right">数量</th><th style="text-align:right">箱数</th></tr></thead>
+        <tbody><tr>
+        <td class="pn">8512-PC-T-P000-BLK<span class="spec">8512-通用PC-透明-不印刷-空白</span></td>
+        <td class="c">不印刷</td>
+        <td class="n">2,229</td>
+        <td class="n">4件</td>
+      </tr><tr>
+        <td class="pn">8512-PC-T-P001-BLK<span class="spec">8512-通用PC-透明-印刷001-空白</span></td>
+        <td class="c">3005C 蓝</td>
+        <td class="n">2,229</td>
+        <td class="n"><span class="zero">—</span></td>
+      </tr></tbody></table>
+      </div><div class="card">
+        <div class="hd">
+          <div class="d">2026/9/12<span class="bill">20260912-002</span></div>
+          <div class="tag">4 项 · 合计 4,018 片</div>
+        </div>
+        <table class="fixed"><colgroup><col><col style="width:22%"><col style="width:19%"><col style="width:13%"></colgroup>
+        <thead><tr><th>品名品号 / 规格</th><th style="text-align:center">印刷颜色</th><th style="text-align:right">数量</th><th style="text-align:right">箱数</th></tr></thead>
+        <tbody><tr>
+        <td class="pn">5510-E/ABS01-BK-P000-5164<span class="spec">5510-防静电ABS01-黑色-不印刷-515164</span></td>
+        <td class="c">不印刷</td>
+        <td class="n">1,000</td>
+        <td class="n"><span class="zero">—</span></td>
+      </tr><tr>
+        <td class="pn">5510-E/ABS01-BK-P002-5164<span class="spec">5510-防静电ABS01-黑色-印刷002-515164</span></td>
+        <td class="c">18717 白</td>
+        <td class="n">1,000</td>
+        <td class="n"><span class="zero">—</span></td>
+      </tr><tr>
+        <td class="pn">8512-E/ABS01-BK-P001-BLK<span class="spec">8512-防静电ABS01-黑色-印刷001-空白</span></td>
+        <td class="c">18727 淡黄</td>
+        <td class="n">1,009</td>
+        <td class="n"><span class="zero">—</span></td>
+      </tr><tr>
+        <td class="pn">8512-E/ABS01-TP-P000-BLK<span class="spec">8512-防静电ABS01-透紫-不印刷-空白</span></td>
+        <td class="c">不印刷</td>
+        <td class="n">1,009</td>
+        <td class="n"><span class="zero">—</span></td>
+      </tr></tbody></table>
+      </div>
+    <div class="note">箱数「—」表示该行未登记箱数；数量「待填」表示源表未填数量。</div>
+  </section>
+  <section id="undelivered">
+    <h2 class="sec"><span class="no">2</span>未交付数量</h2>
+    <div class="sub">按下单记录与交付记录自动对账 · 右侧大字为未交付数量（片）</div>
+    <div class="kpis"><div class="kpi k3"><div class="v">19</div><div class="l">品号合计</div></div><div class="kpi k3"><div class="v">0</div><div class="l">仍有未交付</div></div><div class="kpi k3 warnk"><div class="v">11</div><div class="l">待核对</div></div></div>
+    <div class="warn"><b>有 11 个品号的「已交付」大于「已下单」</b>，本厂正在核对下单记录，核对完成后更新。标红的数字属待核数据，请以实际对账为准。</div><div class="card"><div class="rows"><div class="row">
+      <div class="l1">
+        <div class="pnx">5510-E/ABS01-BK-P000-5164</div>
+        <div class="val zero">0<span class="badge ok">已完成</span></div>
+      </div>
+      <div class="spx">5510-防静电ABS01-黑色-不印刷-515164</div>
+      <div class="mtx">印刷 <b>不印刷</b> · 下单 <b>1,000</b> · 已交付 <b>1,000</b></div>
+    </div><div class="row">
+      <div class="l1">
+        <div class="pnx">5510-E/ABS01-BK-P002-5164</div>
+        <div class="val zero">0<span class="badge ok">已完成</span></div>
+      </div>
+      <div class="spx">5510-防静电ABS01-黑色-印刷002-515164</div>
+      <div class="mtx">印刷 <b>18717 白</b> · 下单 <b>1,000</b> · 已交付 <b>1,000</b></div>
+    </div><div class="row">
+      <div class="l1">
+        <div class="pnx">5510-PC-T-P002-5164</div>
+        <div class="val zero">0<span class="badge ok">已完成</span></div>
+      </div>
+      <div class="spx">5510-通用PC-透明-印刷002-515164</div>
+      <div class="mtx">印刷 <b>3005C 蓝</b> · 下单 <b>2,000</b> · 已交付 <b>2,000</b></div>
+    </div><div class="row">
+      <div class="l1">
+        <div class="pnx">8512-MABS-T-P000-BLK</div>
+        <div class="val zero">0<span class="badge ok">已完成</span></div>
+      </div>
+      <div class="spx">8512-通用透明ABS-透明-不印刷-空白</div>
+      <div class="mtx">印刷 <b>不印刷</b> · 下单 <b>2,000</b> · 已交付 <b>2,000</b></div>
+    </div><div class="row">
+      <div class="l1">
+        <div class="pnx">8512-MABS-T-P001-BLK</div>
+        <div class="val zero">0<span class="badge ok">已完成</span></div>
+      </div>
+      <div class="spx">8512-通用透明ABS-透明-印刷001-空白</div>
+      <div class="mtx">印刷 <b>3005C 蓝</b> · 下单 <b>2,000</b> · 已交付 <b>2,000</b></div>
+    </div><div class="row">
+      <div class="l1">
+        <div class="pnx">5510-ABS-WH-P000-5164</div>
+        <div class="val zero">0<span class="badge ok">已完成</span></div>
+      </div>
+      <div class="spx">5510-通用ABS-白色-不印刷-515164</div>
+      <div class="mtx">印刷 <b>不印刷</b> · 下单 <b>1,000</b> · 已交付 <b>1,000</b></div>
+    </div><div class="row">
+      <div class="l1">
+        <div class="pnx">5508L-9</div>
+        <div class="val zero">0<span class="badge ok">已完成</span></div>
+      </div>
+      <div class="spx"></div>
+      <div class="mtx">印刷 <b>—</b> · 下单 <b>40</b> · 已交付 <b>40</b></div>
+    </div><div class="row">
+      <div class="l1">
+        <div class="pnx">5510-PC-T-P009-5164</div>
+        <div class="val zero">0<span class="badge ok">已完成</span></div>
+      </div>
+      <div class="spx">5510-通用PC-透明-印刷009-515164</div>
+      <div class="mtx">印刷 <b>3005C 蓝</b> · 下单 <b>1,000</b> · 已交付 <b>1,000</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">8512-E/ABS01-TP-P000-BLK</div>
+        <div class="val red">-9<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">8512-防静电ABS01-透紫-不印刷-空白</div>
+      <div class="mtx">印刷 <b>不印刷</b> · 下单 <b>1,000</b> · 已交付 <b>1,009</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">8512-E/ABS01-BK-P001-BLK</div>
+        <div class="val red">-9<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">8512-防静电ABS01-黑色-印刷001-空白</div>
+      <div class="mtx">印刷 <b>18727 淡黄</b> · 下单 <b>1,000</b> · 已交付 <b>1,009</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">8512-PC-BK-P000-BLK</div>
+        <div class="val red">-12<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">8512-通用PC-黑色-不印刷-空白</div>
+      <div class="mtx">印刷 <b>不印刷</b> · 下单 <b>1,000</b> · 已交付 <b>1,012</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">8512-ABS-WH-P000-BLK</div>
+        <div class="val red">-12<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">8512-通用ABS-白色-不印刷-空白</div>
+      <div class="mtx">印刷 <b>不印刷</b> · 下单 <b>1,000</b> · 已交付 <b>1,012</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">5510-PC-BK-P000-5164</div>
+        <div class="val red">-20<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">5510-通用PC-黑色-不印刷-5164</div>
+      <div class="mtx">印刷 <b>不印刷</b> · 下单 <b>1,000</b> · 已交付 <b>1,020</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">5510-PC-BK-P006-5164</div>
+        <div class="val red">-43<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">5510-通用PC-黑色-印刷006-515164</div>
+      <div class="mtx">印刷 <b>18717 白</b> · 下单 <b>4,000</b> · 已交付 <b>4,043</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">8512-PC-BK-P001-BLK</div>
+        <div class="val red">-58<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
+      <div class="mtx">印刷 <b>18727 淡黄</b> · 下单 <b>9,000</b> · 已交付 <b>9,058</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">8512-PC-T-P001-BLK</div>
+        <div class="val red">-169<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">8512-通用PC-透明-印刷001-空白</div>
+      <div class="mtx">印刷 <b>3005C 蓝</b> · 下单 <b>9,208</b> · 已交付 <b>9,377</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">8512-PC-T-P000-BLK</div>
+        <div class="val red">-227<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">8512-通用PC-透明-不印刷-空白</div>
+      <div class="mtx">印刷 <b>不印刷</b> · 下单 <b>18,208</b> · 已交付 <b>18,435</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">5510-PC-BK-P002-5164</div>
+        <div class="val red">-10,020<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">5510-通用PC-黑色-印刷002-515164</div>
+      <div class="mtx">印刷 <b>18717 白</b> · 下单 <b>1,000</b> · 已交付 <b>11,020</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">5510-PC-T-P000-5164</div>
+        <div class="val red">-10,043<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">5510-通用PC-透明-不印刷-515164</div>
+      <div class="mtx">印刷 <b>不印刷</b> · 下单 <b>8,000</b> · 已交付 <b>18,043</b></div>
+    </div></div></div>
+    <div class="note">未交付 = 下单总量 − 已交付总量。红色数字表示尚有未交付；「待核」表示交付量已超过下单量，正在核对下单记录。</div>
+  </section>
+  <section id="orders">
+    <h2 class="sec"><span class="no">3</span>订单记录</h2>
+    <div class="sub">按下单日期倒序</div>
+    <div class="kpis"><div class="kpi"><div class="v">20</div><div class="l">订单（张）</div></div><div class="kpi"><div class="v">33</div><div class="l">订单品项</div></div></div>
+    <div class="card">
+      <div class="hd">
+        <div class="d">2026/9/17</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      <div class="desc">8512全透明的，正常印刷的，552*4套（印刷蓝色）</div>
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-T-P000-BLK</div>
+          <div class="val">2,208<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-透明-不印刷-空白</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/9/17</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      <div class="desc">同单</div>
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-T-P001-BLK</div>
+          <div class="val">2,208<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-透明-印刷001-空白</div>
+        <div class="mtx">印刷 <b>3005C 蓝</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/9/9</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      <div class="desc">5510全黑防静电，1000个</div>
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-E/ABS01-BK-P000-5164</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-防静电ABS01-黑色-不印刷-515164</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/9/9</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      <div class="desc">同单</div>
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-E/ABS01-BK-P002-5164</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-防静电ABS01-黑色-印刷002-515164</div>
+        <div class="mtx">印刷 <b>18717 白</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/9/9</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      <div class="desc">8512上透下黑，防静电1000个</div>
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-E/ABS01-TP-P000-BLK</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-防静电ABS01-透紫-不印刷-空白</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/9/9</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      <div class="desc">同单</div>
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-E/ABS01-BK-P001-BLK</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-防静电ABS01-黑色-印刷001-空白</div>
+        <div class="mtx">印刷 <b>18727 淡黄</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/8/10</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-PC-BK-P000-5164</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用PC-黑色-不印刷-5164</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/8/10</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-PC-BK-P002-5164</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用PC-黑色-印刷002-515164</div>
+        <div class="mtx">印刷 <b>18717 白</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/8/10</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-BK-P000-BLK</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-黑色-不印刷-空白</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/8/10</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-BK-P001-BLK</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
+        <div class="mtx">印刷 <b>18727 淡黄</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/7/20</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-PC-T-P000-5164</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用PC-透明-不印刷-515164</div>
+        <div class="mtx">印刷 <b>不印刷</b> · 单价 <b>1.244</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-PC-BK-P006-5164</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用PC-黑色-印刷006-515164</div>
+        <div class="mtx">印刷 <b>18717 白</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/7/20</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-PC-T-P000-5164</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用PC-透明-不印刷-515164</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-PC-T-P002-5164</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用PC-透明-印刷002-515164</div>
+        <div class="mtx">印刷 <b>3005C 蓝</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/7/19</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-MABS-T-P000-BLK</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用透明ABS-透明-不印刷-空白</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-MABS-T-P001-BLK</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用透明ABS-透明-印刷001-空白</div>
+        <div class="mtx">印刷 <b>3005C 蓝</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/7/17</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-PC-T-P000-5164</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用PC-透明-不印刷-515164</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-PC-BK-P006-5164</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用PC-黑色-印刷006-515164</div>
+        <div class="mtx">印刷 <b>18717 白</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/7/16</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      <div class="desc">再安排一批8512全透，要5000个  ，蓝色</div>
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-T-P000-BLK</div>
+          <div class="val">5,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-透明-不印刷-空白</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-T-P001-BLK</div>
+          <div class="val">5,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-透明-印刷001-空白</div>
+        <div class="mtx">印刷 <b>3005C 蓝</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/6/22</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      <div class="desc">8512全透，带印刷，这款给我安排2000个吧</div>
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-T-P000-BLK</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-透明-不印刷-空白</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-T-P001-BLK</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-透明-印刷001-空白</div>
+        <div class="mtx">印刷 <b>3005C 蓝</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/6/15</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-PC-T-P000-5164</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用PC-透明-不印刷-515164</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-ABS-WH-P000-5164</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用ABS-白色-不印刷-515164</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-T-P000-BLK</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-透明-不印刷-空白</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-ABS-WH-P000-BLK</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用ABS-白色-不印刷-空白</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/6/10</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-T-P000-BLK</div>
+          <div class="val">3,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-透明-不印刷-空白</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-BK-P001-BLK</div>
+          <div class="val">3,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
+        <div class="mtx">印刷 <b>18727 淡黄</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/6/4</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-T-P000-BLK</div>
+          <div class="val">5,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-透明-不印刷-空白</div>
+        <div class="mtx">印刷 <b>不印刷</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">8512-PC-BK-P001-BLK</div>
+          <div class="val">5,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
+        <div class="mtx">印刷 <b>18727 淡黄</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">5508L-9</div>
+          <div class="val">40<span style="font-size:11px;font-weight:400;color:#9aa4b2"> KG</span></div>
+        </div>
+        <div class="spx"></div>
+        <div class="mtx">印刷 <b>—</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/6/3</div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-PC-T-P000-5164</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用PC-透明-不印刷-515164</div>
+        <div class="mtx">印刷 <b>不印刷</b> · 单价 <b>1.244</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">5510-PC-T-P009-5164</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 片</span></div>
+        </div>
+        <div class="spx">5510-通用PC-透明-印刷009-515164</div>
+        <div class="mtx">印刷 <b>3005C 蓝</b></div>
+      </div></div>
+    </div>
+  </section>
+</main>
+<footer>丰康塑料厂 · 本页数据由订单与交付记录自动生成<br>数量单位：片（另有标注除外）</footer>
+</body></html>
