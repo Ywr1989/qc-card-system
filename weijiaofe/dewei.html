@@ -5,14 +5,13 @@
 <title>德威 订单与交付查询 · 丰康塑料厂</title>
 <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
 <style>
-:root{--blue:#2b5797;--blued:#1f3b6e;--ink:#1c2530;--muted:#6b7684;--line:#e3e8ef;--bg:#eef2f7;--red:#d92d20;--green:#12805c}
+:root{--blue:#2b5797;--blued:#1f3b6e;--ink:#1c2530;--muted:#6b7684;--line:#e3e8ef;--bg:#eef2f7;--red:#d92d20;--green:#12805c;--purple:#7c3aed}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
 .hero{background:linear-gradient(135deg,#17325e,#2b5797 55%,#3f7ac0);color:#fff;padding:22px 16px 20px}
 .hero h1{margin:0;font-size:22px;letter-spacing:1px;font-weight:700}
 .hero .code{font-size:12px;opacity:.72;margin-top:3px;letter-spacing:1.5px}
 .hero .meta{margin-top:12px;font-size:12px;opacity:.92;display:flex;gap:14px;flex-wrap:wrap}
-/* ① 导航做成一眼看得出是按钮 */
 nav.anchor{position:sticky;top:0;z-index:9;display:flex;gap:7px;padding:9px 11px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 2px 10px rgba(20,40,80,.07)}
 nav.anchor a{flex:1;text-align:center;padding:9px 3px;font-size:13.5px;color:#2b5797;text-decoration:none;font-weight:700;background:#f2f7ff;border:1.5px solid #c5d8f2;border-radius:9px;box-shadow:0 1px 2px rgba(43,87,151,.08)}
 nav.anchor a:active{background:#dfedfd;border-color:#7fa8dc;color:#1d3f70}
@@ -26,36 +25,36 @@ h2.sec .no{display:inline-flex;width:23px;height:23px;border-radius:7px;backgrou
 .kpi.k3{flex:1 1 calc(33.33% - 6px)}
 .kpi .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--blued);line-height:1.25}
 .kpi .l{font-size:11px;color:var(--muted);margin-top:2px}
-.kpi.warnk{border-color:#f5c2bd;background:#fff7f6}
-.kpi.warnk .v{color:var(--red)}
-/* ② 宽表格 + 横向滑动 */
+.kpi .v.lv-red{color:var(--red)}.kpi .v.lv-purple{color:var(--purple)}.kpi .v.lv-green{color:var(--green)}
 .tw{background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:0 1px 2px rgba(20,40,80,.04)}
 .tws{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table.grid{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12.5px}
 table.grid th{background:var(--blue);color:#fff;font-weight:600;font-size:11.5px;padding:8px 8px;text-align:left;white-space:nowrap}
-table.grid td{padding:8px 8px;border-bottom:1px solid #eef2f7;vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-table.grid tbody tr:nth-child(even){background:#f8fafd}
-table.grid tbody tr:last-child td{border-bottom:none}
+table.grid td{padding:8px 8px;border-bottom:1px solid #eef2f7;vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff}
+/* ① 单据分组：同一单的行同底色 + 组间粗线 + 组内细线 */
+table.grid tr.g-alt td{background:#eef5fd}
+table.grid tr.g-first td{border-top:2px solid #9fbfe6}
+table.grid tr.g-first:first-child td{border-top:none}
 table.grid td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
 table.grid td.c{text-align:center}
 table.grid td.pn{font-weight:600;font-size:12px;white-space:normal;word-break:break-all;line-height:1.35}
 table.grid td.d{font-variant-numeric:tabular-nums}
 table.grid td.b{font-size:11.5px;color:#2b5797;font-weight:700;letter-spacing:.2px}
 table.grid td.sp{white-space:normal;color:#5b6675;font-size:11.5px;line-height:1.45}
-table.grid tr.neg{background:#fff6f5}
-table.grid tr.neg td.n{color:var(--red)}
+/* ② 数值颜色语义 */
+.lv-red{color:var(--red);font-weight:700}
+.lv-green{color:var(--green);font-weight:700}
+.lv-purple{color:var(--purple);font-weight:700}
+.lv-gray{color:#8a94a3;font-weight:600}
 .hint{font-size:11.5px;color:#8a94a3;margin:0 2px 7px;text-align:center}
-.desc{background:#fff;border:1px solid var(--line);border-radius:11px;padding:9px 12px;font-size:12.5px;color:#48566a;margin-bottom:9px;white-space:pre-wrap;word-break:break-word}
-.desc b{color:#2b3a4d}
-.red{color:var(--red)}.zero{color:#9aa4b2}
-.badge{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 5px;border-radius:4px;background:#fdecea;color:var(--red);white-space:nowrap;vertical-align:middle}
-.badge.ok{background:#e7f6f0;color:var(--green)}
-.badge.gray{background:#eef1f5;color:#5b6675}
-.warn{background:#fffbf0;border:1px solid #ffe0a3;border-left:4px solid #e8a020;border-radius:9px;padding:11px 13px;font-size:12.5px;color:#7a5200;margin:0 0 11px;line-height:1.65}
-.warn b{color:#8a4b00}
+.legend{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:12px;color:#5b6675;margin:0 0 11px;line-height:1.95}
+.legend div{white-space:nowrap;overflow-x:auto}
+.legend i{font-style:normal;font-weight:700}
 .empty{padding:28px 12px;text-align:center;color:#9aa4b2;font-size:13.5px;background:#fff;border:1px dashed var(--line);border-radius:12px}
 .note{font-size:11.5px;color:var(--muted);margin:9px 2px 0;line-height:1.75}
 footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;line-height:1.8}
+.voidhero{background:#b3261e;color:#fff;padding:20px 16px;text-align:center;font-size:18px;font-weight:700}
+.voidbody{padding:44px 20px;text-align:center;color:#444;line-height:2;background:#fff}
 </style>
 </head><body>
 <div class="hero">
@@ -71,12 +70,12 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
 <main>
   <section id="delivery">
     <h2 class="sec"><span class="no">1</span>近期发货记录</h2>
-    <div class="sub">最近 10 天已发出的货。同一张送货单的多行只在首行标日期与单号</div>
-    <div class="kpis"><div class="kpi k3"><div class="v">1</div><div class="l">送货单（张）</div></div><div class="kpi k3"><div class="v">1</div><div class="l">发货品项</div></div><div class="kpi k3"><div class="v">2,000</div><div class="l">合计数量（片）</div></div></div>
+    <div class="sub">最近 10 天已发出的货。同一张送货单的行用同色底纹连成一组，只在首行标日期与单号</div>
+    <div class="kpis"><div class="kpi k3"><div class="v ">1</div><div class="l">送货单（张）</div></div><div class="kpi k3"><div class="v ">1</div><div class="l">发货品项</div></div><div class="kpi k3"><div class="v ">2,000</div><div class="l">合计数量（片）</div></div></div>
     <div class="hint">← 表格可左右滑动 →</div><div class="tw"><div class="tws"><table class="grid">
 <colgroup><col style="width:82px"><col style="width:130px"><col style="width:168px"><col style="width:156px"><col style="width:92px"><col style="width:74px"><col style="width:56px"></colgroup>
 <thead><tr><th style="">日期</th><th style="">送货单号</th><th style="">品名品号</th><th style="">规格</th><th style="text-align:center">印刷颜色</th><th style="text-align:right">数量</th><th style="text-align:right">箱数</th></tr></thead>
-<tbody><tr>
+<tbody><tr class="g-first">
           <td class="d">2026/9/16</td>
           <td class="b">20260916-003</td>
           <td class="pn">DAWE-AS-TC5410-B001-ESD-01</td>
@@ -89,86 +88,95 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
   </section>
   <section id="undelivered">
     <h2 class="sec"><span class="no">2</span>未交付数量</h2>
-    <div class="sub">按下单记录与交付记录自动对账 · 绿色「已完成」表示该品号已交齐</div>
-    <div class="kpis"><div class="kpi k3"><div class="v">9</div><div class="l">品号合计</div></div><div class="kpi k3"><div class="v">2</div><div class="l">仍有未交付</div></div><div class="kpi k3 warnk"><div class="v">4</div><div class="l">待核对</div></div></div>
-    <div class="warn"><b>有 4 个品号的「已交付」大于「已下单」</b>，本厂正在核对下单记录，核对完成后更新。标红的数字属待核数据，请以实际对账为准。</div><div class="hint">← 表格可左右滑动 →</div><div class="tw"><div class="tws"><table class="grid">
+    <div class="sub">按下单记录与交付记录自动对账</div>
+    <div class="kpis"><div class="kpi k3"><div class="v ">9</div><div class="l">品号合计</div></div><div class="kpi k3"><div class="v lv-red">2</div><div class="l">未交付 100 片以上</div></div><div class="kpi k3"><div class="v lv-purple">4</div><div class="l">交付量超出下单 200 片以上</div></div></div>
+    <div class="legend">
+      <div><i class="lv-red">红色</i>：未交付超过 100 片，请留意</div>
+      <div><i class="lv-purple">紫色</i>：交付量已超过下单量 200 片以上，本厂正在核对下单记录</div>
+      <div><i class="lv-green">绿色</i>：在正常范围内（共 3 个品号）</div>
+    </div>
+    <div class="hint">← 表格可左右滑动 →</div><div class="tw"><div class="tws"><table class="grid">
 <colgroup><col style="width:168px"><col style="width:156px"><col style="width:92px"><col style="width:86px"><col style="width:86px"><col style="width:84px"></colgroup>
 <thead><tr><th style="">品名品号</th><th style="">规格</th><th style="text-align:center">印刷颜色</th><th style="text-align:right">下单数量</th><th style="text-align:right">已交付</th><th style="text-align:right">未交付</th></tr></thead>
-<tbody><tr class="">
+<tbody><tr>
         <td class="pn">DAWE-AS-AC8512-B001-ESD</td>
         <td class="sp">8512全黑色ABS方盒,三角形扣位,无表格,防静电</td>
         <td class="c">—</td>
         <td class="n">1,000</td>
         <td class="n">0</td>
-        <td class="n">1,000</td>
-      </tr><tr class="">
+        <td class="n lv-red">1,000</td>
+      </tr><tr>
         <td class="pn">DAWE-PC11-AC5410-B100-ESD</td>
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,磨砂面,10*10表格,DAWE刻字</td>
         <td class="c">—</td>
         <td class="n">1,200</td>
         <td class="n">1,000</td>
-        <td class="n">200</td>
-      </tr><tr class="">
+        <td class="n lv-red">200</td>
+      </tr><tr>
         <td class="pn">DAWE-AS-TC5410-B001-ESD-01</td>
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</td>
         <td class="c">—</td>
         <td class="n">16,500</td>
         <td class="n">16,500</td>
-        <td class="n">0<span class="badge ok">已完成</span></td>
-      </tr><tr class="">
+        <td class="n lv-green">0</td>
+      </tr><tr>
         <td class="pn">DAWE-AS-TC8512-B100-ESD</td>
         <td class="sp">8512半透明ABS方能扣应鱼10*10表格(细线暗油墨)上盖透明ABS,下盖ABS,均为防静电材质</td>
         <td class="c">—</td>
         <td class="n">680</td>
         <td class="n">680</td>
-        <td class="n">0<span class="badge ok">已完成</span></td>
-      </tr><tr class="">
+        <td class="n lv-green">0</td>
+      </tr><tr>
         <td class="pn">DAWE-PS-TC8512-B001</td>
         <td class="sp">8512半透明PS方盒,三角形扣位,无表格,不防静电</td>
         <td class="c">—</td>
         <td class="n">2,500</td>
         <td class="n">2,500</td>
-        <td class="n">0<span class="badge ok">已完成</span></td>
-      </tr><tr class="neg">
+        <td class="n lv-green">0</td>
+      </tr><tr>
         <td class="pn">DAWE-PS-TC8512-B100-00</td>
         <td class="sp">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</td>
         <td class="c">—</td>
         <td class="n">7,420</td>
         <td class="n">8,700</td>
-        <td class="n">-1,280<span class="badge">待核</span></td>
-      </tr><tr class="neg">
+        <td class="n lv-purple">-1,280</td>
+      </tr><tr>
         <td class="pn">MO-PC10-AC5410-ESD</td>
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,MOSEMI刻字</td>
         <td class="c">—</td>
         <td class="n">14,000</td>
         <td class="n">16,700</td>
-        <td class="n">-2,700<span class="badge">待核</span></td>
-      </tr><tr class="neg">
+        <td class="n lv-purple">-2,700</td>
+      </tr><tr>
         <td class="pn">DAWE-AS-TC5410-B100-ESD-01</td>
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
         <td class="c">—</td>
         <td class="n">83,787</td>
         <td class="n">91,687</td>
-        <td class="n">-7,900<span class="badge">待核</span></td>
-      </tr><tr class="neg">
+        <td class="n lv-purple">-7,900</td>
+      </tr><tr>
         <td class="pn">DAWE-PC10-AC5410-ESD</td>
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
         <td class="c">—</td>
         <td class="n">58,000</td>
         <td class="n">68,800</td>
-        <td class="n">-10,800<span class="badge">待核</span></td>
+        <td class="n lv-purple">-10,800</td>
       </tr></tbody></table></div></div>
-    <div class="note">未交付 = 下单总量 − 已交付总量。「待核」表示交付量已超过下单量，正在核对下单记录。</div>
+    <div class="note">未交付 = 下单总量 − 已交付总量。</div>
   </section>
   <section id="orders">
     <h2 class="sec"><span class="no">3</span>订单记录</h2>
-    <div class="sub">按下单日期倒序。同一张订单的多行只在首行标日期、客户订单号与客户要求</div>
-    <div class="kpis"><div class="kpi"><div class="v">32</div><div class="l">订单（张）</div></div><div class="kpi"><div class="v">38</div><div class="l">订单品项</div></div></div>
+    <div class="sub">按下单日期倒序。同一张订单的行用同色底纹连成一组，只在首行标日期、客户订单号与状态</div>
+    <div class="kpis"><div class="kpi k3"><div class="v ">32</div><div class="l">订单（张）</div></div><div class="kpi k3"><div class="v ">38</div><div class="l">订单品项</div></div><div class="kpi k3"><div class="v lv-green">0</div><div class="l">未标记记录状态</div></div></div>
+    <div class="legend">
+      <div><i class="lv-green">绿色</i>：记录状态已标记为「已记录」</div>
+      <div><i class="lv-red">红色</i>：尚未标记记录状态，需补录</div>
+    </div>
     <div class="hint">← 表格可左右滑动 →</div>
     <div class="tw"><div class="tws"><table class="grid">
 <colgroup><col style="width:82px"><col style="width:126px"><col style="width:150px"><col style="width:168px"><col style="width:156px"><col style="width:74px"><col style="width:92px"><col style="width:78px"></colgroup>
-<thead><tr><th style="">下单日期</th><th style="">客户订单号</th><th style="">客户要求</th><th style="">品名品号</th><th style="">规格</th><th style="text-align:right">数量</th><th style="text-align:center">印刷颜色</th><th style="text-align:center">状态</th></tr></thead>
-<tbody><tr>
+<thead><tr><th style="">下单日期</th><th style="">客户订单号</th><th style="">客户要求</th><th style="">品名品号</th><th style="">规格</th><th style="text-align:right">数量</th><th style="text-align:center">印刷颜色</th><th style="text-align:center">记录状态</th></tr></thead>
+<tbody><tr class="g-first">
         <td class="d">2026/9/22</td>
         <td class="b">DXP020260922002</td>
         <td class="sp"></td>
@@ -176,8 +184,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,磨砂面,10*10表格,DAWE刻字</td>
         <td class="n">200</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/9/21</td>
         <td class="b">DXP020260921002</td>
         <td class="sp"></td>
@@ -185,8 +193,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
         <td class="n">5,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first">
         <td class="d">2026/9/14</td>
         <td class="b">DXP020260914003</td>
         <td class="sp"></td>
@@ -194,8 +202,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</td>
         <td class="n">2,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/9/9</td>
         <td class="b">DXP020260909003</td>
         <td class="sp"></td>
@@ -203,8 +211,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">8512全黑色ABS方盒,三角形扣位,无表格,防静电</td>
         <td class="n">1,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first">
         <td class="d">2026/9/7</td>
         <td class="b">DXP020260907002</td>
         <td class="sp"></td>
@@ -212,8 +220,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</td>
         <td class="n">2,500</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/8/31</td>
         <td class="b">DXP020260831006</td>
         <td class="sp"></td>
@@ -221,8 +229,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</td>
         <td class="n">2,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first">
         <td class="d">2026/8/17</td>
         <td class="b">DXP020260817002</td>
         <td class="sp"></td>
@@ -230,8 +238,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
         <td class="n">8,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/8/12</td>
         <td class="b">DXP020260812001</td>
         <td class="sp"></td>
@@ -239,8 +247,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
         <td class="n">4,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first">
         <td class="d">2026/8/4</td>
         <td class="b">DXP020260803001</td>
         <td class="sp"></td>
@@ -248,8 +256,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</td>
         <td class="n">2,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/8/4</td>
         <td class="b">DXP020260803001</td>
         <td class="sp"></td>
@@ -257,8 +265,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,MOSEMI刻字</td>
         <td class="n">5,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first">
         <td class="d">2026/8/4</td>
         <td class="b">DXP020260803002</td>
         <td class="sp"></td>
@@ -266,8 +274,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</td>
         <td class="n">680</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/8/4</td>
         <td class="b">DXP020260810009</td>
         <td class="sp"></td>
@@ -275,8 +283,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</td>
         <td class="n">680</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first">
         <td class="d">2026/7/27</td>
         <td class="b">DXP020260727002</td>
         <td class="sp"></td>
@@ -284,8 +292,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
         <td class="n">10,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="">
         <td class="d"></td>
         <td class="b"></td>
         <td class="sp"></td>
@@ -293,8 +301,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</td>
         <td class="n">340</td>
         <td class="c">—</td>
-        <td class="c"></td>
-      </tr><tr>
+        <td class="c "></td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/7/20</td>
         <td class="b">DXP020260720001</td>
         <td class="sp"></td>
@@ -302,8 +310,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
         <td class="n">6,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class=" g-alt">
         <td class="d"></td>
         <td class="b"></td>
         <td class="sp"></td>
@@ -311,8 +319,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</td>
         <td class="n">3,000</td>
         <td class="c">—</td>
-        <td class="c"></td>
-      </tr><tr>
+        <td class="c "></td>
+      </tr><tr class=" g-alt">
         <td class="d"></td>
         <td class="b"></td>
         <td class="sp"></td>
@@ -320,8 +328,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
         <td class="n">10,000</td>
         <td class="c">—</td>
-        <td class="c"></td>
-      </tr><tr>
+        <td class="c "></td>
+      </tr><tr class="g-first">
         <td class="d">2026/7/13</td>
         <td class="b">DXP020260713002</td>
         <td class="sp"></td>
@@ -329,8 +337,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
         <td class="n">5,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/7/6</td>
         <td class="b">DXP020260706003</td>
         <td class="sp"></td>
@@ -338,8 +346,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
         <td class="n">13,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class=" g-alt">
         <td class="d"></td>
         <td class="b"></td>
         <td class="sp"></td>
@@ -347,8 +355,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</td>
         <td class="n">3,000</td>
         <td class="c">—</td>
-        <td class="c"></td>
-      </tr><tr>
+        <td class="c "></td>
+      </tr><tr class="g-first">
         <td class="d">2026/6/23</td>
         <td class="b">DXP020260623001</td>
         <td class="sp"></td>
@@ -356,8 +364,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</td>
         <td class="n">2,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/6/22</td>
         <td class="b">DXP020260622002</td>
         <td class="sp"></td>
@@ -365,8 +373,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
         <td class="n">5,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first">
         <td class="d">2026/6/15</td>
         <td class="b">DXP020260615002</td>
         <td class="sp"></td>
@@ -374,8 +382,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
         <td class="n">5,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/6/11</td>
         <td class="b">DXP020260611001</td>
         <td class="sp"></td>
@@ -383,8 +391,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</td>
         <td class="n">3,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first">
         <td class="d">2026/6/8</td>
         <td class="b">DXP020260608002</td>
         <td class="sp"></td>
@@ -392,8 +400,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
         <td class="n">5,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/5/25</td>
         <td class="b">DXP020260525004</td>
         <td class="sp"></td>
@@ -401,8 +409,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
         <td class="n">10,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class=" g-alt">
         <td class="d"></td>
         <td class="b"></td>
         <td class="sp"></td>
@@ -410,8 +418,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">8512半透明ABS方能扣应鱼10*10表格(细线暗油墨)上盖透明ABS,下盖ABS,均为防静电材质</td>
         <td class="n">680</td>
         <td class="c">—</td>
-        <td class="c"></td>
-      </tr><tr>
+        <td class="c "></td>
+      </tr><tr class="g-first">
         <td class="d">2026/5/21</td>
         <td class="b">DXP020260521002</td>
         <td class="sp"></td>
@@ -419,8 +427,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</td>
         <td class="n">1,360</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/5/20</td>
         <td class="b">DXP020260520001</td>
         <td class="sp"></td>
@@ -428,8 +436,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</td>
         <td class="n">680</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first">
         <td class="d">2026/5/18</td>
         <td class="b">DXP020260518004</td>
         <td class="sp"></td>
@@ -437,8 +445,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</td>
         <td class="n">680</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/5/6</td>
         <td class="b">DXP020260506003</td>
         <td class="sp"></td>
@@ -446,8 +454,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,磨砂面,10*10表格,DAWE刻字</td>
         <td class="n">1,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first">
         <td class="d">2026/4/28</td>
         <td class="b">补货</td>
         <td class="sp"></td>
@@ -455,8 +463,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
         <td class="n">6,787</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/4/27</td>
         <td class="b">DXP020260427002</td>
         <td class="sp"></td>
@@ -464,8 +472,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
         <td class="n">9,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first">
         <td class="d">2026/4/23</td>
         <td class="b">DXP020260423002</td>
         <td class="sp"></td>
@@ -473,8 +481,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
         <td class="n">20,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/4/20</td>
         <td class="b">DXP020260420001</td>
         <td class="sp"></td>
@@ -482,8 +490,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
         <td class="n">11,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class=" g-alt">
         <td class="d"></td>
         <td class="b"></td>
         <td class="sp"></td>
@@ -491,8 +499,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
         <td class="n">9,000</td>
         <td class="c">—</td>
-        <td class="c"></td>
-      </tr><tr>
+        <td class="c "></td>
+      </tr><tr class="g-first">
         <td class="d">2026/4/15</td>
         <td class="b">DXP020260414002</td>
         <td class="sp"></td>
@@ -500,8 +508,8 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">8512半透明PS方盒,三角形扣位,无表格,不防静电</td>
         <td class="n">2,500</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
-      </tr><tr>
+        <td class="c lv-green">已记录</td>
+      </tr><tr class="g-first g-alt">
         <td class="d">2026/4/13</td>
         <td class="b">DXP020260413007</td>
         <td class="sp"></td>
@@ -509,7 +517,7 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="sp">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,MOSEMI刻字</td>
         <td class="n">9,000</td>
         <td class="c">—</td>
-        <td class="c"><span class="badge ">已记录</span></td>
+        <td class="c lv-green">已记录</td>
       </tr></tbody></table></div></div>
   </section>
 </main>
