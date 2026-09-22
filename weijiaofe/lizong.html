@@ -30,10 +30,14 @@ h2.sec .no{display:inline-flex;width:23px;height:23px;border-radius:7px;backgrou
 .tws{overflow-x:auto;-webkit-overflow-scrolling:touch}
 table.grid{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12.5px}
 table.grid th{background:var(--blue);color:#fff;font-weight:600;font-size:11.5px;padding:8px 8px;text-align:left;white-space:nowrap}
-/* ② 行距压缩 + 组内零分隔线（2026-09-23 多模型会诊共识）：
-   组内无线、组间 2px 深线 + 加大上留白；去掉分组底纹（底纹与线的明度打架＝"看着乱"的根因） */
-table.grid td{padding:5px 8px;border:none;vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;line-height:1.35}
-table.grid tr.g-first td{border-top:2px solid #b8c8d8;padding-top:9px}
+/* ② 行距压缩 + 组内零分隔线（多模型会诊共识）
+   v2.5 追加：表格容器加 max-height，表头在容器内吸顶（用户要求「标题要冻结」） */
+.tw{background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:0 1px 2px rgba(20,40,80,.04)}
+.tws{overflow:auto;-webkit-overflow-scrolling:touch;max-height:68vh}
+table.grid{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12.5px}
+table.grid th{background:var(--blue);color:#fff;font-weight:600;font-size:11.5px;padding:6px 7px;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:3}
+table.grid td{padding:4px 7px;border:none;vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;line-height:1.3}
+table.grid tr.g-first td{border-top:2px solid #b8c8d8;padding-top:8px}
 table.grid tr.g-first:first-child td{border-top:none}
 /* ③ 合并单元格（同一单的日期/单号等纵向合并）：必须顶对齐，不能居中 */
 table.grid td[rowspan]{vertical-align:top}
@@ -42,6 +46,7 @@ table.grid td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:6
 table.grid td.c{text-align:center}
 table.grid td.pn{font-weight:600;font-size:12px;white-space:normal;word-break:break-all;line-height:1.35}
 table.grid td.d{font-variant-numeric:tabular-nums}
+table.grid td.d .bl{display:block;font-size:11px;color:#2b5797;font-weight:700;letter-spacing:.2px;margin-top:1px;word-break:break-all;white-space:normal}
 table.grid td.b{font-size:11.5px;color:#2b5797;font-weight:700;letter-spacing:.2px}
 table.grid td.sp{white-space:normal;color:#5b6675;font-size:11.5px;line-height:1.45}
 /* ② 数值颜色语义 */
@@ -76,18 +81,16 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
     <div class="sub">最近 10 天已发出的货。同一张送货单只在首行标日期与单号，组内不再划线分隔</div>
     <div class="kpis"><div class="kpi k3"><div class="v ">1</div><div class="l">送货单（张）</div></div><div class="kpi k3"><div class="v ">2</div><div class="l">发货品项</div></div><div class="kpi k3"><div class="v ">4,458</div><div class="l">合计数量（片）</div></div></div>
     <div class="hint">← 表格可左右滑动 →</div><div class="tw"><div class="tws"><table class="grid">
-<colgroup><col style="width:82px"><col style="width:130px"><col style="width:200px"><col style="width:156px"><col style="width:92px"><col style="width:74px"><col style="width:56px"></colgroup>
-<thead><tr><th style="">日期</th><th style="">送货单号</th><th style="">品名品号</th><th style="">规格</th><th style="text-align:center">印刷颜色</th><th style="text-align:right">数量</th><th style="text-align:right">箱数</th></tr></thead>
+<colgroup><col style="width:156px"><col style="width:200px"><col style="width:156px"><col style="width:92px"><col style="width:74px"><col style="width:56px"></colgroup>
+<thead><tr><th style="">日期 / 送货单号</th><th style="">品名品号</th><th style="">规格</th><th style="text-align:center">印刷颜色</th><th style="text-align:right">数量</th><th style="text-align:right">箱数</th></tr></thead>
 <tbody><tr class="g-first">
-          <td class="d" rowspan="2">2026/9/21</td>
-          <td class="b" rowspan="2">K7-20260921-018</td>
+          <td class="d" rowspan="2">2026/9/21<span class="bl">K7-20260921-018</span></td>
           <td class="pn">8512-PC-T-P000-BLK</td>
           <td class="sp">8512-通用PC-透明-不印刷-空白</td>
           <td class="c">不印刷</td>
           <td class="n">2,229</td>
           <td class="n">4件</td>
         </tr><tr class="">
-          
           
           <td class="pn">8512-PC-T-P001-BLK</td>
           <td class="sp">8512-通用PC-透明-印刷001-空白</td>
@@ -255,11 +258,10 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
     </div>
     <div class="hint">← 表格可左右滑动 →</div>
     <div class="tw"><div class="tws"><table class="grid">
-<colgroup><col style="width:82px"><col style="width:126px"><col style="width:150px"><col style="width:200px"><col style="width:156px"><col style="width:74px"><col style="width:92px"><col style="width:78px"></colgroup>
-<thead><tr><th style="">下单日期</th><th style="">客户订单号</th><th style="">客户要求</th><th style="">品名品号</th><th style="">规格</th><th style="text-align:right">数量</th><th style="text-align:center">印刷颜色</th><th style="text-align:center">记录状态</th></tr></thead>
+<colgroup><col style="width:156px"><col style="width:150px"><col style="width:200px"><col style="width:156px"><col style="width:74px"><col style="width:92px"><col style="width:78px"></colgroup>
+<thead><tr><th style="">下单日期 / 客户订单号</th><th style="">客户要求</th><th style="">品名品号</th><th style="">规格</th><th style="text-align:right">数量</th><th style="text-align:center">印刷颜色</th><th style="text-align:center">记录状态</th></tr></thead>
 <tbody><tr class="g-first">
         <td class="d" rowspan="1">2026/9/17</td>
-        <td class="b" rowspan="1"></td>
         <td class="sp" rowspan="1">8512全透明的，正常印刷的，552*4套（印刷蓝色）</td>
         <td class="pn">8512-PC-T-P000-BLK</td>
         <td class="sp">8512-通用PC-透明-不印刷-空白</td>
@@ -268,7 +270,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c lv-green">已记录</td>
       </tr><tr class="g-first">
         <td class="d" rowspan="1">2026/9/17</td>
-        <td class="b" rowspan="1"></td>
         <td class="sp" rowspan="1"></td>
         <td class="pn">8512-PC-T-P001-BLK</td>
         <td class="sp">8512-通用PC-透明-印刷001-空白</td>
@@ -277,7 +278,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c lv-green">已记录</td>
       </tr><tr class="g-first">
         <td class="d" rowspan="1">2026/9/9</td>
-        <td class="b" rowspan="1"></td>
         <td class="sp" rowspan="1">5510全黑防静电，1000个</td>
         <td class="pn">5510-E/ABS01-BK-P000-5164</td>
         <td class="sp">5510-防静电ABS01-黑色-不印刷-515164</td>
@@ -286,7 +286,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c lv-green">已记录</td>
       </tr><tr class="g-first">
         <td class="d" rowspan="1">2026/9/9</td>
-        <td class="b" rowspan="1"></td>
         <td class="sp" rowspan="1"></td>
         <td class="pn">5510-E/ABS01-BK-P002-5164</td>
         <td class="sp">5510-防静电ABS01-黑色-印刷002-515164</td>
@@ -295,7 +294,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c lv-green">已记录</td>
       </tr><tr class="g-first">
         <td class="d" rowspan="1">2026/9/9</td>
-        <td class="b" rowspan="1"></td>
         <td class="sp" rowspan="1">8512上透下黑，防静电1000个</td>
         <td class="pn">8512-E/ABS01-TP-P000-BLK</td>
         <td class="sp">8512-防静电ABS01-透紫-不印刷-空白</td>
@@ -304,7 +302,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c lv-green">已记录</td>
       </tr><tr class="g-first">
         <td class="d" rowspan="1">2026/9/9</td>
-        <td class="b" rowspan="1"></td>
         <td class="sp" rowspan="1"></td>
         <td class="pn">8512-E/ABS01-BK-P001-BLK</td>
         <td class="sp">8512-防静电ABS01-黑色-印刷001-空白</td>
@@ -313,7 +310,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c lv-green">已记录</td>
       </tr><tr class="g-first">
         <td class="d" rowspan="1">2026/8/10</td>
-        <td class="b" rowspan="1"></td>
         <td class="sp" rowspan="1"></td>
         <td class="pn">5510-PC-BK-P000-5164</td>
         <td class="sp">5510-通用PC-黑色-不印刷-5164</td>
@@ -322,7 +318,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c lv-green">已记录</td>
       </tr><tr class="g-first">
         <td class="d" rowspan="1">2026/8/10</td>
-        <td class="b" rowspan="1"></td>
         <td class="sp" rowspan="1"></td>
         <td class="pn">5510-PC-BK-P002-5164</td>
         <td class="sp">5510-通用PC-黑色-印刷002-515164</td>
@@ -331,7 +326,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c lv-green">已记录</td>
       </tr><tr class="g-first">
         <td class="d" rowspan="1">2026/8/10</td>
-        <td class="b" rowspan="1"></td>
         <td class="sp" rowspan="1"></td>
         <td class="pn">8512-PC-BK-P000-BLK</td>
         <td class="sp">8512-通用PC-黑色-不印刷-空白</td>
@@ -340,7 +334,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c lv-green">已记录</td>
       </tr><tr class="g-first">
         <td class="d" rowspan="1">2026/8/10</td>
-        <td class="b" rowspan="1"></td>
         <td class="sp" rowspan="1"></td>
         <td class="pn">8512-PC-BK-P001-BLK</td>
         <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
@@ -349,7 +342,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c lv-green">已记录</td>
       </tr><tr class="g-first">
         <td class="d" rowspan="2">2026/7/20</td>
-        <td class="b" rowspan="2"></td>
         <td class="sp" rowspan="2"></td>
         <td class="pn">5510-PC-T-P000-5164</td>
         <td class="sp">5510-通用PC-透明-不印刷-515164</td>
@@ -357,7 +349,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c">不印刷</td>
         <td class="c lv-green">已记录</td>
       </tr><tr class="">
-        
         
         
         <td class="pn">5510-PC-BK-P006-5164</td>
@@ -367,7 +358,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c "></td>
       </tr><tr class="g-first">
         <td class="d" rowspan="2">2026/7/20</td>
-        <td class="b" rowspan="2"></td>
         <td class="sp" rowspan="2"></td>
         <td class="pn">5510-PC-T-P000-5164</td>
         <td class="sp">5510-通用PC-透明-不印刷-515164</td>
@@ -375,7 +365,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c">不印刷</td>
         <td class="c lv-green">已记录</td>
       </tr><tr class="">
-        
         
         
         <td class="pn">5510-PC-T-P002-5164</td>
@@ -385,7 +374,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c "></td>
       </tr><tr class="g-first">
         <td class="d" rowspan="2">2026/7/19</td>
-        <td class="b" rowspan="2"></td>
         <td class="sp" rowspan="2"></td>
         <td class="pn">8512-MABS-T-P000-BLK</td>
         <td class="sp">8512-通用透明ABS-透明-不印刷-空白</td>
@@ -395,7 +383,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
       </tr><tr class="">
         
         
-        
         <td class="pn">8512-MABS-T-P001-BLK</td>
         <td class="sp">8512-通用透明ABS-透明-印刷001-空白</td>
         <td class="n">2,000</td>
@@ -403,7 +390,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c "></td>
       </tr><tr class="g-first">
         <td class="d" rowspan="2">2026/7/17</td>
-        <td class="b" rowspan="2"></td>
         <td class="sp" rowspan="2"></td>
         <td class="pn">5510-PC-T-P000-5164</td>
         <td class="sp">5510-通用PC-透明-不印刷-515164</td>
@@ -413,7 +399,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
       </tr><tr class="">
         
         
-        
         <td class="pn">5510-PC-BK-P006-5164</td>
         <td class="sp">5510-通用PC-黑色-印刷006-515164</td>
         <td class="n">2,000</td>
@@ -421,7 +406,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c "></td>
       </tr><tr class="g-first">
         <td class="d" rowspan="2">2026/7/16</td>
-        <td class="b" rowspan="2"></td>
         <td class="sp" rowspan="2">再安排一批8512全透，要5000个  ，蓝色</td>
         <td class="pn">8512-PC-T-P000-BLK</td>
         <td class="sp">8512-通用PC-透明-不印刷-空白</td>
@@ -431,7 +415,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
       </tr><tr class="">
         
         
-        
         <td class="pn">8512-PC-T-P001-BLK</td>
         <td class="sp">8512-通用PC-透明-印刷001-空白</td>
         <td class="n">5,000</td>
@@ -439,7 +422,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c "></td>
       </tr><tr class="g-first">
         <td class="d" rowspan="2">2026/6/22</td>
-        <td class="b" rowspan="2"></td>
         <td class="sp" rowspan="2">8512全透，带印刷，这款给我安排2000个吧</td>
         <td class="pn">8512-PC-T-P000-BLK</td>
         <td class="sp">8512-通用PC-透明-不印刷-空白</td>
@@ -449,7 +431,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
       </tr><tr class="">
         
         
-        
         <td class="pn">8512-PC-T-P001-BLK</td>
         <td class="sp">8512-通用PC-透明-印刷001-空白</td>
         <td class="n">2,000</td>
@@ -457,7 +438,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c "></td>
       </tr><tr class="g-first">
         <td class="d" rowspan="4">2026/6/15</td>
-        <td class="b" rowspan="4"></td>
         <td class="sp" rowspan="4"></td>
         <td class="pn">5510-PC-T-P000-5164</td>
         <td class="sp">5510-通用PC-透明-不印刷-515164</td>
@@ -465,7 +445,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c">不印刷</td>
         <td class="c lv-green">已记录</td>
       </tr><tr class="">
-        
         
         
         <td class="pn">5510-ABS-WH-P000-5164</td>
@@ -476,14 +455,12 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
       </tr><tr class="">
         
         
-        
         <td class="pn">8512-PC-T-P000-BLK</td>
         <td class="sp">8512-通用PC-透明-不印刷-空白</td>
         <td class="n">1,000</td>
         <td class="c">不印刷</td>
         <td class="c "></td>
       </tr><tr class="">
-        
         
         
         <td class="pn">8512-ABS-WH-P000-BLK</td>
@@ -493,7 +470,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c "></td>
       </tr><tr class="g-first">
         <td class="d" rowspan="2">2026/6/10</td>
-        <td class="b" rowspan="2"></td>
         <td class="sp" rowspan="2"></td>
         <td class="pn">8512-PC-T-P000-BLK</td>
         <td class="sp">8512-通用PC-透明-不印刷-空白</td>
@@ -501,7 +477,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c">不印刷</td>
         <td class="c lv-green">已记录</td>
       </tr><tr class="">
-        
         
         
         <td class="pn">8512-PC-BK-P001-BLK</td>
@@ -511,7 +486,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c "></td>
       </tr><tr class="g-first">
         <td class="d" rowspan="3">2026/6/4</td>
-        <td class="b" rowspan="3"></td>
         <td class="sp" rowspan="3"></td>
         <td class="pn">8512-PC-T-P000-BLK</td>
         <td class="sp">8512-通用PC-透明-不印刷-空白</td>
@@ -519,7 +493,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c">不印刷</td>
         <td class="c lv-green">已记录</td>
       </tr><tr class="">
-        
         
         
         <td class="pn">8512-PC-BK-P001-BLK</td>
@@ -530,7 +503,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
       </tr><tr class="">
         
         
-        
         <td class="pn">5508L-9</td>
         <td class="sp"></td>
         <td class="n">40</td>
@@ -538,7 +510,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c "></td>
       </tr><tr class="g-first">
         <td class="d" rowspan="2">2026/6/3</td>
-        <td class="b" rowspan="2"></td>
         <td class="sp" rowspan="2"></td>
         <td class="pn">5510-PC-T-P000-5164</td>
         <td class="sp">5510-通用PC-透明-不印刷-515164</td>
@@ -546,7 +517,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <td class="c">不印刷</td>
         <td class="c lv-green">已记录</td>
       </tr><tr class="">
-        
         
         
         <td class="pn">5510-PC-T-P009-5164</td>
