@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>德威 订单与交付查询 · 丰康塑料厂</title>
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<style>
+:root{--blue:#2b5797;--blued:#1f3b6e;--ink:#1c2530;--muted:#6b7684;--line:#e3e8ef;--bg:#eef2f7;--red:#d92d20;--green:#12805c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+.hero{background:linear-gradient(135deg,#17325e,#2b5797 55%,#3f7ac0);color:#fff;padding:24px 18px 22px}
+.hero h1{margin:0;font-size:23px;letter-spacing:1px;font-weight:700}
+.hero .code{font-size:12px;opacity:.72;margin-top:3px;letter-spacing:1.5px}
+.hero .meta{margin-top:14px;font-size:12px;opacity:.92;display:flex;gap:16px;flex-wrap:wrap}
+nav.anchor{position:sticky;top:0;z-index:9;display:flex;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 2px 10px rgba(20,40,80,.07)}
+nav.anchor a{flex:1;text-align:center;padding:13px 4px;font-size:14px;color:#3a4a60;text-decoration:none;font-weight:600;border-bottom:3px solid transparent}
+nav.anchor a:active{background:#f6f9ff;color:var(--blue)}
+main{padding:14px 12px 44px;max-width:780px;margin:0 auto}
+section{margin-bottom:26px;scroll-margin-top:58px}
+h2.sec{font-size:17.5px;margin:0 0 3px;display:flex;align-items:center;gap:8px;font-weight:700}
+h2.sec .no{display:inline-flex;width:23px;height:23px;border-radius:7px;background:var(--blue);color:#fff;font-size:13px;align-items:center;justify-content:center;flex:0 0 auto}
+.sub{font-size:12px;color:var(--muted);margin:0 0 12px;padding-left:31px}
+.kpis{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}
+.kpi{flex:1 1 calc(50% - 4px);min-width:0;background:#fff;border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+.kpi.k3{flex:1 1 calc(33.33% - 6px)}
+.kpi .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--blued);line-height:1.25}
+.kpi .l{font-size:11px;color:var(--muted);margin-top:2px}
+.kpi.warnk{border-color:#f5c2bd;background:#fff7f6}
+.kpi.warnk .v{color:var(--red)}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 1px 2px rgba(20,40,80,.04)}
+.card>.hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding:11px 13px;background:#f6faff;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.card>.hd .d{font-size:15px;font-weight:700}
+.card>.hd .tag{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bill{display:inline-block;font-size:11.5px;color:#2b5797;background:#e8f0fc;border-radius:5px;padding:1px 6px;margin-left:6px;font-weight:700;letter-spacing:.3px;word-break:break-all}
+.desc{font-size:12.5px;color:#48566a;padding:9px 13px;background:#fcfdff;border-bottom:1px solid #eef2f7;white-space:pre-wrap;word-break:break-word}
+/* 近期发货：窄表格（4 列，固定布局防溢出） */
+table.fixed{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13.5px}
+table.fixed th{background:#f4f7fb;color:#4a5666;font-weight:600;font-size:11.5px;text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.fixed td{padding:8px;border-bottom:1px solid #eef2f7;vertical-align:top;word-break:break-word}
+table.fixed tr:last-child td{border-bottom:none}
+td.pn{font-weight:600;font-size:12.5px;word-break:break-all}
+td .spec{display:block;color:var(--muted);font-size:11.5px;margin-top:2px;font-weight:400;line-height:1.45}
+td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap;font-weight:600}
+td.c{text-align:center;font-size:12.5px;word-break:break-word}
+/* 列表行（未交付 / 订单记录） */
+.rows{padding:2px 0}
+.row{padding:11px 13px;border-bottom:1px solid #eef2f7}
+.row:last-child{border-bottom:none}
+.row.neg{background:#fff6f5}
+.row .l1{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.row .pnx{font-size:13px;font-weight:700;word-break:break-all;flex:1 1 auto;min-width:0}
+.row .val{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap;flex:0 0 auto}
+.row .spx{font-size:11.5px;color:var(--muted);margin-top:3px;line-height:1.5;word-break:break-word}
+.row .mtx{font-size:11.5px;color:#5b6675;margin-top:5px;font-variant-numeric:tabular-nums}
+.row .mtx b{color:#2b3a4d;font-weight:600}
+.red{color:var(--red)}.green{color:var(--green)}.zero{color:#9aa4b2}
+.badge{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 5px;border-radius:4px;background:#fdecea;color:var(--red);white-space:nowrap;vertical-align:middle;margin-left:4px}
+.badge.ok{background:#e7f6f0;color:var(--green)}
+.badge.gray{background:#eef1f5;color:#5b6675}
+.warn{background:#fffbf0;border:1px solid #ffe0a3;border-left:4px solid #e8a020;border-radius:9px;padding:11px 13px;font-size:12.5px;color:#7a5200;margin:0 0 12px;line-height:1.65}
+.warn b{color:#8a4b00}
+.empty{padding:28px 12px;text-align:center;color:#9aa4b2;font-size:13.5px;background:#fff;border:1px dashed var(--line);border-radius:12px}
+.note{font-size:11.5px;color:var(--muted);margin:9px 2px 0;line-height:1.75}
+footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;line-height:1.8}
+</style>
+</head><body>
+<div class="hero">
+  <h1>德威</h1>
+  <div class="code">CDW02302</div>
+  <div class="meta"><span>订单与交付查询</span><span>数据更新：2026/9/22 23:01:04</span></div>
+</div>
+<nav class="anchor">
+  <a href="#delivery">近期发货</a>
+  <a href="#undelivered">未交付</a>
+  <a href="#orders">订单记录</a>
+</nav>
+<main>
+  <section id="delivery">
+    <h2 class="sec"><span class="no">1</span>近期发货记录</h2>
+    <div class="sub">最近 10 天已发出的货</div>
+    <div class="kpis"><div class="kpi k3"><div class="v">1</div><div class="l">送货单（张）</div></div><div class="kpi k3"><div class="v">1</div><div class="l">发货品项</div></div><div class="kpi k3"><div class="v">2,000</div><div class="l">合计数量（片）</div></div></div>
+    <div class="card">
+        <div class="hd">
+          <div class="d">2026/9/16<span class="bill">20260916-003</span></div>
+          <div class="tag">1 项 · 合计 2,000 片</div>
+        </div>
+        <table class="fixed"><colgroup><col><col style="width:22%"><col style="width:19%"><col style="width:13%"></colgroup>
+        <thead><tr><th>品名品号 / 规格</th><th style="text-align:center">印刷颜色</th><th style="text-align:right">数量</th><th style="text-align:right">箱数</th></tr></thead>
+        <tbody><tr>
+        <td class="pn">DAWE-AS-TC5410-B001-ESD-01<span class="spec">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</span></td>
+        <td class="c">—</td>
+        <td class="n">2,000</td>
+        <td class="n">4箱</td>
+      </tr></tbody></table>
+      </div>
+    <div class="note">箱数「—」表示该行未登记箱数；数量「待填」表示源表未填数量。</div>
+  </section>
+  <section id="undelivered">
+    <h2 class="sec"><span class="no">2</span>未交付数量</h2>
+    <div class="sub">按下单记录与交付记录自动对账 · 右侧大字为未交付数量（片）</div>
+    <div class="kpis"><div class="kpi k3"><div class="v">9</div><div class="l">品号合计</div></div><div class="kpi k3"><div class="v">2</div><div class="l">仍有未交付</div></div><div class="kpi k3 warnk"><div class="v">4</div><div class="l">待核对</div></div></div>
+    <div class="warn"><b>有 4 个品号的「已交付」大于「已下单」</b>，本厂正在核对下单记录，核对完成后更新。标红的数字属待核数据，请以实际对账为准。</div><div class="card"><div class="rows"><div class="row">
+      <div class="l1">
+        <div class="pnx">DAWE-AS-AC8512-B001-ESD</div>
+        <div class="val red">1,000</div>
+      </div>
+      <div class="spx">8512全黑色ABS方盒,三角形扣位,无表格,防静电</div>
+      <div class="mtx">印刷 <b>—</b> · 下单 <b>1,000</b> · 已交付 <b>0</b></div>
+    </div><div class="row">
+      <div class="l1">
+        <div class="pnx">DAWE-PC11-AC5410-B100-ESD</div>
+        <div class="val red">200</div>
+      </div>
+      <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,磨砂面,10*10表格,DAWE刻字</div>
+      <div class="mtx">印刷 <b>—</b> · 下单 <b>1,200</b> · 已交付 <b>1,000</b></div>
+    </div><div class="row">
+      <div class="l1">
+        <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
+        <div class="val zero">0<span class="badge ok">已完成</span></div>
+      </div>
+      <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
+      <div class="mtx">印刷 <b>—</b> · 下单 <b>16,500</b> · 已交付 <b>16,500</b></div>
+    </div><div class="row">
+      <div class="l1">
+        <div class="pnx">DAWE-AS-TC8512-B100-ESD</div>
+        <div class="val zero">0<span class="badge ok">已完成</span></div>
+      </div>
+      <div class="spx">8512半透明ABS方能扣应鱼10*10表格(细线暗油墨)上盖透明ABS,下盖ABS,均为防静电材质</div>
+      <div class="mtx">印刷 <b>—</b> · 下单 <b>680</b> · 已交付 <b>680</b></div>
+    </div><div class="row">
+      <div class="l1">
+        <div class="pnx">DAWE-PS-TC8512-B001</div>
+        <div class="val zero">0<span class="badge ok">已完成</span></div>
+      </div>
+      <div class="spx">8512半透明PS方盒,三角形扣位,无表格,不防静电</div>
+      <div class="mtx">印刷 <b>—</b> · 下单 <b>2,500</b> · 已交付 <b>2,500</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">DAWE-PS-TC8512-B100-00</div>
+        <div class="val red">-1,280<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</div>
+      <div class="mtx">印刷 <b>—</b> · 下单 <b>7,420</b> · 已交付 <b>8,700</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">MO-PC10-AC5410-ESD</div>
+        <div class="val red">-2,700<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,MOSEMI刻字</div>
+      <div class="mtx">印刷 <b>—</b> · 下单 <b>14,000</b> · 已交付 <b>16,700</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
+        <div class="val red">-7,900<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
+      <div class="mtx">印刷 <b>—</b> · 下单 <b>83,787</b> · 已交付 <b>91,687</b></div>
+    </div><div class="row neg">
+      <div class="l1">
+        <div class="pnx">DAWE-PC10-AC5410-ESD</div>
+        <div class="val red">-10,800<span class="badge">待核</span></div>
+      </div>
+      <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</div>
+      <div class="mtx">印刷 <b>—</b> · 下单 <b>58,000</b> · 已交付 <b>68,800</b></div>
+    </div></div></div>
+    <div class="note">未交付 = 下单总量 − 已交付总量。红色数字表示尚有未交付；「待核」表示交付量已超过下单量，正在核对下单记录。</div>
+  </section>
+  <section id="orders">
+    <h2 class="sec"><span class="no">3</span>订单记录</h2>
+    <div class="sub">按下单日期倒序</div>
+    <div class="kpis"><div class="kpi"><div class="v">32</div><div class="l">订单（张）</div></div><div class="kpi"><div class="v">38</div><div class="l">订单品项</div></div></div>
+    <div class="card">
+      <div class="hd">
+        <div class="d">2026/9/22<span class="bill">DXP020260922002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PC11-AC5410-B100-ESD</div>
+          <div class="val">200<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,磨砂面,10*10表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>2.3</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/9/21<span class="bill">DXP020260921002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
+          <div class="val">5,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.65</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/9/14<span class="bill">DXP020260914003</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.35</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/9/9<span class="bill">DXP020260909003</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-AC8512-B001-ESD</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">8512全黑色ABS方盒,三角形扣位,无表格,防静电</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>2.851</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/9/7<span class="bill">DXP020260907002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
+          <div class="val">2,500<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.35</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/8/31<span class="bill">DXP020260831006</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.35</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/8/17<span class="bill">DXP020260817002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
+          <div class="val">8,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.65</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/8/12<span class="bill">DXP020260812001</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
+          <div class="val">4,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.65</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/8/4<span class="bill">DXP020260803001</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.35</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/8/4<span class="bill">DXP020260803001</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">MO-PC10-AC5410-ESD</div>
+          <div class="val">5,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,MOSEMI刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.4</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/8/4<span class="bill">DXP020260803002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PS-TC8512-B100-00</div>
+          <div class="val">680<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>2.39</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/8/4<span class="bill">DXP020260810009</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PS-TC8512-B100-00</div>
+          <div class="val">680<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>2.39</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/7/27<span class="bill">DXP020260727002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PC10-AC5410-ESD</div>
+          <div class="val">10,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.4</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PS-TC8512-B100-00</div>
+          <div class="val">340<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>2.39</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/7/20<span class="bill">DXP020260720001</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
+          <div class="val">6,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.65</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
+          <div class="val">3,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.35</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PC10-AC5410-ESD</div>
+          <div class="val">10,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.4</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/7/13<span class="bill">DXP020260713002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PC10-AC5410-ESD</div>
+          <div class="val">5,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.4</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/7/6<span class="bill">DXP020260706003</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
+          <div class="val">13,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.65</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
+          <div class="val">3,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.35</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/6/23<span class="bill">DXP020260623001</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
+          <div class="val">2,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.35</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/6/22<span class="bill">DXP020260622002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PC10-AC5410-ESD</div>
+          <div class="val">5,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.4</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/6/15<span class="bill">DXP020260615002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PC10-AC5410-ESD</div>
+          <div class="val">5,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.4</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/6/11<span class="bill">DXP020260611001</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PS-TC8512-B100-00</div>
+          <div class="val">3,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>2.39</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/6/8<span class="bill">DXP020260608002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PC10-AC5410-ESD</div>
+          <div class="val">5,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.4</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/5/25<span class="bill">DXP020260525004</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
+          <div class="val">10,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.65</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC8512-B100-ESD</div>
+          <div class="val">680<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">8512半透明ABS方能扣应鱼10*10表格(细线暗油墨)上盖透明ABS,下盖ABS,均为防静电材质</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>3.53</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/5/21<span class="bill">DXP020260521002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PS-TC8512-B100-00</div>
+          <div class="val">1,360<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>2.39</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/5/20<span class="bill">DXP020260520001</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PS-TC8512-B100-00</div>
+          <div class="val">680<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>2.39</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/5/18<span class="bill">DXP020260518004</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PS-TC8512-B100-00</div>
+          <div class="val">680<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>2.39</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/5/6<span class="bill">DXP020260506003</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PC11-AC5410-B100-ESD</div>
+          <div class="val">1,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,磨砂面,10*10表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>2.3</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/4/28<span class="bill">补货</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
+          <div class="val">6,787<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.65</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/4/27<span class="bill">DXP020260427002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PC10-AC5410-ESD</div>
+          <div class="val">9,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.4</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/4/23<span class="bill">DXP020260423002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
+          <div class="val">20,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.65</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/4/20<span class="bill">DXP020260420001</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
+          <div class="val">11,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.65</b></div>
+      </div><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PC10-AC5410-ESD</div>
+          <div class="val">9,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.4</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/4/15<span class="bill">DXP020260414002</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">DAWE-PS-TC8512-B001</div>
+          <div class="val">2,500<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">8512半透明PS方盒,三角形扣位,无表格,不防静电</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>2.05</b></div>
+      </div></div>
+    </div><div class="card">
+      <div class="hd">
+        <div class="d">2026/4/13<span class="bill">DXP020260413007</span></div>
+        <div class="tag"><span class="badge ">已记录</span></div>
+      </div>
+      
+      <div class="rows"><div class="row">
+        <div class="l1">
+          <div class="pnx">MO-PC10-AC5410-ESD</div>
+          <div class="val">9,000<span style="font-size:11px;font-weight:400;color:#9aa4b2"> 个</span></div>
+        </div>
+        <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,MOSEMI刻字</div>
+        <div class="mtx">印刷 <b>—</b> · 单价 <b>1.4</b></div>
+      </div></div>
+    </div>
+  </section>
+</main>
+<footer>丰康塑料厂 · 本页数据由订单与交付记录自动生成<br>数量单位：片（另有标注除外）</footer>
+</body></html>
