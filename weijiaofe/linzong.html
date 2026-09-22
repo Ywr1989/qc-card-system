@@ -15,7 +15,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Micros
 nav.anchor{position:sticky;top:0;z-index:9;display:flex;gap:7px;padding:9px 11px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 2px 10px rgba(20,40,80,.07)}
 nav.anchor a{flex:1;text-align:center;padding:9px 3px;font-size:13.5px;color:#2b5797;text-decoration:none;font-weight:700;background:#f2f7ff;border:1.5px solid #c5d8f2;border-radius:9px;box-shadow:0 1px 2px rgba(43,87,151,.08)}
 nav.anchor a:active{background:#dfedfd;border-color:#7fa8dc;color:#1d3f70}
-main{padding:14px 11px 44px;max-width:900px;margin:0 auto}
+main{padding:14px 11px 44px;max-width:720px;margin:0 auto}
 section{margin-bottom:26px;scroll-margin-top:62px}
 h2.sec{font-size:17.5px;margin:0 0 3px;display:flex;align-items:center;gap:8px;font-weight:700}
 h2.sec .no{display:inline-flex;width:23px;height:23px;border-radius:7px;background:var(--blue);color:#fff;font-size:13px;align-items:center;justify-content:center;flex:0 0 auto}
@@ -26,40 +26,26 @@ h2.sec .no{display:inline-flex;width:23px;height:23px;border-radius:7px;backgrou
 .kpi .v{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--blued);line-height:1.25}
 .kpi .l{font-size:11px;color:var(--muted);margin-top:2px}
 .kpi .v.lv-red{color:var(--red)}.kpi .v.lv-orange{color:var(--orange)}.kpi .v.lv-green{color:var(--green)}
-.tw{background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:0 1px 2px rgba(20,40,80,.04)}
-.tws{overflow-x:auto;-webkit-overflow-scrolling:touch}
-table.grid{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12.5px}
-table.grid th{background:var(--blue);color:#fff;font-weight:600;font-size:11.5px;padding:8px 8px;text-align:left;white-space:nowrap}
-/* ② 行距压缩 + 组内零分隔线（多模型会诊共识）
-   v2.5 追加：表格容器加 max-height，表头在容器内吸顶（用户要求「标题要冻结」） */
-.tw{background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:0 1px 2px rgba(20,40,80,.04)}
-.tws{overflow:auto;-webkit-overflow-scrolling:touch;max-height:68vh}
-table.grid{width:100%;border-collapse:collapse;table-layout:fixed;font-size:12.5px}
-table.grid th{background:var(--blue);color:#fff;font-weight:600;font-size:11.5px;padding:6px 7px;text-align:left;white-space:nowrap;position:sticky;top:0;z-index:3}
-table.grid td{padding:4px 7px;border:none;vertical-align:middle;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:#fff;line-height:1.3}
-table.grid tr.g-first td{border-top:2px solid #b8c8d8;padding-top:8px}
-table.grid tr.g-first:first-child td{border-top:none}
-/* ③ 合并单元格（同一单的日期/单号等纵向合并）：必须顶对齐，不能居中 */
-table.grid td[rowspan]{vertical-align:top}
-table.grid td[rowspan].b{white-space:normal;word-break:break-all}
-table.grid td.n{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
-table.grid td.c{text-align:center}
-table.grid td.pn{font-weight:600;font-size:12px;white-space:normal;word-break:break-all;line-height:1.35}
-table.grid td.d{font-variant-numeric:tabular-nums}
-table.grid td.d .bl{display:block;font-size:11px;color:#2b5797;font-weight:700;letter-spacing:.2px;margin-top:1px;word-break:break-all;white-space:normal}
-table.grid td.b{font-size:11.5px;color:#2b5797;font-weight:700;letter-spacing:.2px}
-table.grid td.sp{white-space:normal;color:#5b6675;font-size:11.5px;line-height:1.45}
-/* ② 数值颜色语义（文字） */
+/* ==== 列表行（手机不需要左右滑）==== */
+.rows{background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:0 1px 2px rgba(20,40,80,.04)}
+.ghead{background:#f2f7fd;border-bottom:1px solid #dfe9f6;border-top:1px solid #dfe9f6;padding:7px 12px;font-size:12.5px;font-weight:700;color:#1f3b6e;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.rows>.ghead:first-child{border-top:none}
+.ghead .bl{color:#2b5797;font-weight:700;word-break:break-all}
+.ghead .tag{font-size:11px;color:#6b7684;font-weight:400;white-space:nowrap}
+.gdesc{padding:6px 12px;font-size:11.5px;color:#4a5666;background:#fbfdff;border-bottom:1px solid #eef3f9;white-space:pre-wrap;word-break:break-word}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;padding:8px 12px;border-bottom:1px solid #e9eff6}
+.row:last-child{border-bottom:none}
+.row.row-red{background:#fdecea;border-bottom-color:#f5cdc7}
+.row.row-warn{background:#fdf2dd;border-bottom-color:#f0dcb6}
+.row .lft{flex:1 1 auto;min-width:0}
+.row .pnx{font-size:12.5px;font-weight:700;word-break:break-all;line-height:1.35}
+.row .spx{font-size:11.5px;color:#5b6675;line-height:1.4;margin-top:1px;word-break:break-word}
+.row .mtx{font-size:11px;color:#7c8797;margin-top:2px;font-variant-numeric:tabular-nums}
+.row .val{flex:0 0 auto;font-size:17px;font-weight:700;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap;line-height:1.3}
 .lv-red{color:var(--red);font-weight:700}
 .lv-green{color:var(--green);font-weight:700}
 .lv-orange{color:var(--orange);font-weight:700}
 .lv-gray{color:#8a94a3;font-weight:600}
-/* ②b 未交付表：整行底色（用户要求：没交够整行变红底，超出做特殊底色，正常保持常规） */
-table.grid tr.row-red td{background:#fdecea;border-bottom-color:#f5cdc7}
-table.grid tr.row-warn td{background:#fdf2dd;border-bottom-color:#f0dcb6}
-/* ②c 未交付表恢复逐行分隔线（该表是「一个品号一行」，不按单据分组，需要横线区分） */
-table.grid.k2 td{border-bottom:1px solid #e4eaf2}
-.hint{font-size:11.5px;color:#8a94a3;margin:0 2px 7px;text-align:center}
 .legend{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 12px;font-size:12px;color:#5b6675;margin:0 0 11px;line-height:1.95}
 .legend div{white-space:normal}
 .legend i{font-style:normal;font-weight:700}
@@ -83,803 +69,365 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
 <main>
   <section id="delivery">
     <h2 class="sec"><span class="no">1</span>近期发货记录</h2>
-    <div class="sub">最近 10 天已发出的货。同一张送货单只在首行标日期与单号，组内不再划线分隔</div>
+    <div class="sub">最近 10 天已发出的货，每张送货单一个分组</div>
     <div class="kpis"><div class="kpi k3"><div class="v ">5</div><div class="l">送货单（张）</div></div><div class="kpi k3"><div class="v ">8</div><div class="l">发货品项</div></div><div class="kpi k3"><div class="v ">75,280</div><div class="l">合计数量（片）</div></div></div>
-    <div class="hint">← 表格可左右滑动 →</div><div class="tw"><div class="tws"><table class="grid">
-<colgroup><col style="width:156px"><col style="width:200px"><col style="width:156px"><col style="width:92px"><col style="width:74px"><col style="width:56px"></colgroup>
-<thead><tr><th style="">日期 / 送货单号</th><th style="">品名品号</th><th style="">规格</th><th style="text-align:center">印刷颜色</th><th style="text-align:right">数量</th><th style="text-align:right">箱数</th></tr></thead>
-<tbody><tr class="g-first">
-          <td class="d" rowspan="1">2026/9/21<span class="bl">K7-20260921-019</span></td>
-          <td class="pn">8512-PC-BK-P001-BLK</td>
-          <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-          <td class="c">18727 淡黄</td>
-          <td class="n">7,560</td>
-          <td class="n">7件</td>
-        </tr><tr class="g-first">
-          <td class="d" rowspan="2">2026/9/20<span class="bl">20260920-004</span></td>
-          <td class="pn">8512-PC-BK-P001-BLK</td>
-          <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-          <td class="c">18727 淡黄</td>
-          <td class="n">6,480</td>
-          <td class="n">6箱</td>
-        </tr><tr class="">
-          
-          <td class="pn">8512-PC-T-P000-BLK</td>
-          <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-          <td class="c">不印刷</td>
-          <td class="n">18,360</td>
-          <td class="n">17箱</td>
-        </tr><tr class="g-first">
-          <td class="d" rowspan="1">2026/9/18<span class="bl">20260918-001</span></td>
-          <td class="pn">8512-PC-BK-P001-BLK</td>
-          <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-          <td class="c">18727 淡黄</td>
-          <td class="n">8,640</td>
-          <td class="n">8箱</td>
-        </tr><tr class="g-first">
-          <td class="d" rowspan="1">2026/9/16<span class="bl">20260916-004</span></td>
-          <td class="pn">5510-PC-WH-P000-5164</td>
-          <td class="sp">5510-通用PC-白色-不印刷-515164</td>
-          <td class="c">不印刷</td>
-          <td class="n">2,000</td>
-          <td class="n"><span class="lv-gray">—</span></td>
-        </tr><tr class="g-first">
-          <td class="d" rowspan="3">2026/9/14<span class="bl">20260914-006</span></td>
-          <td class="pn">5510-PC-T-P000-5164</td>
-          <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-          <td class="c">不印刷</td>
-          <td class="n">2,000</td>
-          <td class="n"><span class="lv-gray">—</span></td>
-        </tr><tr class="">
-          
-          <td class="pn">8512-PC-BK-P001-BLK</td>
-          <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-          <td class="c">18727 淡黄</td>
-          <td class="n">9,720</td>
-          <td class="n"><span class="lv-gray">—</span></td>
-        </tr><tr class="">
-          
-          <td class="pn">8512-PC-T-P000-BLK</td>
-          <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-          <td class="c">不印刷</td>
-          <td class="n">20,520</td>
-          <td class="n"><span class="lv-gray">—</span></td>
-        </tr></tbody></table></div></div>
-    <div class="note">箱数「—」表示该行未登记箱数；数量「待填」表示源表未填数量。</div>
+    <div class="rows"><div class="ghead">
+        <span>2026/9/21 <span class="bl">K7-20260921-019</span></span>
+        <span class="tag">1 项 · 7,560 片</span>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">8512-PC-BK-P001-BLK</div>
+          <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
+          <div class="mtx">印刷 18727 淡黄 · 箱数 7件</div>
+        </div>
+        <div class="val">7,560</div>
+      </div><div class="ghead">
+        <span>2026/9/20 <span class="bl">20260920-004</span></span>
+        <span class="tag">2 项 · 24,840 片</span>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">8512-PC-BK-P001-BLK</div>
+          <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
+          <div class="mtx">印刷 18727 淡黄 · 箱数 6箱</div>
+        </div>
+        <div class="val">6,480</div>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">8512-PC-T-P000-BLK</div>
+          <div class="spx">8512-通用PC-透明-不印刷-空白</div>
+          <div class="mtx">印刷 不印刷 · 箱数 17箱</div>
+        </div>
+        <div class="val">18,360</div>
+      </div><div class="ghead">
+        <span>2026/9/18 <span class="bl">20260918-001</span></span>
+        <span class="tag">1 项 · 8,640 片</span>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">8512-PC-BK-P001-BLK</div>
+          <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
+          <div class="mtx">印刷 18727 淡黄 · 箱数 8箱</div>
+        </div>
+        <div class="val">8,640</div>
+      </div><div class="ghead">
+        <span>2026/9/16 <span class="bl">20260916-004</span></span>
+        <span class="tag">1 项 · 2,000 片</span>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">5510-PC-WH-P000-5164</div>
+          <div class="spx">5510-通用PC-白色-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷</div>
+        </div>
+        <div class="val">2,000</div>
+      </div><div class="ghead">
+        <span>2026/9/14 <span class="bl">20260914-006</span></span>
+        <span class="tag">3 项 · 32,240 片</span>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">5510-PC-T-P000-5164</div>
+          <div class="spx">5510-通用PC-透明-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷</div>
+        </div>
+        <div class="val">2,000</div>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">8512-PC-BK-P001-BLK</div>
+          <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
+          <div class="mtx">印刷 18727 淡黄</div>
+        </div>
+        <div class="val">9,720</div>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">8512-PC-T-P000-BLK</div>
+          <div class="spx">8512-通用PC-透明-不印刷-空白</div>
+          <div class="mtx">印刷 不印刷</div>
+        </div>
+        <div class="val">20,520</div>
+      </div></div>
+    <div class="note">数量「待填」表示源表未填数量；未登记箱数的行不显示箱数。</div>
   </section>
   <section id="undelivered">
     <h2 class="sec"><span class="no">2</span>未交付数量</h2>
-    <div class="sub">按下单记录与交付记录自动对账</div>
+    <div class="sub">按下单记录与交付记录自动对账，右侧大字为未交付数量（片）</div>
     <div class="kpis"><div class="kpi k3"><div class="v ">26</div><div class="l">品号合计</div></div><div class="kpi k3"><div class="v lv-red">3</div><div class="l">未交付 100 片以上</div></div><div class="kpi k3"><div class="v lv-orange">4</div><div class="l">交付量超出下单 200 片以上</div></div></div>
     <div class="legend">
       <div><i class="lv-red">红底行</i>：未交付超过 100 片，请留意</div>
-      <div><i class="lv-orange">橙底行</i>：交付量已超过下单量 200 片以上，本厂正在核对下单记录</div>
+      <div><i class="lv-orange">橙底行</i>：交付量已超过下单量 200 片以上，本厂正在核对</div>
       <div><i class="lv-green">白底绿字</i>：在正常范围内（共 19 个品号）</div>
-      <div>「旧单结转」＝ 老订单遗留下来尚未交完的数量，已计入未交付</div>
     </div>
-    <div class="hint">← 表格可左右滑动 →</div><div class="tw"><div class="tws"><table class="grid k2">
-<colgroup><col style="width:200px"><col style="width:150px"><col style="width:90px"><col style="width:82px"><col style="width:86px"><col style="width:86px"><col style="width:84px"></colgroup>
-<thead><tr><th style="">品名品号</th><th style="">规格</th><th style="text-align:center">印刷颜色</th><th style="text-align:right">旧单结转</th><th style="text-align:right">下单数量</th><th style="text-align:right">已交付</th><th style="text-align:right">未交付</th></tr></thead>
-<tbody><tr class="row-red">
-        <td class="pn">8512-PC-BK-P001-BLK</td>
-        <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-        <td class="c">18727 淡黄</td>
-        <td class="n">-1,169</td>
-        <td class="n">417,120</td>
-        <td class="n">410,616</td>
-        <td class="n lv-red">5,335</td>
-      </tr><tr class="row-red">
-        <td class="pn">8512-PC-T-P000-BLK</td>
-        <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-        <td class="c">不印刷</td>
-        <td class="n">30,362</td>
-        <td class="n">405,240</td>
-        <td class="n">434,357</td>
-        <td class="n lv-red">1,245</td>
-      </tr><tr class="row-red">
-        <td class="pn">8512-E/ABS01-T-P001-BLK</td>
-        <td class="sp"></td>
-        <td class="c">—</td>
-        <td class="n">119</td>
-        <td class="n">0</td>
-        <td class="n">0</td>
-        <td class="n lv-red">119</td>
-      </tr><tr class="">
-        <td class="pn">5510-PC-WH-P000-5164</td>
-        <td class="sp">5510-通用PC-白色-不印刷-515164</td>
-        <td class="c">不印刷</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">2,000</td>
-        <td class="n">2,000</td>
-        <td class="n lv-green">0</td>
-      </tr><tr class="">
-        <td class="pn">5510-PC-BK-P015-5164</td>
-        <td class="sp">5510-通用PC-黑色-印刷015-515164</td>
-        <td class="c">18717 白</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">500</td>
-        <td class="n">500</td>
-        <td class="n lv-green">0</td>
-      </tr><tr class="">
-        <td class="pn">8512-E/ABS01-TP-P000-BLK</td>
-        <td class="sp">8512-防静电ABS01-透紫-不印刷-空白</td>
-        <td class="c">不印刷</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">2,000</td>
-        <td class="n">2,000</td>
-        <td class="n lv-green">0</td>
-      </tr><tr class="">
-        <td class="pn">CPL4IN-E/ABS01-BK-P000-BLK</td>
-        <td class="sp">4寸芯片盘盖板-防静电ABS01-黑色-不印刷-空白</td>
-        <td class="c">不印刷</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">1,000</td>
-        <td class="n">1,000</td>
-        <td class="n lv-green">0</td>
-      </tr><tr class="">
-        <td class="pn">5510-E/ABS01-TP-P000-5164</td>
-        <td class="sp">5510-防静电ABS01-透紫-不印刷-515164</td>
-        <td class="c">不印刷</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">4,000</td>
-        <td class="n">4,000</td>
-        <td class="n lv-green">0</td>
-      </tr><tr class="">
-        <td class="pn">5510-E/ABS01-BK-P012-5164</td>
-        <td class="sp">5510-防静电ABS01-黑色-印刷012-515164</td>
-        <td class="c">18717 白</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">200</td>
-        <td class="n">200</td>
-        <td class="n lv-green">0</td>
-      </tr><tr class="">
-        <td class="pn">5510-E/ABS01-BK-P000-5164</td>
-        <td class="sp">5510-防静电ABS01-黑色-不印刷-515164</td>
-        <td class="c">不印刷</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">200</td>
-        <td class="n">200</td>
-        <td class="n lv-green">0</td>
-      </tr><tr class="">
-        <td class="pn">CP4IN-E/PC02-BK-P000-BLK</td>
-        <td class="sp">4寸芯片盘-防静电PC02-黑色-不印刷-空白</td>
-        <td class="c">不印刷</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">530</td>
-        <td class="n">530</td>
-        <td class="n lv-green">0</td>
-      </tr><tr class="">
-        <td class="pn">CPC4IN-PP01-TRC-P000-BLK</td>
-        <td class="sp">4寸芯片盘夹-通用均聚PP-半透-不印刷-空白</td>
-        <td class="c">不印刷</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">530</td>
-        <td class="n">530</td>
-        <td class="n lv-green">0</td>
-      </tr><tr class="">
-        <td class="pn">5510-E/ABS01-BK-P013-5164</td>
-        <td class="sp">5510-防静电ABS01-黑色-印刷013-515164</td>
-        <td class="c">18727 淡黄</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">0</td>
-        <td class="n">0</td>
-        <td class="n lv-green">0</td>
-      </tr><tr class="">
-        <td class="pn">5510-PC-T-P005-5164</td>
-        <td class="sp">5510-通用PC-透明-印刷005-515164</td>
-        <td class="c">3005C 蓝</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">500</td>
-        <td class="n">506</td>
-        <td class="n lv-green">-6</td>
-      </tr><tr class="">
-        <td class="pn">8512-E/ABS01-BK-P001-BLK</td>
-        <td class="sp">8512-防静电ABS01-黑色-印刷001-空白</td>
-        <td class="c">18727 淡黄</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">2,000</td>
-        <td class="n">2,013</td>
-        <td class="n lv-green">-13</td>
-      </tr><tr class="">
-        <td class="pn">5510-PC-BK-P000-5164</td>
-        <td class="sp">5510-通用PC-黑色-不印刷-515164</td>
-        <td class="c">不印刷</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">20,000</td>
-        <td class="n">20,028</td>
-        <td class="n lv-green">-28</td>
-      </tr><tr class="">
-        <td class="pn">CPC4IN-PP01-BK-P000-BLK</td>
-        <td class="sp">4寸芯片盘夹-通用均聚PP-黑色-不印刷-空白</td>
-        <td class="c">不印刷</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">1,500</td>
-        <td class="n">1,529</td>
-        <td class="n lv-green">-29</td>
-      </tr><tr class="">
-        <td class="pn">8512-E/ABS01-T-P000-BLK</td>
-        <td class="sp"></td>
-        <td class="c">—</td>
-        <td class="n">-34</td>
-        <td class="n">0</td>
-        <td class="n">0</td>
-        <td class="n lv-green">-34</td>
-      </tr><tr class="">
-        <td class="pn">5510-PC-T-P010-5164</td>
-        <td class="sp">5510-通用PC-透明-印刷010-515164</td>
-        <td class="c">3005C 蓝</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">7,500</td>
-        <td class="n">7,556</td>
-        <td class="n lv-green">-56</td>
-      </tr><tr class="">
-        <td class="pn">8512-PC-T-P001-BLK</td>
-        <td class="sp"></td>
-        <td class="c">—</td>
-        <td class="n">-100</td>
-        <td class="n">0</td>
-        <td class="n">0</td>
-        <td class="n lv-green">-100</td>
-      </tr><tr class="">
-        <td class="pn">5510-E/ABS01-BK-P002-5164</td>
-        <td class="sp">5510-防静电ABS01-黑色-印刷002-515164</td>
-        <td class="c">18717 白</td>
-        <td class="n">-158</td>
-        <td class="n">2,000</td>
-        <td class="n">2,000</td>
-        <td class="n lv-green">-158</td>
-      </tr><tr class="">
-        <td class="pn">5510-PC-T-P002-5164</td>
-        <td class="sp">5510-通用PC-透明-印刷002-515164</td>
-        <td class="c">3005C 蓝</td>
-        <td class="n">-70</td>
-        <td class="n">15,000</td>
-        <td class="n">15,124</td>
-        <td class="n lv-green">-194</td>
-      </tr><tr class="row-warn">
-        <td class="pn">CPL4IN-E/ABS01-TP-P000-BLK</td>
-        <td class="sp">4寸芯片盘盖板-防静电ABS01-透紫-不印刷-空白</td>
-        <td class="c">不印刷</td>
-        <td class="n"><span class="lv-gray">—</span></td>
-        <td class="n">530</td>
-        <td class="n">1,060</td>
-        <td class="n lv-orange">-530</td>
-      </tr><tr class="row-warn">
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="c">不印刷</td>
-        <td class="n">-943</td>
-        <td class="n">144,500</td>
-        <td class="n">144,390</td>
-        <td class="n lv-orange">-833</td>
-      </tr><tr class="row-warn">
-        <td class="pn">5510-PC-BK-P003-5164</td>
-        <td class="sp">5510-通用PC-黑色-印刷003-515164</td>
-        <td class="c">18717 白</td>
-        <td class="n">-2,458</td>
-        <td class="n">100,000</td>
-        <td class="n">98,686</td>
-        <td class="n lv-orange">-1,144</td>
-      </tr><tr class="row-warn">
-        <td class="pn">8512-PC-BK-P000-BLK</td>
-        <td class="sp">8512-通用PC-黑色-不印刷-空白</td>
-        <td class="c">不印刷</td>
-        <td class="n">-560</td>
-        <td class="n">4,000</td>
-        <td class="n">7,400</td>
-        <td class="n lv-orange">-3,960</td>
-      </tr></tbody></table></div></div>
-    <div class="note">未交付 = 旧单结转 + 下单数量 − 已交付。若某品号「下单数量」为 0 而「已交付」有值，说明该品号的下单记录尚未登记，本厂正在补录。</div>
+    <div class="rows"><div class="row row-red">
+        <div class="lft">
+          <div class="pnx">8512-PC-BK-P001-BLK</div>
+          <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
+          <div class="mtx">印刷 18727 淡黄 · 已交付 410,616</div>
+        </div>
+        <div class="val lv-red">5,335</div>
+      </div><div class="row row-red">
+        <div class="lft">
+          <div class="pnx">8512-PC-T-P000-BLK</div>
+          <div class="spx">8512-通用PC-透明-不印刷-空白</div>
+          <div class="mtx">印刷 不印刷 · 已交付 434,357</div>
+        </div>
+        <div class="val lv-red">1,245</div>
+      </div><div class="row row-red">
+        <div class="lft">
+          <div class="pnx">8512-E/ABS01-T-P001-BLK</div>
+          <div class="spx"></div>
+          <div class="mtx">印刷 — · 已交付 0</div>
+        </div>
+        <div class="val lv-red">119</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">5510-PC-WH-P000-5164</div>
+          <div class="spx">5510-通用PC-白色-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷 · 已交付 2,000</div>
+        </div>
+        <div class="val lv-green">0</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">5510-PC-BK-P015-5164</div>
+          <div class="spx">5510-通用PC-黑色-印刷015-515164</div>
+          <div class="mtx">印刷 18717 白 · 已交付 500</div>
+        </div>
+        <div class="val lv-green">0</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">8512-E/ABS01-TP-P000-BLK</div>
+          <div class="spx">8512-防静电ABS01-透紫-不印刷-空白</div>
+          <div class="mtx">印刷 不印刷 · 已交付 2,000</div>
+        </div>
+        <div class="val lv-green">0</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">CPL4IN-E/ABS01-BK-P000-BLK</div>
+          <div class="spx">4寸芯片盘盖板-防静电ABS01-黑色-不印刷-空白</div>
+          <div class="mtx">印刷 不印刷 · 已交付 1,000</div>
+        </div>
+        <div class="val lv-green">0</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">5510-E/ABS01-TP-P000-5164</div>
+          <div class="spx">5510-防静电ABS01-透紫-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷 · 已交付 4,000</div>
+        </div>
+        <div class="val lv-green">0</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">5510-E/ABS01-BK-P012-5164</div>
+          <div class="spx">5510-防静电ABS01-黑色-印刷012-515164</div>
+          <div class="mtx">印刷 18717 白 · 已交付 200</div>
+        </div>
+        <div class="val lv-green">0</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">5510-E/ABS01-BK-P000-5164</div>
+          <div class="spx">5510-防静电ABS01-黑色-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷 · 已交付 200</div>
+        </div>
+        <div class="val lv-green">0</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">CP4IN-E/PC02-BK-P000-BLK</div>
+          <div class="spx">4寸芯片盘-防静电PC02-黑色-不印刷-空白</div>
+          <div class="mtx">印刷 不印刷 · 已交付 530</div>
+        </div>
+        <div class="val lv-green">0</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">CPC4IN-PP01-TRC-P000-BLK</div>
+          <div class="spx">4寸芯片盘夹-通用均聚PP-半透-不印刷-空白</div>
+          <div class="mtx">印刷 不印刷 · 已交付 530</div>
+        </div>
+        <div class="val lv-green">0</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">5510-E/ABS01-BK-P013-5164</div>
+          <div class="spx">5510-防静电ABS01-黑色-印刷013-515164</div>
+          <div class="mtx">印刷 18727 淡黄 · 已交付 0</div>
+        </div>
+        <div class="val lv-green">0</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">5510-PC-T-P005-5164</div>
+          <div class="spx">5510-通用PC-透明-印刷005-515164</div>
+          <div class="mtx">印刷 3005C 蓝 · 已交付 506</div>
+        </div>
+        <div class="val lv-green">-6</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">8512-E/ABS01-BK-P001-BLK</div>
+          <div class="spx">8512-防静电ABS01-黑色-印刷001-空白</div>
+          <div class="mtx">印刷 18727 淡黄 · 已交付 2,013</div>
+        </div>
+        <div class="val lv-green">-13</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">5510-PC-BK-P000-5164</div>
+          <div class="spx">5510-通用PC-黑色-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷 · 已交付 20,028</div>
+        </div>
+        <div class="val lv-green">-28</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">CPC4IN-PP01-BK-P000-BLK</div>
+          <div class="spx">4寸芯片盘夹-通用均聚PP-黑色-不印刷-空白</div>
+          <div class="mtx">印刷 不印刷 · 已交付 1,529</div>
+        </div>
+        <div class="val lv-green">-29</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">8512-E/ABS01-T-P000-BLK</div>
+          <div class="spx"></div>
+          <div class="mtx">印刷 — · 已交付 0</div>
+        </div>
+        <div class="val lv-green">-34</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">5510-PC-T-P010-5164</div>
+          <div class="spx">5510-通用PC-透明-印刷010-515164</div>
+          <div class="mtx">印刷 3005C 蓝 · 已交付 7,556</div>
+        </div>
+        <div class="val lv-green">-56</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">8512-PC-T-P001-BLK</div>
+          <div class="spx"></div>
+          <div class="mtx">印刷 — · 已交付 0</div>
+        </div>
+        <div class="val lv-green">-100</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">5510-E/ABS01-BK-P002-5164</div>
+          <div class="spx">5510-防静电ABS01-黑色-印刷002-515164</div>
+          <div class="mtx">印刷 18717 白 · 已交付 2,000</div>
+        </div>
+        <div class="val lv-green">-158</div>
+      </div><div class="row ">
+        <div class="lft">
+          <div class="pnx">5510-PC-T-P002-5164</div>
+          <div class="spx">5510-通用PC-透明-印刷002-515164</div>
+          <div class="mtx">印刷 3005C 蓝 · 已交付 15,124</div>
+        </div>
+        <div class="val lv-green">-194</div>
+      </div><div class="row row-warn">
+        <div class="lft">
+          <div class="pnx">CPL4IN-E/ABS01-TP-P000-BLK</div>
+          <div class="spx">4寸芯片盘盖板-防静电ABS01-透紫-不印刷-空白</div>
+          <div class="mtx">印刷 不印刷 · 已交付 1,060</div>
+        </div>
+        <div class="val lv-orange">-530</div>
+      </div><div class="row row-warn">
+        <div class="lft">
+          <div class="pnx">5510-PC-T-P000-5164</div>
+          <div class="spx">5510-通用PC-透明-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷 · 已交付 144,390</div>
+        </div>
+        <div class="val lv-orange">-833</div>
+      </div><div class="row row-warn">
+        <div class="lft">
+          <div class="pnx">5510-PC-BK-P003-5164</div>
+          <div class="spx">5510-通用PC-黑色-印刷003-515164</div>
+          <div class="mtx">印刷 18717 白 · 已交付 98,686</div>
+        </div>
+        <div class="val lv-orange">-1,144</div>
+      </div><div class="row row-warn">
+        <div class="lft">
+          <div class="pnx">8512-PC-BK-P000-BLK</div>
+          <div class="spx">8512-通用PC-黑色-不印刷-空白</div>
+          <div class="mtx">印刷 不印刷 · 已交付 7,400</div>
+        </div>
+        <div class="val lv-orange">-3,960</div>
+      </div></div>
+    <div class="note">未交付已含老订单的历史未交量。若某品号「已交付」有值而本厂下单记录尚未登记，数字会显示为负。</div>
   </section>
   <section id="orders">
     <h2 class="sec"><span class="no">3</span>订单记录</h2>
-    <div class="sub">按下单日期倒序。同一张订单只在首行标日期、客户订单号与状态，组内不再划线分隔</div>
-    <div class="kpis"><div class="kpi k3"><div class="v ">33</div><div class="l">订单（张）</div></div><div class="kpi k3"><div class="v ">62</div><div class="l">订单品项</div></div><div class="kpi k3"><div class="v lv-green">0</div><div class="l">未标记记录状态</div></div></div>
+    <div class="sub">只显示最近 30 天的订单，按日期倒序</div>
+    <div class="kpis"><div class="kpi k3"><div class="v ">8</div><div class="l">近 30 天订单（张）</div></div><div class="kpi k3"><div class="v ">8</div><div class="l">订单品项</div></div><div class="kpi k3"><div class="v lv-green">0</div><div class="l">未标记记录状态</div></div></div>
     <div class="legend">
       <div><i class="lv-green">绿色</i>：记录状态已标记为「已记录」</div>
       <div><i class="lv-red">红色</i>：尚未标记记录状态，需补录</div>
     </div>
-    <div class="hint">← 表格可左右滑动 →</div>
-    <div class="tw"><div class="tws"><table class="grid">
-<colgroup><col style="width:156px"><col style="width:150px"><col style="width:200px"><col style="width:156px"><col style="width:74px"><col style="width:92px"><col style="width:78px"></colgroup>
-<thead><tr><th style="">下单日期 / 客户订单号</th><th style="">客户要求</th><th style="">品名品号</th><th style="">规格</th><th style="text-align:right">数量</th><th style="text-align:center">印刷颜色</th><th style="text-align:center">记录状态</th></tr></thead>
-<tbody><tr class="g-first">
-        <td class="d" rowspan="1">2026/9/11</td>
-        <td class="sp" rowspan="1">5510白色底透明盖不印刷 2000套</td>
-        <td class="pn">5510-PC-WH-P000-5164</td>
-        <td class="sp">5510-通用PC-白色-不印刷-515164</td>
-        <td class="n">2,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="1">2026/9/11</td>
-        <td class="sp" rowspan="1"></td>
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">2,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="1">2026/9/4</td>
-        <td class="sp" rowspan="1">5510PC半透空壳不印刷10000套；优先发5000套</td>
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">10,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="1">2026/9/4</td>
-        <td class="sp" rowspan="1"></td>
-        <td class="pn">5510-PC-BK-P000-5164</td>
-        <td class="sp">5510-通用PC-黑色-不印刷-515164</td>
-        <td class="n">10,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="1">2026/9/2</td>
-        <td class="sp" rowspan="1">不要商标做过来。500个</td>
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">500</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="1">2026/9/2</td>
-        <td class="sp" rowspan="1"></td>
-        <td class="pn">5510-PC-BK-P015-5164</td>
-        <td class="sp">5510-通用PC-黑色-印刷015-515164</td>
-        <td class="n">500</td>
-        <td class="c">18717 白</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="1">2026/8/25</td>
-        <td class="sp" rowspan="1">8.24下单， 8512半透pc印刷， 10万套，每周2万个</td>
-        <td class="pn">8512-PC-BK-P001-BLK</td>
-        <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-        <td class="n">100,000</td>
-        <td class="c">18727 淡黄</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="1">2026/8/25</td>
-        <td class="sp" rowspan="1"></td>
-        <td class="pn">8512-PC-T-P000-BLK</td>
-        <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-        <td class="n">100,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/8/13</td>
-        <td class="sp" rowspan="2">半透防静电8512-2000套</td>
-        <td class="pn">8512-E/ABS01-TP-P000-BLK</td>
-        <td class="sp">8512-防静电ABS01-透紫-不印刷-空白</td>
-        <td class="n">2,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">8512-E/ABS01-BK-P001-BLK</td>
-        <td class="sp">8512-防静电ABS01-黑色-印刷001-空白</td>
-        <td class="n">2,000</td>
-        <td class="c">18727 淡黄</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/8/5</td>
-        <td class="sp" rowspan="2">半透5510-003- pc订制印刷 5万套，安排一下，尽快发，</td>
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">50,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-BK-P003-5164</td>
-        <td class="sp">5510-通用PC-黑色-印刷003-515164</td>
-        <td class="n">50,000</td>
-        <td class="c">18717 白</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="1">2026/8/3</td>
-        <td class="sp" rowspan="1">4寸真空盒，全黑盖子，只要盖子，1000套</td>
-        <td class="pn">CPL4IN-E/ABS01-BK-P000-BLK</td>
-        <td class="sp">4寸芯片盘盖板-防静电ABS01-黑色-不印刷-空白</td>
-        <td class="n">1,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/7/25</td>
-        <td class="sp" rowspan="2">再加9000套</td>
-        <td class="pn">8512-PC-BK-P000-BLK</td>
-        <td class="sp">8512-通用PC-黑色-不印刷-空白</td>
-        <td class="n">0</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-gray">已取消</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">8512-PC-T-P000-BLK</td>
-        <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-        <td class="n">3,240</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/7/25</td>
-        <td class="sp" rowspan="2">再加9000套</td>
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">9,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-BK-P000-5164</td>
-        <td class="sp">5510-通用PC-黑色-不印刷-515164</td>
-        <td class="n">9,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/7/24</td>
-        <td class="sp" rowspan="2">PC无印刷5510空壳  1000套；上透下黑</td>
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">1,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-BK-P000-5164</td>
-        <td class="sp">5510-通用PC-黑色-不印刷-515164</td>
-        <td class="n">1,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/7/16</td>
-        <td class="sp" rowspan="2">半透8512印刷-5万套</td>
-        <td class="pn">8512-PC-BK-P001-BLK</td>
-        <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">18727 淡黄</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">8512-PC-T-P000-BLK</td>
-        <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/7/13</td>
-        <td class="sp" rowspan="2">5510黑色底ABS 安排2000套 印刷的002 粗线</td>
-        <td class="pn">5510-E/ABS01-TP-P000-5164</td>
-        <td class="sp">5510-防静电ABS01-透紫-不印刷-515164</td>
-        <td class="n">1,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-E/ABS01-BK-P002-5164</td>
-        <td class="sp">5510-防静电ABS01-黑色-印刷002-515164</td>
-        <td class="n">2,000</td>
-        <td class="c">18717 白</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/7/11</td>
-        <td class="sp" rowspan="2">全黑 200套 防静电</td>
-        <td class="pn">5510-E/ABS01-BK-P012-5164</td>
-        <td class="sp">5510-防静电ABS01-黑色-印刷012-515164</td>
-        <td class="n">200</td>
-        <td class="c">18717 白</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-E/ABS01-BK-P000-5164</td>
-        <td class="sp">5510-防静电ABS01-黑色-不印刷-515164</td>
-        <td class="n">200</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/7/9</td>
-        <td class="sp" rowspan="2">不印刷的8512半透，2000套，按整箱出，</td>
-        <td class="pn">8512-PC-BK-P000-BLK</td>
-        <td class="sp">8512-通用PC-黑色-不印刷-空白</td>
-        <td class="n">2,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">8512-PC-T-P000-BLK</td>
-        <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-        <td class="n">2,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/6/18</td>
-        <td class="sp" rowspan="2">5510-010 4500套的安排</td>
-        <td class="pn">5510-PC-T-P010-5164</td>
-        <td class="sp">5510-通用PC-透明-印刷010-515164</td>
-        <td class="n">4,500</td>
-        <td class="c">3005C 蓝</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">4,500</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/6/18</td>
-        <td class="sp" rowspan="2">5510-紫色盖子-2000个</td>
-        <td class="pn">5510-E/ABS01-TP-P000-5164</td>
-        <td class="sp">5510-防静电ABS01-透紫-不印刷-515164</td>
-        <td class="n">2,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">CPC4IN-PP01-BK-P000-BLK</td>
-        <td class="sp">4寸芯片盘夹-通用均聚PP-黑色-不印刷-空白</td>
-        <td class="n">1,500</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="4">2026/6/9</td>
-        <td class="sp" rowspan="4">6.9号下单， 8512半透PC-印刷001-10万 每周12000套送货，</td>
-        <td class="pn">8512-PC-BK-P001-BLK</td>
-        <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">18727 淡黄</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">8512-PC-T-P000-BLK</td>
-        <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">8512-PC-BK-P001-BLK</td>
-        <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">18727 淡黄</td>
-        <td class="c "></td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">8512-PC-T-P000-BLK</td>
-        <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/5/23</td>
-        <td class="sp" rowspan="2">下单外壳，全透明5510-印刷005  pc  500套，</td>
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">500</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-T-P005-5164</td>
-        <td class="sp">5510-通用PC-透明-印刷005-515164</td>
-        <td class="n">500</td>
-        <td class="c">3005C 蓝</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/5/22</td>
-        <td class="sp" rowspan="2">全透5510- pc粗线，印刷002 数量8000套</td>
-        <td class="pn">5510-PC-T-P002-5164</td>
-        <td class="sp">5510-通用PC-透明-印刷002-515164</td>
-        <td class="n">8,000</td>
-        <td class="c">3005C 蓝</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">8,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/5/18</td>
-        <td class="sp" rowspan="2">半透5510-003- pc订制印刷 5万套，安排一下，尽快发</td>
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">50,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-BK-P003-5164</td>
-        <td class="sp">5510-通用PC-黑色-印刷003-515164</td>
-        <td class="n">50,000</td>
-        <td class="c">18717 白</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/5/14</td>
-        <td class="sp" rowspan="2">透明很细的线5510搞2000套来</td>
-        <td class="pn">5510-PC-T-P010-5164</td>
-        <td class="sp">5510-通用PC-透明-印刷010-515164</td>
-        <td class="n">2,000</td>
-        <td class="c">3005C 蓝</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">2,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="1">2026/5/12</td>
-        <td class="sp" rowspan="1">补退货</td>
-        <td class="pn">8512-PC-BK-P001-BLK</td>
-        <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-        <td class="n">15,120</td>
-        <td class="c">18727 淡黄</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/5/8</td>
-        <td class="sp" rowspan="2">8512半透印刷-pc 5万</td>
-        <td class="pn">8512-PC-BK-P001-BLK</td>
-        <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">18727 淡黄</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">8512-PC-T-P000-BLK</td>
-        <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="3">2026/5/8</td>
-        <td class="sp" rowspan="3">5.8下单， 紫色5510盖-1000个 全透pc粗线5510-2000套</td>
-        <td class="pn">5510-E/ABS01-TP-P000-5164</td>
-        <td class="sp">5510-防静电ABS01-透紫-不印刷-515164</td>
-        <td class="n">1,000</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">2,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-T-P002-5164</td>
-        <td class="sp">5510-通用PC-透明-印刷002-515164</td>
-        <td class="n">2,000</td>
-        <td class="c">3005C 蓝</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/5/3</td>
-        <td class="sp" rowspan="2">5万套外壳，8512半透印刷</td>
-        <td class="pn">8512-PC-BK-P001-BLK</td>
-        <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">18727 淡黄</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">8512-PC-T-P000-BLK</td>
-        <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="5">2026/4/23</td>
-        <td class="sp" rowspan="5">4寸芯片盘 自行写入测试订单</td>
-        <td class="pn">CP4IN-E/PC02-BK-P000-BLK</td>
-        <td class="sp">4寸芯片盘-防静电PC02-黑色-不印刷-空白</td>
-        <td class="n">530</td>
-        <td class="c">不印刷</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">CPL4IN-E/ABS01-TP-P000-BLK</td>
-        <td class="sp">4寸芯片盘盖板-防静电ABS01-透紫-不印刷-空白</td>
-        <td class="n">530</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">CPC4IN-PP01-TRC-P000-BLK</td>
-        <td class="sp">4寸芯片盘夹-通用均聚PP-半透-不印刷-空白</td>
-        <td class="n">530</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-T-P002-5164</td>
-        <td class="sp">5510-通用PC-透明-印刷002-515164</td>
-        <td class="n">5,000</td>
-        <td class="c">3005C 蓝</td>
-        <td class="c "></td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">4,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/4/17</td>
-        <td class="sp" rowspan="2">新细蓝色格子1000套</td>
-        <td class="pn">5510-PC-T-P010-5164</td>
-        <td class="sp">5510-通用PC-透明-印刷010-515164</td>
-        <td class="n">1,000</td>
-        <td class="c">3005C 蓝</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">5510-PC-T-P000-5164</td>
-        <td class="sp">5510-通用PC-透明-不印刷-515164</td>
-        <td class="n">1,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/4/3</td>
-        <td class="sp" rowspan="2">8512半透pc印刷 5万套，按照每周5000规划过来</td>
-        <td class="pn">8512-PC-BK-P001-BLK</td>
-        <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">18727 淡黄</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">8512-PC-T-P000-BLK</td>
-        <td class="sp">8512-通用PC-透明-不印刷-空白</td>
-        <td class="n">50,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr><tr class="g-first">
-        <td class="d" rowspan="2">2026/3/23</td>
-        <td class="sp" rowspan="2">3.30 全黑印刷8512- pc 2000套</td>
-        <td class="pn">8512-PC-BK-P001-BLK</td>
-        <td class="sp">8512-通用PC-黑色-印刷001-空白</td>
-        <td class="n">2,000</td>
-        <td class="c">18727 淡黄</td>
-        <td class="c lv-green">已记录</td>
-      </tr><tr class="">
-        
-        
-        <td class="pn">8512-PC-BK-P000-BLK</td>
-        <td class="sp">8512-通用PC-黑色-不印刷-空白</td>
-        <td class="n">2,000</td>
-        <td class="c">不印刷</td>
-        <td class="c "></td>
-      </tr></tbody></table></div></div>
+    <div class="rows"><div class="ghead">
+        <span>2026/9/11</span>
+        <span class="tag lv-green">已记录</span>
+      </div><div class="gdesc">5510白色底透明盖不印刷 2000套</div><div class="row">
+        <div class="lft">
+          <div class="pnx">5510-PC-WH-P000-5164</div>
+          <div class="spx">5510-通用PC-白色-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷</div>
+        </div>
+        <div class="val">2,000</div>
+      </div><div class="ghead">
+        <span>2026/9/11</span>
+        <span class="tag lv-green">已记录</span>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">5510-PC-T-P000-5164</div>
+          <div class="spx">5510-通用PC-透明-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷</div>
+        </div>
+        <div class="val">2,000</div>
+      </div><div class="ghead">
+        <span>2026/9/4</span>
+        <span class="tag lv-green">已记录</span>
+      </div><div class="gdesc">5510PC半透空壳不印刷10000套；优先发5000套</div><div class="row">
+        <div class="lft">
+          <div class="pnx">5510-PC-T-P000-5164</div>
+          <div class="spx">5510-通用PC-透明-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷</div>
+        </div>
+        <div class="val">10,000</div>
+      </div><div class="ghead">
+        <span>2026/9/4</span>
+        <span class="tag lv-green">已记录</span>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">5510-PC-BK-P000-5164</div>
+          <div class="spx">5510-通用PC-黑色-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷</div>
+        </div>
+        <div class="val">10,000</div>
+      </div><div class="ghead">
+        <span>2026/9/2</span>
+        <span class="tag lv-green">已记录</span>
+      </div><div class="gdesc">不要商标做过来。500个</div><div class="row">
+        <div class="lft">
+          <div class="pnx">5510-PC-T-P000-5164</div>
+          <div class="spx">5510-通用PC-透明-不印刷-515164</div>
+          <div class="mtx">印刷 不印刷</div>
+        </div>
+        <div class="val">500</div>
+      </div><div class="ghead">
+        <span>2026/9/2</span>
+        <span class="tag lv-green">已记录</span>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">5510-PC-BK-P015-5164</div>
+          <div class="spx">5510-通用PC-黑色-印刷015-515164</div>
+          <div class="mtx">印刷 18717 白</div>
+        </div>
+        <div class="val">500</div>
+      </div><div class="ghead">
+        <span>2026/8/25</span>
+        <span class="tag lv-green">已记录</span>
+      </div><div class="gdesc">8.24下单， 8512半透pc印刷， 10万套，每周2万个</div><div class="row">
+        <div class="lft">
+          <div class="pnx">8512-PC-BK-P001-BLK</div>
+          <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
+          <div class="mtx">印刷 18727 淡黄</div>
+        </div>
+        <div class="val">100,000</div>
+      </div><div class="ghead">
+        <span>2026/8/25</span>
+        <span class="tag lv-green">已记录</span>
+      </div><div class="row">
+        <div class="lft">
+          <div class="pnx">8512-PC-T-P000-BLK</div>
+          <div class="spx">8512-通用PC-透明-不印刷-空白</div>
+          <div class="mtx">印刷 不印刷</div>
+        </div>
+        <div class="val">100,000</div>
+      </div></div>
   </section>
 </main>
 <footer>丰康塑料厂 · 本页数据由订单与交付记录自动生成<br>数量单位：片（另有标注除外）</footer>
