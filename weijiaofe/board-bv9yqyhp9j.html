@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>交付情况速览 · 丰康塑料厂</title>
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<style>
+:root{--ink:#1c2530;--muted:#6b7684;--line:#e3e8ef;--bg:#eef2f7;--blue:#2b5797;--red:#d92d20;--green:#12805c;--orange:#b45309;--yellow:#9a6b00}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5}
+header{background:linear-gradient(135deg,#17325e,#2b5797 55%,#3f7ac0);color:#fff;padding:18px 22px 16px}
+header h1{margin:0;font-size:21px;letter-spacing:1px;font-weight:700}
+header .m{font-size:12.5px;opacity:.88;margin-top:5px;display:flex;gap:18px;flex-wrap:wrap}
+.wrap{padding:14px 18px 46px;max-width:1680px;margin:0 auto}
+.bar{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.chip{padding:7px 14px;border-radius:20px;border:1.5px solid #cbd8e8;background:#fff;color:#3a4a60;font-size:13px;font-weight:700;cursor:pointer;user-select:none;white-space:nowrap}
+.chip:hover{border-color:#7fa8dc}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip .n{font-variant-numeric:tabular-nums;opacity:.85;font-weight:600;margin-left:3px}
+.chip.c-red.on{background:var(--red);border-color:var(--red)}
+.chip.c-warn.on{background:var(--yellow);border-color:var(--yellow)}
+.chip.c-ok.on{background:var(--green);border-color:var(--green)}
+.chip.c-over.on{background:var(--orange);border-color:var(--orange)}
+.sel{padding:7px 11px;border-radius:9px;border:1.5px solid #cbd8e8;background:#fff;font-size:13px;color:#3a4a60;font-weight:600}
+.searchbox{padding:7px 12px;border-radius:9px;border:1.5px solid #cbd8e8;background:#fff;font-size:13px;min-width:190px;outline:none}
+.searchbox:focus{border-color:var(--blue)}
+.tblwrap{background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:0 1px 3px rgba(20,40,80,.06)}
+table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
+thead th{position:sticky;top:0;z-index:2;background:#dbe8f8;color:#16304f;font-size:12.5px;font-weight:800;
+  padding:9px 10px;text-align:left;border-bottom:2px solid #bcd4ee;white-space:nowrap}
+thead th.num{text-align:right}
+tbody td{padding:7px 10px;border-bottom:1px solid #eef3f9;font-size:13px;vertical-align:middle}
+tbody tr:hover{background:#f6faff}
+tbody tr.r-red{background:#fdecea}
+tbody tr.r-red:hover{background:#fbdfdb}
+tbody tr.r-warn{background:#fffaeb}
+tbody tr.r-over{background:#fdf2dd}
+td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:700}
+td.pn{font-weight:700;word-break:break-all;font-size:12.5px}
+td.spc{color:#5b6675;font-size:12px;word-break:break-word}
+.st{display:inline-block;padding:2px 9px;border-radius:6px;font-size:12px;font-weight:800;white-space:nowrap}
+.st-red{background:#d92d20;color:#fff}
+.st-warn{background:#e0a800;color:#fff}
+.st-ok{background:#e6f4ee;color:#0e6b4d;border:1px solid #9fd3bd}
+.st-over{background:#b45309;color:#fff}
+.big{font-size:14.5px}
+.v-red{color:var(--red)}.v-warn{color:var(--yellow)}.v-ok{color:#8a94a3}.v-over{color:var(--orange)}
+.bar2{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.card{flex:1 1 130px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 13px}
+.card .v{font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1.2}
+.card .l{font-size:11.5px;color:var(--muted);margin-top:2px}
+.empty{text-align:center;padding:40px;color:#9aa4b2}
+footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;line-height:1.8}
+@media(max-width:900px){
+  .wrap{padding:10px 9px 40px}
+  table{table-layout:auto}
+  thead th:nth-child(2),tbody td.spc{display:none}   /* 小屏藏规格列 */
+  td.pn{max-width:150px}
+}
+</style>
+</head><body>
+<header>
+  <h1>交付情况速览</h1>
+  <div class="m"><span>丰康塑料厂 · 内部使用</span><span>共 102 个品号 · 5 家客户</span><span>数据更新：2026/9/23 15:19:27</span></div>
+</header>
+<div class="wrap">
+  <div class="bar2">
+    <div class="card"><div class="v">102</div><div class="l">品号总数</div></div>
+    <div class="card"><div class="v" style="color:var(--red)">10</div><div class="l">未交完·急（&gt;100片）</div></div>
+    <div class="card"><div class="v" style="color:var(--yellow)">0</div><div class="l">未交完·少量</div></div>
+    <div class="card"><div class="v" style="color:var(--green)">87</div><div class="l">已交完</div></div>
+    <div class="card"><div class="v" style="color:var(--orange)">5</div><div class="l">超交待核</div></div>
+    <div class="card"><div class="v" style="color:var(--red)">41,416</div><div class="l">待交合计（片）</div></div>
+  </div>
+
+  <div class="bar">
+    <span class="chip on" data-f="all">全部<span class="n">102</span></span>
+    <span class="chip c-red" data-f="red">未交完·急<span class="n">10</span></span>
+    <span class="chip c-warn" data-f="warn">未交完·少量<span class="n">0</span></span>
+    <span class="chip c-ok" data-f="ok">已交完<span class="n">87</span></span>
+    <span class="chip c-over" data-f="over">超交待核<span class="n">5</span></span>
+    <select class="sel" id="cl"><option value="">全部客户</option><option value="凯崴">凯崴</option><option value="李总">李总</option><option value="林总">林总</option><option value="德威">德威</option><option value="帝奥">帝奥</option></select>
+    <input class="searchbox" id="q" placeholder="搜品号 / 油墨色…">
+  </div>
+
+  <div class="tblwrap">
+    <table>
+      <thead><tr>
+        <th style="width:82px">客户</th>
+        <th style="width:26%">品名品号</th>
+        <th>规格</th>
+        <th style="width:110px">油墨色</th>
+        <th class="num" style="width:110px">应交付</th>
+        <th class="num" style="width:110px">已交付</th>
+        <th class="num" style="width:110px">未交付</th>
+        <th style="width:92px">状态</th>
+      </tr></thead>
+      <tbody id="tb"><tr class="r-red" data-st="red" data-cl="凯崴" data-pn="5510-E/ABS01-BK-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">5510-E/ABS01-BK-P000-KW</td>
+  <td class="spc">5510-防静电ABS01-黑色-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">50,040</td>
+  <td class="num">30,060</td>
+  <td class="num big v-red">19,980</td>
+  <td><span class="st st-red">未交完</span></td>
+</tr><tr class="r-red" data-st="red" data-cl="凯崴" data-pn="5510-E/ABS01-TP-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">5510-E/ABS01-TP-P000-KW</td>
+  <td class="spc">5510-防静电ABS01-透紫-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">40,040</td>
+  <td class="num">30,060</td>
+  <td class="num big v-red">9,980</td>
+  <td><span class="st st-red">未交完</span></td>
+</tr><tr class="r-red" data-st="red" data-cl="凯崴" data-pn="20CTB2IN-PP03-T-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">20CTB2IN-PP03-T-P000-KW</td>
+  <td class="spc">20格转运盒/2寸-高透PP-透明-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">6,424</td>
+  <td class="num">2,646</td>
+  <td class="num big v-red">3,778</td>
+  <td><span class="st st-red">未交完</span></td>
+</tr><tr class="r-red" data-st="red" data-cl="李总" data-pn="5510-PC-T-P000-5164">
+  <td>李总</td>
+  <td class="pn">5510-PC-T-P000-5164</td>
+  <td class="spc">5510-通用PC-透明-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">20,000</td>
+  <td class="num">18,043</td>
+  <td class="num big v-red">1,957</td>
+  <td><span class="st st-red">未交完</span></td>
+</tr><tr class="r-red" data-st="red" data-cl="李总" data-pn="5510-PC-BK-P006-5164">
+  <td>李总</td>
+  <td class="pn">5510-PC-BK-P006-5164</td>
+  <td class="spc">5510-通用PC-黑色-印刷006-515164</td>
+  <td>18717 白</td>
+  <td class="num">6,000</td>
+  <td class="num">4,043</td>
+  <td class="num big v-red">1,957</td>
+  <td><span class="st st-red">未交完</span></td>
+</tr><tr class="r-red" data-st="red" data-cl="林总" data-pn="8512-PC-T-P000-BLK">
+  <td>林总</td>
+  <td class="pn">8512-PC-T-P000-BLK</td>
+  <td class="spc">8512-通用PC-透明-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">435,602</td>
+  <td class="num">434,357</td>
+  <td class="num big v-red">1,245</td>
+  <td><span class="st st-red">未交完</span></td>
+</tr><tr class="r-red" data-st="red" data-cl="凯崴" data-pn="LCBX-E/ABS02-BK-P000-BLK">
+  <td>凯崴</td>
+  <td class="pn">LCBX-E/ABS02-BK-P000-BLK</td>
+  <td class="spc">大外盒-防静电ABS02-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">1,200</td>
+  <td class="num">0</td>
+  <td class="num big v-red">1,200</td>
+  <td><span class="st st-red">未交完</span></td>
+</tr><tr class="r-red" data-st="red" data-cl="德威" data-pn="DAWE-AS-AC8512-B001-ESD">
+  <td>德威</td>
+  <td class="pn">DAWE-AS-AC8512-B001-ESD</td>
+  <td class="spc">8512全黑色ABS方盒,三角形扣位,无表格,防静电</td>
+  <td></td>
+  <td class="num">1,000</td>
+  <td class="num">0</td>
+  <td class="num big v-red">1,000</td>
+  <td><span class="st st-red">未交完</span></td>
+</tr><tr class="r-red" data-st="red" data-cl="德威" data-pn="DAWE-PC11-AC5410-B100-ESD">
+  <td>德威</td>
+  <td class="pn">DAWE-PC11-AC5410-B100-ESD</td>
+  <td class="spc">2寸全黑PC方盒,长效防静电,长方形扣位,磨砂面,10*10表格,DAWE刻字</td>
+  <td></td>
+  <td class="num">1,200</td>
+  <td class="num">1,000</td>
+  <td class="num big v-red">200</td>
+  <td><span class="st st-red">未交完</span></td>
+</tr><tr class="r-red" data-st="red" data-cl="林总" data-pn="8512-E/ABS01-T-P001-BLK">
+  <td>林总</td>
+  <td class="pn">8512-E/ABS01-T-P001-BLK</td>
+  <td class="spc"></td>
+  <td></td>
+  <td class="num">119</td>
+  <td class="num">0</td>
+  <td class="num big v-red">119</td>
+  <td><span class="st st-red">未交完</span></td>
+</tr><tr class="r-over" data-st="over" data-cl="李总" data-pn="8512-PC-T-P000-BLK">
+  <td>李总</td>
+  <td class="pn">8512-PC-T-P000-BLK</td>
+  <td class="spc">8512-通用PC-透明-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">18,208</td>
+  <td class="num">18,435</td>
+  <td class="num big v-over">-227</td>
+  <td><span class="st st-over">超交</span></td>
+</tr><tr class="r-over" data-st="over" data-cl="林总" data-pn="5510-PC-T-P000-5164">
+  <td>林总</td>
+  <td class="pn">5510-PC-T-P000-5164</td>
+  <td class="spc">5510-通用PC-透明-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">143,557</td>
+  <td class="num">144,390</td>
+  <td class="num big v-over">-833</td>
+  <td><span class="st st-over">超交</span></td>
+</tr><tr class="r-over" data-st="over" data-cl="林总" data-pn="5510-PC-BK-P003-5164">
+  <td>林总</td>
+  <td class="pn">5510-PC-BK-P003-5164</td>
+  <td class="spc">5510-通用PC-黑色-印刷003-515164</td>
+  <td>18717 白</td>
+  <td class="num">97,542</td>
+  <td class="num">98,686</td>
+  <td class="num big v-over">-1,144</td>
+  <td><span class="st st-over">超交</span></td>
+</tr><tr class="r-over" data-st="over" data-cl="林总" data-pn="8512-PC-BK-P001-BLK">
+  <td>林总</td>
+  <td class="pn">8512-PC-BK-P001-BLK</td>
+  <td class="spc">8512-通用PC-黑色-印刷001-空白</td>
+  <td>18727 淡黄</td>
+  <td class="num">415,951</td>
+  <td class="num">417,096</td>
+  <td class="num big v-over">-1,145</td>
+  <td><span class="st st-over">超交</span></td>
+</tr><tr class="r-over" data-st="over" data-cl="林总" data-pn="8512-PC-BK-P000-BLK">
+  <td>林总</td>
+  <td class="pn">8512-PC-BK-P000-BLK</td>
+  <td class="spc">8512-通用PC-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">3,440</td>
+  <td class="num">7,400</td>
+  <td class="num big v-over">-3,960</td>
+  <td><span class="st st-over">超交</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="林总" data-pn="5510-PC-WH-P000-5164">
+  <td>林总</td>
+  <td class="pn">5510-PC-WH-P000-5164</td>
+  <td class="spc">5510-通用PC-白色-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">2,000</td>
+  <td class="num">2,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="林总" data-pn="5510-PC-BK-P015-5164">
+  <td>林总</td>
+  <td class="pn">5510-PC-BK-P015-5164</td>
+  <td class="spc">5510-通用PC-黑色-印刷015-515164</td>
+  <td>18717 白</td>
+  <td class="num">500</td>
+  <td class="num">500</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="林总" data-pn="8512-E/ABS01-TP-P000-BLK">
+  <td>林总</td>
+  <td class="pn">8512-E/ABS01-TP-P000-BLK</td>
+  <td class="spc">8512-防静电ABS01-透紫-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">2,000</td>
+  <td class="num">2,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="林总" data-pn="CPL4IN-E/ABS01-BK-P000-BLK">
+  <td>林总</td>
+  <td class="pn">CPL4IN-E/ABS01-BK-P000-BLK</td>
+  <td class="spc">4寸芯片盘盖板-防静电ABS01-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="林总" data-pn="5510-E/ABS01-TP-P000-5164">
+  <td>林总</td>
+  <td class="pn">5510-E/ABS01-TP-P000-5164</td>
+  <td class="spc">5510-防静电ABS01-透紫-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">4,000</td>
+  <td class="num">4,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="林总" data-pn="5510-E/ABS01-BK-P012-5164">
+  <td>林总</td>
+  <td class="pn">5510-E/ABS01-BK-P012-5164</td>
+  <td class="spc">5510-防静电ABS01-黑色-印刷012-515164</td>
+  <td>18717 白</td>
+  <td class="num">200</td>
+  <td class="num">200</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="林总" data-pn="5510-E/ABS01-BK-P000-5164">
+  <td>林总</td>
+  <td class="pn">5510-E/ABS01-BK-P000-5164</td>
+  <td class="spc">5510-防静电ABS01-黑色-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">200</td>
+  <td class="num">200</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="林总" data-pn="CP4IN-E/PC02-BK-P000-BLK">
+  <td>林总</td>
+  <td class="pn">CP4IN-E/PC02-BK-P000-BLK</td>
+  <td class="spc">4寸芯片盘-防静电PC02-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">530</td>
+  <td class="num">530</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="林总" data-pn="CPL4IN-E/ABS01-TP-P000-BLK">
+  <td>林总</td>
+  <td class="pn">CPL4IN-E/ABS01-TP-P000-BLK</td>
+  <td class="spc">4寸芯片盘盖板-防静电ABS01-透紫-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">530</td>
+  <td class="num">530</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="林总" data-pn="CPC4IN-PP01-TRC-P000-BLK">
+  <td>林总</td>
+  <td class="pn">CPC4IN-PP01-TRC-P000-BLK</td>
+  <td class="spc">4寸芯片盘夹-通用均聚PP-半透-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">530</td>
+  <td class="num">530</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="林总" data-pn="5510-E/ABS01-BK-P013-5164">
+  <td>林总</td>
+  <td class="pn">5510-E/ABS01-BK-P013-5164</td>
+  <td class="spc">5510-防静电ABS01-黑色-印刷013-515164</td>
+  <td>18727 淡黄</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="德威" data-pn="DAWE-AS-TC5410-B100-ESD-01">
+  <td>德威</td>
+  <td class="pn">DAWE-AS-TC5410-B100-ESD-01</td>
+  <td class="spc">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</td>
+  <td></td>
+  <td class="num">83,787</td>
+  <td class="num">96,687</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="德威" data-pn="DAWE-AS-TC5410-B001-ESD-01">
+  <td>德威</td>
+  <td class="pn">DAWE-AS-TC5410-B001-ESD-01</td>
+  <td class="spc">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</td>
+  <td></td>
+  <td class="num">16,500</td>
+  <td class="num">16,500</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="德威" data-pn="MO-PC10-AC5410-ESD">
+  <td>德威</td>
+  <td class="pn">MO-PC10-AC5410-ESD</td>
+  <td class="spc">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,MOSEMI刻字</td>
+  <td></td>
+  <td class="num">14,000</td>
+  <td class="num">16,700</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="德威" data-pn="DAWE-PS-TC8512-B100-00">
+  <td>德威</td>
+  <td class="pn">DAWE-PS-TC8512-B100-00</td>
+  <td class="spc">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</td>
+  <td></td>
+  <td class="num">7,420</td>
+  <td class="num">8,700</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="德威" data-pn="DAWE-PC10-AC5410-ESD">
+  <td>德威</td>
+  <td class="pn">DAWE-PC10-AC5410-ESD</td>
+  <td class="spc">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</td>
+  <td></td>
+  <td class="num">58,000</td>
+  <td class="num">68,800</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="德威" data-pn="DAWE-AS-TC8512-B100-ESD">
+  <td>德威</td>
+  <td class="pn">DAWE-AS-TC8512-B100-ESD</td>
+  <td class="spc">8512半透明ABS方能扣应鱼10*10表格(细线暗油墨)上盖透明ABS,下盖ABS,均为防静电材质</td>
+  <td></td>
+  <td class="num">680</td>
+  <td class="num">680</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="德威" data-pn="DAWE-PS-TC8512-B001">
+  <td>德威</td>
+  <td class="pn">DAWE-PS-TC8512-B001</td>
+  <td class="spc">8512半透明PS方盒,三角形扣位,无表格,不防静电</td>
+  <td></td>
+  <td class="num">2,500</td>
+  <td class="num">2,500</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="PBA48-E/ABS01-TP-P000-BLK">
+  <td>凯崴</td>
+  <td class="pn">PBA48-E/ABS01-TP-P000-BLK</td>
+  <td class="spc">PBA48-防静电ABS01-透紫-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="PBA48-E/ABS01-BK-P000-BLK">
+  <td>凯崴</td>
+  <td class="pn">PBA48-E/ABS01-BK-P000-BLK</td>
+  <td class="spc">PBA48-防静电ABS01-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="PBA21-E/ABS01-TP-P000-BLK">
+  <td>凯崴</td>
+  <td class="pn">PBA21-E/ABS01-TP-P000-BLK</td>
+  <td class="spc">PBA21-防静电ABS01-透紫-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="PBA51-E/ABS01-BK-P000-BLK">
+  <td>凯崴</td>
+  <td class="pn">PBA51-E/ABS01-BK-P000-BLK</td>
+  <td class="spc">PBA51-防静电ABS01-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="4CBX-E/PC02-BK-P000-BLK">
+  <td>凯崴</td>
+  <td class="pn">4CBX-E/PC02-BK-P000-BLK</td>
+  <td class="spc">4格盒-防静电PC02-黑色-不印刷-上</td>
+  <td>不印刷</td>
+  <td class="num">8,737</td>
+  <td class="num">8,737</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="K-5508L-2">
+  <td>凯崴</td>
+  <td class="pn">K-5508L-2</td>
+  <td class="spc"></td>
+  <td>不印刷</td>
+  <td class="num">75</td>
+  <td class="num">75</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="HWD70358-E/ABS01-TP-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">HWD70358-E/ABS01-TP-P000-KW</td>
+  <td class="spc">HWD70358-防静电ABS01-透紫-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">4,000</td>
+  <td class="num">4,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="HWD70358-E/ABS01-BK-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">HWD70358-E/ABS01-BK-P000-KW</td>
+  <td class="spc">HWD70358-防静电ABS01-黑色-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">4,000</td>
+  <td class="num">4,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="LHP9-E/ABS01-TP-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">LHP9-E/ABS01-TP-P000-KW</td>
+  <td class="spc">通用压9-防静电ABS01-透紫-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">4,000</td>
+  <td class="num">4,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="HWD903-E/ABS01-BK-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">HWD903-E/ABS01-BK-P000-KW</td>
+  <td class="spc">HWD903-防静电ABS01-黑色-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">4,000</td>
+  <td class="num">4,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="LHP1-E/ABS01-TP-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">LHP1-E/ABS01-TP-P000-KW</td>
+  <td class="spc">通用压1-防静电ABS01-透紫-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">4,000</td>
+  <td class="num">4,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="HWD14288-E/ABS01-BK-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">HWD14288-E/ABS01-BK-P000-KW</td>
+  <td class="spc">HWD14288-防静电ABS01-黑色-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">4,000</td>
+  <td class="num">4,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="HASP01-PP02-BK-P000-BLK">
+  <td>凯崴</td>
+  <td class="pn">HASP01-PP02-BK-P000-BLK</td>
+  <td class="spc">124盒扣-通用共聚PP-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">47,500</td>
+  <td class="num">47,500</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="CP2IN-E/ABS01-BK-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">CP2IN-E/ABS01-BK-P000-KW</td>
+  <td class="spc">2寸芯片盘-防静电ABS01-黑色-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">2,875</td>
+  <td class="num">2,875</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="K-5508L-9">
+  <td>凯崴</td>
+  <td class="pn">K-5508L-9</td>
+  <td class="spc"></td>
+  <td>不印刷</td>
+  <td class="num">20</td>
+  <td class="num">20</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="PBA50-E/ABS01-BK-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">PBA50-E/ABS01-BK-P000-KW</td>
+  <td class="spc">PBA50-防静电ABS01-黑色-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="PBA22-E/ABS01-TP-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">PBA22-E/ABS01-TP-P000-KW</td>
+  <td class="spc">PBA22-防静电ABS01-透紫-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="凯崴" data-pn="PBA22-E/ABS01-BK-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">PBA22-E/ABS01-BK-P000-KW</td>
+  <td class="spc">PBA22-防静电ABS01-黑色-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="李总" data-pn="5510-PC-T-P009-5164">
+  <td>李总</td>
+  <td class="pn">5510-PC-T-P009-5164</td>
+  <td class="spc">5510-通用PC-透明-印刷009-515164</td>
+  <td>3005C 蓝</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="李总" data-pn="5508L-9">
+  <td>李总</td>
+  <td class="pn">5508L-9</td>
+  <td class="spc"></td>
+  <td></td>
+  <td class="num">40</td>
+  <td class="num">40</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="李总" data-pn="5510-ABS-WH-P000-5164">
+  <td>李总</td>
+  <td class="pn">5510-ABS-WH-P000-5164</td>
+  <td class="spc">5510-通用ABS-白色-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="李总" data-pn="8512-MABS-T-P000-BLK">
+  <td>李总</td>
+  <td class="pn">8512-MABS-T-P000-BLK</td>
+  <td class="spc">8512-通用透明ABS-透明-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">2,000</td>
+  <td class="num">2,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="李总" data-pn="8512-MABS-T-P001-BLK">
+  <td>李总</td>
+  <td class="pn">8512-MABS-T-P001-BLK</td>
+  <td class="spc">8512-通用透明ABS-透明-印刷001-空白</td>
+  <td>3005C 蓝</td>
+  <td class="num">2,000</td>
+  <td class="num">2,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="李总" data-pn="5510-PC-T-P002-5164">
+  <td>李总</td>
+  <td class="pn">5510-PC-T-P002-5164</td>
+  <td class="spc">5510-通用PC-透明-印刷002-515164</td>
+  <td>3005C 蓝</td>
+  <td class="num">2,000</td>
+  <td class="num">2,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="李总" data-pn="5510-E/ABS01-BK-P000-5164">
+  <td>李总</td>
+  <td class="pn">5510-E/ABS01-BK-P000-5164</td>
+  <td class="spc">5510-防静电ABS01-黑色-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="李总" data-pn="5510-E/ABS01-BK-P002-5164">
+  <td>李总</td>
+  <td class="pn">5510-E/ABS01-BK-P002-5164</td>
+  <td class="spc">5510-防静电ABS01-黑色-印刷002-515164</td>
+  <td>18717 白</td>
+  <td class="num">1,000</td>
+  <td class="num">1,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="5510-PC-T-P000-5164">
+  <td>帝奥</td>
+  <td class="pn">5510-PC-T-P000-5164</td>
+  <td class="spc">5510-通用PC-透明-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">44,000</td>
+  <td class="num">44,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="5510-E/PC02-BK-P000-5164">
+  <td>帝奥</td>
+  <td class="pn">5510-E/PC02-BK-P000-5164</td>
+  <td class="spc">5510-防静电PC02-黑色-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">44,000</td>
+  <td class="num">44,000</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="5510-PC-BK-P003-5164">
+  <td>帝奥</td>
+  <td class="pn">5510-PC-BK-P003-5164</td>
+  <td class="spc">5510-通用PC-黑色-印刷003-515164</td>
+  <td>18717 白</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="5510-PC-T-P002-5164">
+  <td>帝奥</td>
+  <td class="pn">5510-PC-T-P002-5164</td>
+  <td class="spc">5510-通用PC-透明-印刷002-515164</td>
+  <td>3005C 蓝</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="5510-E/ABS01-BK-P002-5164">
+  <td>帝奥</td>
+  <td class="pn">5510-E/ABS01-BK-P002-5164</td>
+  <td class="spc">5510-防静电ABS01-黑色-印刷002-515164</td>
+  <td>18717 白</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="5510-PC-T-P010-5164">
+  <td>帝奥</td>
+  <td class="pn">5510-PC-T-P010-5164</td>
+  <td class="spc">5510-通用PC-透明-印刷010-515164</td>
+  <td>3005C 蓝</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="8512-PC-BK-P000-BLK">
+  <td>帝奥</td>
+  <td class="pn">8512-PC-BK-P000-BLK</td>
+  <td class="spc">8512-通用PC-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="8512-PC-BK-P001-BLK">
+  <td>帝奥</td>
+  <td class="pn">8512-PC-BK-P001-BLK</td>
+  <td class="spc">8512-通用PC-黑色-印刷001-空白</td>
+  <td>18727 淡黄</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="8512-PC-T-P000-BLK">
+  <td>帝奥</td>
+  <td class="pn">8512-PC-T-P000-BLK</td>
+  <td class="spc">8512-通用PC-透明-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="8512-PC-T-P001-BLK">
+  <td>帝奥</td>
+  <td class="pn">8512-PC-T-P001-BLK</td>
+  <td class="spc">8512-通用PC-透明-印刷001-空白</td>
+  <td>3005C 蓝</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="8512-E/ABS01-T-P000-BLK">
+  <td>帝奥</td>
+  <td class="pn">8512-E/ABS01-T-P000-BLK</td>
+  <td class="spc">8512-防静电ABS01-透明-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="8512-E/ABS01-T-P001-BLK">
+  <td>帝奥</td>
+  <td class="pn">8512-E/ABS01-T-P001-BLK</td>
+  <td class="spc">8512-防静电ABS01-透明-印刷001-空白</td>
+  <td>18727 淡黄</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="CP4IN-E/PC02-BK-P000-BLK">
+  <td>帝奥</td>
+  <td class="pn">CP4IN-E/PC02-BK-P000-BLK</td>
+  <td class="spc">4寸芯片盘-防静电PC02-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="CPL4IN-E/ABS01-TP-P000-BLK">
+  <td>帝奥</td>
+  <td class="pn">CPL4IN-E/ABS01-TP-P000-BLK</td>
+  <td class="spc">4寸芯片盘盖板-防静电ABS01-透紫-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="CPC4IN-PP01-TRC-P000-BLK">
+  <td>帝奥</td>
+  <td class="pn">CPC4IN-PP01-TRC-P000-BLK</td>
+  <td class="spc">4寸芯片盘夹-通用均聚PP-半透-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="5510-E/ABS01-TP-P000-5164">
+  <td>帝奥</td>
+  <td class="pn">5510-E/ABS01-TP-P000-5164</td>
+  <td class="spc">5510-防静电ABS01-透紫-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="5510-E/ABS01-BK-P000-5164">
+  <td>帝奥</td>
+  <td class="pn">5510-E/ABS01-BK-P000-5164</td>
+  <td class="spc">5510-防静电ABS01-黑色-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok" data-st="ok" data-cl="帝奥" data-pn="5510-PC-T-P005-5164">
+  <td>帝奥</td>
+  <td class="pn">5510-PC-T-P005-5164</td>
+  <td class="spc">5510-通用PC-透明-印刷005-515164</td>
+  <td>3005C 蓝</td>
+  <td class="num">0</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">0</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="林总" data-pn="5510-PC-T-P005-5164">
+  <td>林总</td>
+  <td class="pn">5510-PC-T-P005-5164</td>
+  <td class="spc">5510-通用PC-透明-印刷005-515164</td>
+  <td>3005C 蓝</td>
+  <td class="num">500</td>
+  <td class="num">506</td>
+  <td class="num big v-ok">-6</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="李总" data-pn="8512-E/ABS01-TP-P000-BLK">
+  <td>李总</td>
+  <td class="pn">8512-E/ABS01-TP-P000-BLK</td>
+  <td class="spc">8512-防静电ABS01-透紫-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,009</td>
+  <td class="num big v-ok">-9</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="李总" data-pn="8512-E/ABS01-BK-P001-BLK">
+  <td>李总</td>
+  <td class="pn">8512-E/ABS01-BK-P001-BLK</td>
+  <td class="spc">8512-防静电ABS01-黑色-印刷001-空白</td>
+  <td>18727 淡黄</td>
+  <td class="num">1,000</td>
+  <td class="num">1,009</td>
+  <td class="num big v-ok">-9</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="李总" data-pn="8512-ABS-WH-P000-BLK">
+  <td>李总</td>
+  <td class="pn">8512-ABS-WH-P000-BLK</td>
+  <td class="spc">8512-通用ABS-白色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,012</td>
+  <td class="num big v-ok">-12</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="李总" data-pn="8512-PC-BK-P000-BLK">
+  <td>李总</td>
+  <td class="pn">8512-PC-BK-P000-BLK</td>
+  <td class="spc">8512-通用PC-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,012</td>
+  <td class="num big v-ok">-12</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="林总" data-pn="8512-E/ABS01-BK-P001-BLK">
+  <td>林总</td>
+  <td class="pn">8512-E/ABS01-BK-P001-BLK</td>
+  <td class="spc">8512-防静电ABS01-黑色-印刷001-空白</td>
+  <td>18727 淡黄</td>
+  <td class="num">2,000</td>
+  <td class="num">2,013</td>
+  <td class="num big v-ok">-13</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="李总" data-pn="5510-PC-BK-P002-5164">
+  <td>李总</td>
+  <td class="pn">5510-PC-BK-P002-5164</td>
+  <td class="spc">5510-通用PC-黑色-印刷002-515164</td>
+  <td>18717 白</td>
+  <td class="num">11,000</td>
+  <td class="num">11,020</td>
+  <td class="num big v-ok">-20</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="李总" data-pn="5510-PC-BK-P000-5164">
+  <td>李总</td>
+  <td class="pn">5510-PC-BK-P000-5164</td>
+  <td class="spc">5510-通用PC-黑色-不印刷-5164</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,020</td>
+  <td class="num big v-ok">-20</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="林总" data-pn="5510-PC-BK-P000-5164">
+  <td>林总</td>
+  <td class="pn">5510-PC-BK-P000-5164</td>
+  <td class="spc">5510-通用PC-黑色-不印刷-515164</td>
+  <td>不印刷</td>
+  <td class="num">20,000</td>
+  <td class="num">20,028</td>
+  <td class="num big v-ok">-28</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="林总" data-pn="CPC4IN-PP01-BK-P000-BLK">
+  <td>林总</td>
+  <td class="pn">CPC4IN-PP01-BK-P000-BLK</td>
+  <td class="spc">4寸芯片盘夹-通用均聚PP-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">1,500</td>
+  <td class="num">1,529</td>
+  <td class="num big v-ok">-29</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="林总" data-pn="8512-E/ABS01-T-P000-BLK">
+  <td>林总</td>
+  <td class="pn">8512-E/ABS01-T-P000-BLK</td>
+  <td class="spc"></td>
+  <td></td>
+  <td class="num">-34</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">-34</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="凯崴" data-pn="8512-E/ABS01-TP-P000-BLK">
+  <td>凯崴</td>
+  <td class="pn">8512-E/ABS01-TP-P000-BLK</td>
+  <td class="spc">8512-防静电ABS01-透紫-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">3,000</td>
+  <td class="num">3,039</td>
+  <td class="num big v-ok">-39</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="凯崴" data-pn="8512-E/ABS01-BK-P001-BLK">
+  <td>凯崴</td>
+  <td class="pn">8512-E/ABS01-BK-P001-BLK</td>
+  <td class="spc">8512-防静电ABS01-黑色-印刷001-空白</td>
+  <td>18727 米黄色</td>
+  <td class="num">3,000</td>
+  <td class="num">3,039</td>
+  <td class="num big v-ok">-39</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="凯崴" data-pn="PBA25-E/ABS01-TP-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">PBA25-E/ABS01-TP-P000-KW</td>
+  <td class="spc">PBA25-防静电ABS01-透紫-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">2,000</td>
+  <td class="num">2,040</td>
+  <td class="num big v-ok">-40</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="凯崴" data-pn="PBA27-E/ABS01-BK-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">PBA27-E/ABS01-BK-P000-KW</td>
+  <td class="spc">PBA27-防静电ABS01-黑色-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,040</td>
+  <td class="num big v-ok">-40</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="凯崴" data-pn="PBA25-E/ABS01-BK-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">PBA25-E/ABS01-BK-P000-KW</td>
+  <td class="spc">PBA25-防静电ABS01-黑色-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,040</td>
+  <td class="num big v-ok">-40</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="林总" data-pn="5510-PC-T-P010-5164">
+  <td>林总</td>
+  <td class="pn">5510-PC-T-P010-5164</td>
+  <td class="spc">5510-通用PC-透明-印刷010-515164</td>
+  <td>3005C 蓝</td>
+  <td class="num">7,500</td>
+  <td class="num">7,556</td>
+  <td class="num big v-ok">-56</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="李总" data-pn="8512-PC-BK-P001-BLK">
+  <td>李总</td>
+  <td class="pn">8512-PC-BK-P001-BLK</td>
+  <td class="spc">8512-通用PC-黑色-印刷001-空白</td>
+  <td>18727 淡黄</td>
+  <td class="num">9,000</td>
+  <td class="num">9,058</td>
+  <td class="num big v-ok">-58</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="凯崴" data-pn="PBA27-E/ABS01-TP-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">PBA27-E/ABS01-TP-P000-KW</td>
+  <td class="spc">PBA27-防静电ABS01-透紫-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">1,000</td>
+  <td class="num">1,060</td>
+  <td class="num big v-ok">-60</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="凯崴" data-pn="1CBX-E/PC02-BK-P000-BLK">
+  <td>凯崴</td>
+  <td class="pn">1CBX-E/PC02-BK-P000-BLK</td>
+  <td class="spc">1格盒-防静电PC02-黑色-不印刷-空白</td>
+  <td>不印刷</td>
+  <td class="num">10,000</td>
+  <td class="num">10,061</td>
+  <td class="num big v-ok">-61</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="凯崴" data-pn="5510P-E/ABS01-TP-P000-KW">
+  <td>凯崴</td>
+  <td class="pn">5510P-E/ABS01-TP-P000-KW</td>
+  <td class="spc">5510带柱-防静电ABS01-透紫-不印刷-凯崴</td>
+  <td>不印刷</td>
+  <td class="num">10,000</td>
+  <td class="num">10,080</td>
+  <td class="num big v-ok">-80</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="林总" data-pn="8512-PC-T-P001-BLK">
+  <td>林总</td>
+  <td class="pn">8512-PC-T-P001-BLK</td>
+  <td class="spc"></td>
+  <td></td>
+  <td class="num">-100</td>
+  <td class="num">0</td>
+  <td class="num big v-ok">-100</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="林总" data-pn="5510-E/ABS01-BK-P002-5164">
+  <td>林总</td>
+  <td class="pn">5510-E/ABS01-BK-P002-5164</td>
+  <td class="spc">5510-防静电ABS01-黑色-印刷002-515164</td>
+  <td>18717 白</td>
+  <td class="num">1,842</td>
+  <td class="num">2,000</td>
+  <td class="num big v-ok">-158</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="李总" data-pn="8512-PC-T-P001-BLK">
+  <td>李总</td>
+  <td class="pn">8512-PC-T-P001-BLK</td>
+  <td class="spc">8512-通用PC-透明-印刷001-空白</td>
+  <td>3005C 蓝</td>
+  <td class="num">9,208</td>
+  <td class="num">9,377</td>
+  <td class="num big v-ok">-169</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr><tr class="r-ok2" data-st="ok2" data-cl="林总" data-pn="5510-PC-T-P002-5164">
+  <td>林总</td>
+  <td class="pn">5510-PC-T-P002-5164</td>
+  <td class="spc">5510-通用PC-透明-印刷002-515164</td>
+  <td>3005C 蓝</td>
+  <td class="num">14,930</td>
+  <td class="num">15,124</td>
+  <td class="num big v-ok">-194</td>
+  <td><span class="st st-ok">已交完</span></td>
+</tr></tbody>
+    </table>
+  </div>
+  <div class="empty" id="none" style="display:none">没有符合条件的记录</div>
+</div>
+<footer>丰康塑料厂 · 数据由订单与交付记录自动生成，每天 20:00 更新<br>
+未交完·急 = 未交付超 100 片　｜　超交待核 = 交付量超下单 200 片以上　｜　未交付为负数表示交得比订的多</footer>
+<script>
+var f = 'all', cl = '', q = '';
+function apply() {
+  var rows = document.querySelectorAll('#tb tr'), shown = 0;
+  rows.forEach(function (tr) {
+    var okF = (f === 'all') || (f === 'ok' ? (tr.dataset.st === 'ok' || tr.dataset.st === 'ok2') : tr.dataset.st === f);
+    var okC = !cl || tr.dataset.cl === cl;
+    var okQ = !q || (tr.dataset.pn || '').toLowerCase().indexOf(q) >= 0 || tr.textContent.toLowerCase().indexOf(q) >= 0;
+    var show = okF && okC && okQ;
+    tr.style.display = show ? '' : 'none';
+    if (show) shown++;
+  });
+  document.getElementById('none').style.display = shown ? 'none' : '';
+}
+document.querySelectorAll('.chip').forEach(function (c) {
+  c.onclick = function () {
+    document.querySelectorAll('.chip').forEach(function (x) { x.classList.remove('on'); });
+    c.classList.add('on');
+    f = c.dataset.f;
+    apply();
+  };
+});
+document.getElementById('cl').onchange = function (e) { cl = e.target.value; apply(); };
+document.getElementById('q').oninput = function (e) { q = (e.target.value || '').trim().toLowerCase(); apply(); };
+</script>
+</body></html>
