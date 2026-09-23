@@ -13,8 +13,8 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Micros
 .hero .code{font-size:12px;opacity:.72;margin-top:3px;letter-spacing:1.5px}
 .hero .meta{margin-top:12px;font-size:12px;opacity:.92;display:flex;gap:14px;flex-wrap:wrap}
 nav.anchor{position:sticky;top:0;z-index:9;display:flex;gap:7px;padding:9px 11px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 2px 10px rgba(20,40,80,.07)}
-nav.anchor a{flex:1;text-align:center;padding:9px 3px;font-size:13.5px;color:#2b5797;text-decoration:none;font-weight:700;background:#f2f7ff;border:1.5px solid #c5d8f2;border-radius:9px;box-shadow:0 1px 2px rgba(43,87,151,.08)}
-nav.anchor a:active{background:#dfedfd;border-color:#7fa8dc;color:#1d3f70}
+nav.anchor a{flex:1;text-align:center;padding:11px 3px;font-size:14.5px;color:#fff;text-decoration:none;font-weight:700;background:var(--blue);border:1px solid #1b3f7a;border-radius:10px;box-shadow:0 2px 6px rgba(43,87,151,.3)}
+nav.anchor a:active{background:var(--blued);border-color:#122a52}
 main{padding:14px 11px 44px;max-width:720px;margin:0 auto}
 section{margin-bottom:26px;scroll-margin-top:62px}
 h2.sec{font-size:17.5px;margin:0 0 3px;display:flex;align-items:center;gap:8px;font-weight:700}
@@ -28,7 +28,7 @@ h2.sec .no{display:inline-flex;width:23px;height:23px;border-radius:7px;backgrou
 .kpi .v.lv-red{color:var(--red)}.kpi .v.lv-orange{color:var(--orange)}.kpi .v.lv-green{color:var(--green)}
 /* ==== 列表行（手机不需要左右滑）==== */
 .rows{background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:0 1px 2px rgba(20,40,80,.04)}
-.ghead{background:#f2f7fd;border-bottom:1px solid #dfe9f6;border-top:1px solid #dfe9f6;padding:7px 12px;font-size:12.5px;font-weight:700;color:#1f3b6e;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.ghead{background:#e2eefb;border-bottom:1px solid #cbe0f5;border-top:3px solid #b8cfe9;padding:9px 12px;font-size:13px;font-weight:700;color:#17325e;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .rows>.ghead:first-child{border-top:none}
 .ghead .bl{color:#2b5797;font-weight:700;word-break:break-all}
 .ghead .tag{font-size:11px;color:#6b7684;font-weight:400;white-space:nowrap}
@@ -70,7 +70,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
   <section id="delivery">
     <h2 class="sec"><span class="no">1</span>近期发货记录</h2>
     <div class="sub">最近 10 天已发出的货，每张送货单一个分组</div>
-    <div class="kpis"><div class="kpi k3"><div class="v ">1</div><div class="l">送货单（张）</div></div><div class="kpi k3"><div class="v ">1</div><div class="l">发货品项</div></div><div class="kpi k3"><div class="v ">2,000</div><div class="l">合计数量（片）</div></div></div>
     <div class="rows"><div class="ghead">
         <span>2026/9/16 <span class="bl">20260916-003</span></span>
         <span class="tag">1 项 · 2,000 片</span>
@@ -78,7 +77,7 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
           <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
-          <div class="mtx">印刷 — · 箱数 4箱</div>
+          <div class="mtx">油墨色 — · 箱数 4箱</div>
         </div>
         <div class="val">2,000</div>
       </div></div>
@@ -87,7 +86,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
   <section id="undelivered">
     <h2 class="sec"><span class="no">2</span>未交付数量</h2>
     <div class="sub">按下单记录与交付记录自动对账，右侧大字为未交付数量（片）</div>
-    <div class="kpis"><div class="kpi k3"><div class="v ">9</div><div class="l">品号合计</div></div><div class="kpi k3"><div class="v lv-red">3</div><div class="l">未交付 100 片以上</div></div><div class="kpi k3"><div class="v lv-orange">0</div><div class="l">交付量超出下单 200 片以上</div></div></div>
     <div class="legend">
       <div><i class="lv-red">红底行</i>：未交付超过 100 片，请留意</div>
       <div><i class="lv-orange">橙底行</i>：交付量已超过下单量 200 片以上，本厂正在核对</div>
@@ -97,63 +95,63 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
           <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
-          <div class="mtx">印刷 — · 已交付 91,687</div>
+          <div class="mtx">油墨色 — · 已交付 91,687</div>
         </div>
         <div class="val lv-red">5,000</div>
       </div><div class="row row-red">
         <div class="lft">
           <div class="pnx">DAWE-AS-AC8512-B001-ESD</div>
           <div class="spx">8512全黑色ABS方盒,三角形扣位,无表格,防静电</div>
-          <div class="mtx">印刷 — · 已交付 0</div>
+          <div class="mtx">油墨色 — · 已交付 0</div>
         </div>
         <div class="val lv-red">1,000</div>
       </div><div class="row row-red">
         <div class="lft">
           <div class="pnx">DAWE-PC11-AC5410-B100-ESD</div>
           <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,磨砂面,10*10表格,DAWE刻字</div>
-          <div class="mtx">印刷 — · 已交付 1,000</div>
+          <div class="mtx">油墨色 — · 已交付 1,000</div>
         </div>
         <div class="val lv-red">200</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
           <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
-          <div class="mtx">印刷 — · 已交付 16,500</div>
+          <div class="mtx">油墨色 — · 已交付 16,500</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">MO-PC10-AC5410-ESD</div>
           <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,MOSEMI刻字</div>
-          <div class="mtx">印刷 — · 已交付 16,700</div>
+          <div class="mtx">油墨色 — · 已交付 16,700</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">DAWE-PS-TC8512-B100-00</div>
           <div class="spx">8512半透明PS方盒,三角形扣位,10*10表格(细线暗油墨),不防静电</div>
-          <div class="mtx">印刷 — · 已交付 8,700</div>
+          <div class="mtx">油墨色 — · 已交付 8,700</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">DAWE-PC10-AC5410-ESD</div>
           <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,上盖带4个顶柱,磨砂面,DAWE刻字</div>
-          <div class="mtx">印刷 — · 已交付 68,800</div>
+          <div class="mtx">油墨色 — · 已交付 68,800</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">DAWE-AS-TC8512-B100-ESD</div>
           <div class="spx">8512半透明ABS方能扣应鱼10*10表格(细线暗油墨)上盖透明ABS,下盖ABS,均为防静电材质</div>
-          <div class="mtx">印刷 — · 已交付 680</div>
+          <div class="mtx">油墨色 — · 已交付 680</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">DAWE-PS-TC8512-B001</div>
           <div class="spx">8512半透明PS方盒,三角形扣位,无表格,不防静电</div>
-          <div class="mtx">印刷 — · 已交付 2,500</div>
+          <div class="mtx">油墨色 — · 已交付 2,500</div>
         </div>
         <div class="val lv-green">0</div>
       </div></div>
@@ -162,7 +160,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
   <section id="orders">
     <h2 class="sec"><span class="no">3</span>订单记录</h2>
     <div class="sub">只显示最近 30 天的订单，按日期倒序</div>
-    <div class="kpis"><div class="kpi k3"><div class="v ">6</div><div class="l">近 30 天订单（张）</div></div><div class="kpi k3"><div class="v ">6</div><div class="l">订单品项</div></div><div class="kpi k3"><div class="v lv-green">0</div><div class="l">未标记记录状态</div></div></div>
     <div class="legend">
       <div><i class="lv-green">绿色</i>：记录状态已标记为「已记录」</div>
       <div><i class="lv-red">红色</i>：尚未标记记录状态，需补录</div>
@@ -174,7 +171,7 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">DAWE-PC11-AC5410-B100-ESD</div>
           <div class="spx">2寸全黑PC方盒,长效防静电,长方形扣位,磨砂面,10*10表格,DAWE刻字</div>
-          <div class="mtx">印刷 —</div>
+          <div class="mtx">油墨色 —</div>
         </div>
         <div class="val">200</div>
       </div><div class="ghead">
@@ -184,7 +181,7 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">DAWE-AS-TC5410-B100-ESD-01</div>
           <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,10*10表格,DAWE刻字</div>
-          <div class="mtx">印刷 —</div>
+          <div class="mtx">油墨色 —</div>
         </div>
         <div class="val">5,000</div>
       </div><div class="ghead">
@@ -194,7 +191,7 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
           <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
-          <div class="mtx">印刷 —</div>
+          <div class="mtx">油墨色 —</div>
         </div>
         <div class="val">2,000</div>
       </div><div class="ghead">
@@ -204,7 +201,7 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">DAWE-AS-AC8512-B001-ESD</div>
           <div class="spx">8512全黑色ABS方盒,三角形扣位,无表格,防静电</div>
-          <div class="mtx">印刷 —</div>
+          <div class="mtx">油墨色 —</div>
         </div>
         <div class="val">1,000</div>
       </div><div class="ghead">
@@ -214,7 +211,7 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
           <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
-          <div class="mtx">印刷 —</div>
+          <div class="mtx">油墨色 —</div>
         </div>
         <div class="val">2,500</div>
       </div><div class="ghead">
@@ -224,7 +221,7 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">DAWE-AS-TC5410-B001-ESD-01</div>
           <div class="spx">2寸半透明方盒,ABS蓝色上盖,黑色PC下盖,长效防静电,长方形扣位,无表格,DAWE刻字</div>
-          <div class="mtx">印刷 —</div>
+          <div class="mtx">油墨色 —</div>
         </div>
         <div class="val">2,000</div>
       </div></div>
