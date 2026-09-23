@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>全部客户交付总览 · 丰康塑料厂</title>
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<style>
+:root{--blue:#2b5797;--blued:#1f3b6e;--ink:#1c2530;--muted:#6b7684;--line:#e3e8ef;--bg:#eef2f7;--red:#d92d20;--green:#12805c;--orange:#b45309}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55;-webkit-text-size-adjust:100%}
+.hero{background:linear-gradient(135deg,#17325e,#2b5797 55%,#3f7ac0);color:#fff;padding:24px 18px 22px}
+.hero h1{margin:0;font-size:23px;letter-spacing:1px;font-weight:700}
+.hero .sub2{font-size:12.5px;opacity:.8;margin-top:4px}
+.hero .meta{margin-top:13px;font-size:12.5px;opacity:.93;display:flex;gap:16px;flex-wrap:wrap}
+main{padding:16px 14px 48px;max-width:1180px;margin:0 auto}
+.sum{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-bottom:18px}
+@media(min-width:640px){.sum{grid-template-columns:repeat(5,1fr)}}
+.sum div{background:#fff;border:1px solid var(--line);border-radius:11px;padding:12px 13px;box-shadow:0 1px 2px rgba(20,40,80,.04)}
+.sum .v{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--blued);line-height:1.2}
+.sum .l{font-size:11.5px;color:var(--muted);margin-top:3px}
+.sum .v.red{color:var(--red)}.sum .v.orange{color:var(--orange)}
+h2.cat{font-size:16.5px;margin:0 0 12px;font-weight:800;color:#17325e;display:flex;align-items:center;gap:9px}
+h2.cat::before{content:"";width:5px;height:19px;background:var(--blue);border-radius:3px;display:inline-block}
+.grid{display:grid;grid-template-columns:1fr;gap:13px}
+@media(min-width:640px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(min-width:1000px){.grid{grid-template-columns:repeat(3,1fr)}}
+.card{background:#fff;border:1px solid #d9e5f3;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(20,40,80,.06);text-decoration:none;color:inherit;display:flex;flex-direction:column}
+.card:active{border-color:#7fa8dc;box-shadow:0 2px 8px rgba(43,87,151,.16)}
+.card .hd{background:#d9e8f9;border-bottom:1px solid #bcd4ee;padding:11px 14px;display:flex;justify-content:space-between;align-items:baseline;gap:9px}
+.card .nm{font-size:16px;font-weight:800;color:#16304f}
+.card .cd{font-size:11px;color:#5a6b80;font-weight:600;letter-spacing:.3px}
+.card .bd{padding:12px 14px;flex:1}
+.card .row2{display:flex;justify-content:space-between;font-size:13px;padding:4px 0}
+.card .row2 .k{color:var(--muted)}
+.card .row2 .v{font-weight:700;font-variant-numeric:tabular-nums}
+.v.red{color:var(--red)}.v.orange{color:var(--orange)}.v.green{color:var(--green)}
+.card .go{padding:10px 14px;border-top:1px solid #eef3f9;text-align:center;font-size:13px;font-weight:700;color:var(--blue);background:#fafcff}
+.card.err .hd{background:#fdecea;border-bottom-color:#f5cdc7}
+.card.err .bd{color:#9aa4b2;font-size:13px}
+footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:8px 16px 32px;line-height:1.8}
+</style>
+</head><body>
+<div class="hero">
+  <h1>全部客户交付总览</h1>
+  <div class="sub2">丰康塑料厂 · 仅本厂内部使用</div>
+  <div class="meta"><span>共 4 家客户</span><span>数据更新：2026/9/23 15:07:30</span></div>
+</div>
+<main>
+  <div class="sum">
+    <div><div class="v">4</div><div class="l">客户数</div></div>
+    <div><div class="v">84</div><div class="l">品号合计</div></div>
+    <div><div class="v red">41,416</div><div class="l">待交合计（片）</div></div>
+    <div><div class="v red">10</div><div class="l">红色·需催</div></div>
+    <div><div class="v orange">5</div><div class="l">橙色·待核</div></div>
+  </div>
+  <h2 class="cat">点击任意客户查看明细</h2>
+  <div class="grid"><a class="card" href="linzong.html">
+    <div class="hd"><span class="nm">林总</span><span class="cd">CJX085902</span></div>
+    <div class="bd">
+      <div class="row2"><span class="k">待交数量合计</span><span class="v red">1,364 片</span></div>
+      <div class="row2"><span class="k">涉及品号</span><span class="v">26 个</span></div>
+      <div class="row2"><span class="k">红色（未交付&gt;100片）</span><span class="v red">2 个</span></div>
+      <div class="row2"><span class="k">橙色（超交200片以上）</span><span class="v orange">4 个</span></div>
+      <div class="row2"><span class="k">正常</span><span class="v green">20 个</span></div>
+    </div>
+    <div class="go">查看 林总 明细 ›</div>
+  </a><a class="card" href="dewei.html">
+    <div class="hd"><span class="nm">德威</span><span class="cd">CDW02302</span></div>
+    <div class="bd">
+      <div class="row2"><span class="k">待交数量合计</span><span class="v red">1,200 片</span></div>
+      <div class="row2"><span class="k">涉及品号</span><span class="v">9 个</span></div>
+      <div class="row2"><span class="k">红色（未交付&gt;100片）</span><span class="v red">2 个</span></div>
+      <div class="row2"><span class="k">橙色（超交200片以上）</span><span class="v green">0 个</span></div>
+      <div class="row2"><span class="k">正常</span><span class="v green">7 个</span></div>
+    </div>
+    <div class="go">查看 德威 明细 ›</div>
+  </a><a class="card" href="kaiwei.html">
+    <div class="hd"><span class="nm">凯崴</span><span class="cd">CKW02802</span></div>
+    <div class="bd">
+      <div class="row2"><span class="k">待交数量合计</span><span class="v red">34,938 片</span></div>
+      <div class="row2"><span class="k">涉及品号</span><span class="v">30 个</span></div>
+      <div class="row2"><span class="k">红色（未交付&gt;100片）</span><span class="v red">4 个</span></div>
+      <div class="row2"><span class="k">橙色（超交200片以上）</span><span class="v green">0 个</span></div>
+      <div class="row2"><span class="k">正常</span><span class="v green">26 个</span></div>
+    </div>
+    <div class="go">查看 凯崴 明细 ›</div>
+  </a><a class="card" href="lizong.html">
+    <div class="hd"><span class="nm">李总</span><span class="cd">CLZ053002</span></div>
+    <div class="bd">
+      <div class="row2"><span class="k">待交数量合计</span><span class="v red">3,914 片</span></div>
+      <div class="row2"><span class="k">涉及品号</span><span class="v">19 个</span></div>
+      <div class="row2"><span class="k">红色（未交付&gt;100片）</span><span class="v red">2 个</span></div>
+      <div class="row2"><span class="k">橙色（超交200片以上）</span><span class="v orange">1 个</span></div>
+      <div class="row2"><span class="k">正常</span><span class="v green">16 个</span></div>
+    </div>
+    <div class="go">查看 李总 明细 ›</div>
+  </a></div>
+</main>
+<footer>丰康塑料厂 · 本页数据由订单与交付记录自动生成<br>数量单位：片　｜　红色=未交付超 100 片　橙色=交付超下单 200 片以上</footer>
+</body></html>
