@@ -13,8 +13,8 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Micros
 .hero .code{font-size:12px;opacity:.72;margin-top:3px;letter-spacing:1.5px}
 .hero .meta{margin-top:12px;font-size:12px;opacity:.92;display:flex;gap:14px;flex-wrap:wrap}
 nav.anchor{position:sticky;top:0;z-index:9;display:flex;gap:7px;padding:9px 11px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 2px 10px rgba(20,40,80,.07)}
-nav.anchor a{flex:1;text-align:center;padding:9px 3px;font-size:13.5px;color:#2b5797;text-decoration:none;font-weight:700;background:#f2f7ff;border:1.5px solid #c5d8f2;border-radius:9px;box-shadow:0 1px 2px rgba(43,87,151,.08)}
-nav.anchor a:active{background:#dfedfd;border-color:#7fa8dc;color:#1d3f70}
+nav.anchor a{flex:1;text-align:center;padding:11px 3px;font-size:14.5px;color:#fff;text-decoration:none;font-weight:700;background:var(--blue);border:1px solid #1b3f7a;border-radius:10px;box-shadow:0 2px 6px rgba(43,87,151,.3)}
+nav.anchor a:active{background:var(--blued);border-color:#122a52}
 main{padding:14px 11px 44px;max-width:720px;margin:0 auto}
 section{margin-bottom:26px;scroll-margin-top:62px}
 h2.sec{font-size:17.5px;margin:0 0 3px;display:flex;align-items:center;gap:8px;font-weight:700}
@@ -28,7 +28,7 @@ h2.sec .no{display:inline-flex;width:23px;height:23px;border-radius:7px;backgrou
 .kpi .v.lv-red{color:var(--red)}.kpi .v.lv-orange{color:var(--orange)}.kpi .v.lv-green{color:var(--green)}
 /* ==== 列表行（手机不需要左右滑）==== */
 .rows{background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:0 1px 2px rgba(20,40,80,.04)}
-.ghead{background:#f2f7fd;border-bottom:1px solid #dfe9f6;border-top:1px solid #dfe9f6;padding:7px 12px;font-size:12.5px;font-weight:700;color:#1f3b6e;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.ghead{background:#e2eefb;border-bottom:1px solid #cbe0f5;border-top:3px solid #b8cfe9;padding:9px 12px;font-size:13px;font-weight:700;color:#17325e;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .rows>.ghead:first-child{border-top:none}
 .ghead .bl{color:#2b5797;font-weight:700;word-break:break-all}
 .ghead .tag{font-size:11px;color:#6b7684;font-weight:400;white-space:nowrap}
@@ -70,7 +70,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
   <section id="delivery">
     <h2 class="sec"><span class="no">1</span>近期发货记录</h2>
     <div class="sub">最近 10 天已发出的货，每张送货单一个分组</div>
-    <div class="kpis"><div class="kpi k3"><div class="v ">5</div><div class="l">送货单（张）</div></div><div class="kpi k3"><div class="v ">8</div><div class="l">发货品项</div></div><div class="kpi k3"><div class="v ">75,280</div><div class="l">合计数量（片）</div></div></div>
     <div class="rows"><div class="ghead">
         <span>2026/9/21 <span class="bl">K7-20260921-019</span></span>
         <span class="tag">1 项 · 7,560 片</span>
@@ -78,7 +77,7 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">8512-PC-BK-P001-BLK</div>
           <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
-          <div class="mtx">印刷 18727 淡黄 · 箱数 7件</div>
+          <div class="mtx">油墨色 18727 淡黄 · 箱数 7件</div>
         </div>
         <div class="val">7,560</div>
       </div><div class="ghead">
@@ -88,14 +87,14 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">8512-PC-BK-P001-BLK</div>
           <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
-          <div class="mtx">印刷 18727 淡黄 · 箱数 6箱</div>
+          <div class="mtx">油墨色 18727 淡黄 · 箱数 6箱</div>
         </div>
         <div class="val">6,480</div>
       </div><div class="row">
         <div class="lft">
           <div class="pnx">8512-PC-T-P000-BLK</div>
           <div class="spx">8512-通用PC-透明-不印刷-空白</div>
-          <div class="mtx">印刷 不印刷 · 箱数 17箱</div>
+          <div class="mtx">油墨色 不印刷 · 箱数 17箱</div>
         </div>
         <div class="val">18,360</div>
       </div><div class="ghead">
@@ -105,7 +104,7 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">8512-PC-BK-P001-BLK</div>
           <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
-          <div class="mtx">印刷 18727 淡黄 · 箱数 8箱</div>
+          <div class="mtx">油墨色 18727 淡黄 · 箱数 8箱</div>
         </div>
         <div class="val">8,640</div>
       </div><div class="ghead">
@@ -115,7 +114,7 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">5510-PC-WH-P000-5164</div>
           <div class="spx">5510-通用PC-白色-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷</div>
+          <div class="mtx">油墨色 不印刷</div>
         </div>
         <div class="val">2,000</div>
       </div><div class="ghead">
@@ -125,21 +124,21 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">5510-PC-T-P000-5164</div>
           <div class="spx">5510-通用PC-透明-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷</div>
+          <div class="mtx">油墨色 不印刷</div>
         </div>
         <div class="val">2,000</div>
       </div><div class="row">
         <div class="lft">
           <div class="pnx">8512-PC-BK-P001-BLK</div>
           <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
-          <div class="mtx">印刷 18727 淡黄</div>
+          <div class="mtx">油墨色 18727 淡黄</div>
         </div>
         <div class="val">9,720</div>
       </div><div class="row">
         <div class="lft">
           <div class="pnx">8512-PC-T-P000-BLK</div>
           <div class="spx">8512-通用PC-透明-不印刷-空白</div>
-          <div class="mtx">印刷 不印刷</div>
+          <div class="mtx">油墨色 不印刷</div>
         </div>
         <div class="val">20,520</div>
       </div></div>
@@ -148,7 +147,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
   <section id="undelivered">
     <h2 class="sec"><span class="no">2</span>未交付数量</h2>
     <div class="sub">按下单记录与交付记录自动对账，右侧大字为未交付数量（片）</div>
-    <div class="kpis"><div class="kpi k3"><div class="v ">26</div><div class="l">品号合计</div></div><div class="kpi k3"><div class="v lv-red">3</div><div class="l">未交付 100 片以上</div></div><div class="kpi k3"><div class="v lv-orange">3</div><div class="l">交付量超出下单 200 片以上</div></div></div>
     <div class="legend">
       <div><i class="lv-red">红底行</i>：未交付超过 100 片，请留意</div>
       <div><i class="lv-orange">橙底行</i>：交付量已超过下单量 200 片以上，本厂正在核对</div>
@@ -158,182 +156,182 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">8512-PC-BK-P001-BLK</div>
           <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
-          <div class="mtx">印刷 18727 淡黄 · 已交付 410,616</div>
+          <div class="mtx">油墨色 18727 淡黄 · 已交付 410,616</div>
         </div>
         <div class="val lv-red">5,335</div>
       </div><div class="row row-red">
         <div class="lft">
           <div class="pnx">8512-PC-T-P000-BLK</div>
           <div class="spx">8512-通用PC-透明-不印刷-空白</div>
-          <div class="mtx">印刷 不印刷 · 已交付 434,357</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 434,357</div>
         </div>
         <div class="val lv-red">1,245</div>
       </div><div class="row row-red">
         <div class="lft">
           <div class="pnx">8512-E/ABS01-T-P001-BLK</div>
           <div class="spx"></div>
-          <div class="mtx">印刷 — · 已交付 0</div>
+          <div class="mtx">油墨色 — · 已交付 0</div>
         </div>
         <div class="val lv-red">119</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">5510-PC-WH-P000-5164</div>
           <div class="spx">5510-通用PC-白色-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷 · 已交付 2,000</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 2,000</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">5510-PC-BK-P015-5164</div>
           <div class="spx">5510-通用PC-黑色-印刷015-515164</div>
-          <div class="mtx">印刷 18717 白 · 已交付 500</div>
+          <div class="mtx">油墨色 18717 白 · 已交付 500</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">8512-E/ABS01-TP-P000-BLK</div>
           <div class="spx">8512-防静电ABS01-透紫-不印刷-空白</div>
-          <div class="mtx">印刷 不印刷 · 已交付 2,000</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 2,000</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">CPL4IN-E/ABS01-BK-P000-BLK</div>
           <div class="spx">4寸芯片盘盖板-防静电ABS01-黑色-不印刷-空白</div>
-          <div class="mtx">印刷 不印刷 · 已交付 1,000</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 1,000</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">5510-E/ABS01-TP-P000-5164</div>
           <div class="spx">5510-防静电ABS01-透紫-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷 · 已交付 4,000</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 4,000</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">5510-E/ABS01-BK-P012-5164</div>
           <div class="spx">5510-防静电ABS01-黑色-印刷012-515164</div>
-          <div class="mtx">印刷 18717 白 · 已交付 200</div>
+          <div class="mtx">油墨色 18717 白 · 已交付 200</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">5510-E/ABS01-BK-P000-5164</div>
           <div class="spx">5510-防静电ABS01-黑色-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷 · 已交付 200</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 200</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">CP4IN-E/PC02-BK-P000-BLK</div>
           <div class="spx">4寸芯片盘-防静电PC02-黑色-不印刷-空白</div>
-          <div class="mtx">印刷 不印刷 · 已交付 530</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 530</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">CPL4IN-E/ABS01-TP-P000-BLK</div>
           <div class="spx">4寸芯片盘盖板-防静电ABS01-透紫-不印刷-空白</div>
-          <div class="mtx">印刷 不印刷 · 已交付 530</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 530</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">CPC4IN-PP01-TRC-P000-BLK</div>
           <div class="spx">4寸芯片盘夹-通用均聚PP-半透-不印刷-空白</div>
-          <div class="mtx">印刷 不印刷 · 已交付 530</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 530</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">5510-E/ABS01-BK-P013-5164</div>
           <div class="spx">5510-防静电ABS01-黑色-印刷013-515164</div>
-          <div class="mtx">印刷 18727 淡黄 · 已交付 0</div>
+          <div class="mtx">油墨色 18727 淡黄 · 已交付 0</div>
         </div>
         <div class="val lv-green">0</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">5510-PC-T-P005-5164</div>
           <div class="spx">5510-通用PC-透明-印刷005-515164</div>
-          <div class="mtx">印刷 3005C 蓝 · 已交付 506</div>
+          <div class="mtx">油墨色 3005C 蓝 · 已交付 506</div>
         </div>
         <div class="val lv-green">-6</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">8512-E/ABS01-BK-P001-BLK</div>
           <div class="spx">8512-防静电ABS01-黑色-印刷001-空白</div>
-          <div class="mtx">印刷 18727 淡黄 · 已交付 2,013</div>
+          <div class="mtx">油墨色 18727 淡黄 · 已交付 2,013</div>
         </div>
         <div class="val lv-green">-13</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">5510-PC-BK-P000-5164</div>
           <div class="spx">5510-通用PC-黑色-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷 · 已交付 20,028</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 20,028</div>
         </div>
         <div class="val lv-green">-28</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">CPC4IN-PP01-BK-P000-BLK</div>
           <div class="spx">4寸芯片盘夹-通用均聚PP-黑色-不印刷-空白</div>
-          <div class="mtx">印刷 不印刷 · 已交付 1,529</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 1,529</div>
         </div>
         <div class="val lv-green">-29</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">8512-E/ABS01-T-P000-BLK</div>
           <div class="spx"></div>
-          <div class="mtx">印刷 — · 已交付 0</div>
+          <div class="mtx">油墨色 — · 已交付 0</div>
         </div>
         <div class="val lv-green">-34</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">5510-PC-T-P010-5164</div>
           <div class="spx">5510-通用PC-透明-印刷010-515164</div>
-          <div class="mtx">印刷 3005C 蓝 · 已交付 7,556</div>
+          <div class="mtx">油墨色 3005C 蓝 · 已交付 7,556</div>
         </div>
         <div class="val lv-green">-56</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">8512-PC-T-P001-BLK</div>
           <div class="spx"></div>
-          <div class="mtx">印刷 — · 已交付 0</div>
+          <div class="mtx">油墨色 — · 已交付 0</div>
         </div>
         <div class="val lv-green">-100</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">5510-E/ABS01-BK-P002-5164</div>
           <div class="spx">5510-防静电ABS01-黑色-印刷002-515164</div>
-          <div class="mtx">印刷 18717 白 · 已交付 2,000</div>
+          <div class="mtx">油墨色 18717 白 · 已交付 2,000</div>
         </div>
         <div class="val lv-green">-158</div>
       </div><div class="row ">
         <div class="lft">
           <div class="pnx">5510-PC-T-P002-5164</div>
           <div class="spx">5510-通用PC-透明-印刷002-515164</div>
-          <div class="mtx">印刷 3005C 蓝 · 已交付 15,124</div>
+          <div class="mtx">油墨色 3005C 蓝 · 已交付 15,124</div>
         </div>
         <div class="val lv-green">-194</div>
       </div><div class="row row-warn">
         <div class="lft">
           <div class="pnx">5510-PC-T-P000-5164</div>
           <div class="spx">5510-通用PC-透明-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷 · 已交付 144,390</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 144,390</div>
         </div>
         <div class="val lv-orange">-833</div>
       </div><div class="row row-warn">
         <div class="lft">
           <div class="pnx">5510-PC-BK-P003-5164</div>
           <div class="spx">5510-通用PC-黑色-印刷003-515164</div>
-          <div class="mtx">印刷 18717 白 · 已交付 98,686</div>
+          <div class="mtx">油墨色 18717 白 · 已交付 98,686</div>
         </div>
         <div class="val lv-orange">-1,144</div>
       </div><div class="row row-warn">
         <div class="lft">
           <div class="pnx">8512-PC-BK-P000-BLK</div>
           <div class="spx">8512-通用PC-黑色-不印刷-空白</div>
-          <div class="mtx">印刷 不印刷 · 已交付 7,400</div>
+          <div class="mtx">油墨色 不印刷 · 已交付 7,400</div>
         </div>
         <div class="val lv-orange">-3,960</div>
       </div></div>
@@ -342,7 +340,6 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
   <section id="orders">
     <h2 class="sec"><span class="no">3</span>订单记录</h2>
     <div class="sub">只显示最近 30 天的订单，按日期倒序</div>
-    <div class="kpis"><div class="kpi k3"><div class="v ">8</div><div class="l">近 30 天订单（张）</div></div><div class="kpi k3"><div class="v ">8</div><div class="l">订单品项</div></div><div class="kpi k3"><div class="v lv-green">0</div><div class="l">未标记记录状态</div></div></div>
     <div class="legend">
       <div><i class="lv-green">绿色</i>：记录状态已标记为「已记录」</div>
       <div><i class="lv-red">红色</i>：尚未标记记录状态，需补录</div>
@@ -354,17 +351,14 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">5510-PC-WH-P000-5164</div>
           <div class="spx">5510-通用PC-白色-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷</div>
+          <div class="mtx">油墨色 不印刷</div>
         </div>
         <div class="val">2,000</div>
-      </div><div class="ghead">
-        <span>2026/9/11</span>
-        <span class="tag lv-green">已记录</span>
       </div><div class="row">
         <div class="lft">
           <div class="pnx">5510-PC-T-P000-5164</div>
           <div class="spx">5510-通用PC-透明-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷</div>
+          <div class="mtx">油墨色 不印刷</div>
         </div>
         <div class="val">2,000</div>
       </div><div class="ghead">
@@ -374,17 +368,14 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">5510-PC-T-P000-5164</div>
           <div class="spx">5510-通用PC-透明-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷</div>
+          <div class="mtx">油墨色 不印刷</div>
         </div>
         <div class="val">10,000</div>
-      </div><div class="ghead">
-        <span>2026/9/4</span>
-        <span class="tag lv-green">已记录</span>
       </div><div class="row">
         <div class="lft">
           <div class="pnx">5510-PC-BK-P000-5164</div>
           <div class="spx">5510-通用PC-黑色-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷</div>
+          <div class="mtx">油墨色 不印刷</div>
         </div>
         <div class="val">10,000</div>
       </div><div class="ghead">
@@ -394,17 +385,14 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">5510-PC-T-P000-5164</div>
           <div class="spx">5510-通用PC-透明-不印刷-515164</div>
-          <div class="mtx">印刷 不印刷</div>
+          <div class="mtx">油墨色 不印刷</div>
         </div>
         <div class="val">500</div>
-      </div><div class="ghead">
-        <span>2026/9/2</span>
-        <span class="tag lv-green">已记录</span>
       </div><div class="row">
         <div class="lft">
           <div class="pnx">5510-PC-BK-P015-5164</div>
           <div class="spx">5510-通用PC-黑色-印刷015-515164</div>
-          <div class="mtx">印刷 18717 白</div>
+          <div class="mtx">油墨色 18717 白</div>
         </div>
         <div class="val">500</div>
       </div><div class="ghead">
@@ -414,17 +402,14 @@ footer{text-align:center;font-size:11.5px;color:#9aa4b2;padding:6px 16px 30px;li
         <div class="lft">
           <div class="pnx">8512-PC-BK-P001-BLK</div>
           <div class="spx">8512-通用PC-黑色-印刷001-空白</div>
-          <div class="mtx">印刷 18727 淡黄</div>
+          <div class="mtx">油墨色 18727 淡黄</div>
         </div>
         <div class="val">100,000</div>
-      </div><div class="ghead">
-        <span>2026/8/25</span>
-        <span class="tag lv-green">已记录</span>
       </div><div class="row">
         <div class="lft">
           <div class="pnx">8512-PC-T-P000-BLK</div>
           <div class="spx">8512-通用PC-透明-不印刷-空白</div>
-          <div class="mtx">印刷 不印刷</div>
+          <div class="mtx">油墨色 不印刷</div>
         </div>
         <div class="val">100,000</div>
       </div></div>
